@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<title>Never the Network</title>
+<h1>Network Tools</h1>
+<form method="POST">
+    DNS:
+    <input type = "text" name = "dns_lookup" value = "brandonsjames.com">
+    <input type="submit" value="Submit">
+</form>
+{% for dns_result in dns_results %}
+    {{ dns_result }} <br>
+{% endfor %}
