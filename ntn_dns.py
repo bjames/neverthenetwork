@@ -1,6 +1,6 @@
 import dns.resolver
 
-_RESOLVER_LIST = ['8.8.8.8', '4.2.2.2', '1.1.1.1']
+_RESOLVER_LIST = ['8.8.8.8', '4.2.2.2', '1.1.1.1', '9.9.9.9']
 
 def ntn_dns(hostname, record_type):
 
@@ -17,6 +17,10 @@ def ntn_dns(hostname, record_type):
         except dns.resolver.NoAnswer:
 
             response = 'No Answer'
+
+        except dns.resolver.NoNameservers:
+
+            response = 'SERVFAIL'
 
         results.append({'response': response[:], 'resolver': resolver})
 
