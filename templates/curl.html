@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+    {% include "head.html" %}
+<body>
+    {% include "nav.html" %}
+    <form method="POST">
+        <input type="text" name="url" value={{ url or "neverthenetwork.com" }}>
+        <input type="submit" value="Submit">
+    </form>
+{% if results %}
+<pre>
+{{ results }}
+</pre>
+{% endif %}
+{% include "footer.html" %}
+</body>

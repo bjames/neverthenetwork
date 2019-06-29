@@ -11,17 +11,12 @@ def ntn_dns(hostname, record_type):
         dns.resolver.override_system_resolver(resolver)
 
         try:
-
             response = dns.resolver.Resolver().query(hostname, record_type)
-
         except dns.resolver.NoAnswer:
-
             response = 'No Answer'
-
         except dns.resolver.NoNameservers:
-
             response = 'SERVFAIL'
-
+            
         results.append({'response': response[:], 'resolver': resolver})
 
     dns.resolver.restore_system_resolver()

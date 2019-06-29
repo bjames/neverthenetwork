@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+    {% include "head.html" %}
+<body>
+    {% include "nav.html" %}
+    <form method="POST">
+        <input type="text" name="ip_address" value={{ ip_address or "192.168.0.0" }}>
+        <input type="text" name="subnet_mask" value={{ subnet_mask or "/24" }}>
+        <input type="submit" value="Submit">
+    </form>
+{% if results %}
+<pre>
+<table>
+{% for key, value in results.items() %}
+<tr>
+<td>{{ key }}</td><td>{{ value }}</td>
+</tr>
+{% endfor %}
+</table>
+</pre>
+{% endif %}
+{% include "footer.html" %}
+</body>
