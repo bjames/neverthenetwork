@@ -6,6 +6,10 @@ body {
     text-align: center;
 }
 
+table {
+    border-spacing: 10px 2px;
+}
+
 .navbar {
     background-color: #333;
     overflow: hidden;
@@ -39,7 +43,8 @@ body {
 pre {
     background-color: #333;
     color: white;
-    padding: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
     overflow: scroll;
     display: inline-block;
     width: 50%;
