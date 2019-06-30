@@ -21,7 +21,6 @@
     </form>
 {% if dns_results %}
 <pre>
-<h3> {{ dns_lookup }} IN {{ record_type }}</h3>
 {% for dns_result in dns_results %}
 {{ dns_result['response'] }} {{dns_result['resolver']}}
 {% endfor %}

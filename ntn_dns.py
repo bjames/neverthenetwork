@@ -16,6 +16,8 @@ def ntn_dns(hostname, record_type):
             response = 'No Answer'
         except dns.resolver.NoNameservers:
             response = 'SERVFAIL'
+        except dns.resolver.NXDOMAIN:
+            response = 'NXDOMAIN'
             
         results.append({'response': response[:], 'resolver': resolver})
 

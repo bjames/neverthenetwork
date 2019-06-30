@@ -8,7 +8,9 @@
     </form>
 {% if results %}
 <pre>
-{{ results }}
+{% for key, result in results.items() %}
+{{ key }}: {{ result }}
+{% endfor %}
 </pre>
 {% endif %}
 {% include "footer.html" %}

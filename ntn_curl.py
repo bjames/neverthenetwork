@@ -7,4 +7,6 @@ def ntn_curl(url):
     except requests.exceptions.MissingSchema:
         return ntn_curl('https://' + url)
     except requests.exceptions.SSLError:
-        return 'SSL Error'
+        return {'Error':'Invalid SSL Certificate'}
+    except requests.exceptions.ConnectionError:
+        return {'Error':'Connection timed out'}

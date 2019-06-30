@@ -2,6 +2,10 @@
     font-family: 'monospace';
 }
 
+body {
+    text-align: center;
+}
+
 .navbar {
     background-color: #333;
     overflow: hidden;
@@ -35,9 +39,16 @@
 pre {
     background-color: #333;
     color: white;
-    width: 70%; 
-    word-wrap: break-word;
+    padding: 10px;
+    overflow: scroll;
     display: inline-block;
+    width: 50%;
+    height: 70vh;
+    line-height: 100%;
+    text-align: left;
+    border-color: grey;
+    border-style: solid;
+    border-top-width: 20px;
 }
 
 .footer {
