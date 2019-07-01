@@ -16,7 +16,7 @@ _RESOLVER_LIST = [
     {'name': 'OpenDNS', 'ip': '208.67.222.222'},
     {'name': 'Verisign', 'ip': '64.6.64.6'},
     {'name': 'AdGuard', 'ip': '176.103.130.131'},
-    {'name': 'CleanBrowsing (Family Filter)', 'ip': '185.228.168.168'}
+    {'name': 'CleanBrowsing - Family Filter', 'ip': '185.228.168.168'}
 ]
 
 RECORD_TYPES = [

@@ -7,8 +7,8 @@
         <input type="text" name="subnet_mask" value={{ subnet_mask or "/24" }}>
         <input type="submit" value="Submit">
     </form>
-{% if results %}
 <pre>
+{% if results %}
 <table>
 {% for key, value in results.items() %}
 <tr>
@@ -16,7 +16,7 @@
 </tr>
 {% endfor %}
 </table>
-</pre>
 {% endif %}
+</pre>
 {% include "footer.html" %}
 </body>

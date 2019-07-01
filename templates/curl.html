@@ -6,12 +6,11 @@
         <input type="text" name="url" value={{ url or "neverthenetwork.com" }}>
         <input type="submit" value="Submit">
     </form>
-{% if results %}
 <pre>
-{% for key, result in results.items() %}
+{% if results %}{% for key, result in results.items() %}
 {{ key }}: {{ result }}
 {% endfor %}
-</pre>
 {% endif %}
+</pre>
 {% include "footer.html" %}
 </body>
