@@ -1,31 +1,64 @@
 import dns.resolver
 
-_RESOLVER_LIST = ['8.8.8.8', '4.2.2.2', '1.1.1.1', '9.9.9.9']
+_ROOT_SERVERS = [
+    'a.root-servers.net', 'b.root-servers.net', 'c.root-servers.net',
+    'd.root-servers.net', 'e.root-servers.net', 'f.root-servers.net',
+    'g.root-servers.net', 'h.root-servers.net', 'i.root-servers.net',
+    'j.root-servers.net', 'k.root-servers.net', 'l.root-servers.net',
+    'm.root-servers.net'
+]
+
+_RESOLVER_LIST = [
+    {'name': 'Google', 'ip': '8.8.8.8'},
+    {'name': 'Level3', 'ip': '4.2.2.2'},
+    {'name': 'CloudFlare', 'ip': '1.1.1.1'},
+    {'name': 'Quad9', 'ip': '9.9.9.9'},
+    {'name': 'OpenDNS', 'ip': '208.67.222.222'},
+    {'name': 'Verisign', 'ip': '64.6.64.6'},
+    {'name': 'AdGuard', 'ip': '176.103.130.131'},
+    {'name': 'CleanBrowsing (Family Filter)', 'ip': '185.228.168.168'}
+]
+
+RECORD_TYPES = [
+    'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
+]
+
+def ntn_ns(hostname):
+
+    pass
 
 def ntn_dns(hostname, record_type):
 
     results = []
 
+    dns_resolver = dns.resolver.Resolver()
+
     for resolver in _RESOLVER_LIST:
 
-        dns.resolver.override_system_resolver(resolver)
+        dns_resolver.nameservers.clear()
+        dns_resolver.nameservers.append(resolver['ip'])
+        print(dns_resolver.nameservers)
 
         try:
-            response = dns.resolver.Resolver().query(hostname, record_type)
+            response = dns_resolver.query(hostname, record_type)
         except dns.resolver.NoAnswer:
             response = ['No Answer']
         except dns.resolver.NoNameservers:
             response = ['SERVFAIL']
         except dns.resolver.NXDOMAIN:
             response = ['NXDOMAIN']
-            
+        
         results.append({'response': response[:], 'resolver': resolver})
 
-    dns.resolver.restore_system_resolver()
 
-    return results
+    try:
+        return results.rrset
+    except:
+        return results
 
 if __name__ == "__main__":
+
+    from pprint import pprint
 
     test_request = [
         {'hostname': 'brandonsjames.com', 'record_type': 'A'},
@@ -46,5 +79,4 @@ if __name__ == "__main__":
 
         for result in results:
 
-            print(result['response'])
-            print(result['resolver'])
+            pprint(result)
