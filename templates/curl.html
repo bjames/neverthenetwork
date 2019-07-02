@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-    {% include "head.html" %}
-<body>
-    {% include "nav.html" %}
-    <form method="POST">
-        <input type="text" name="url" value={{ url or "neverthenetwork.com" }}>
-        <input type="submit" value="Submit">
-    </form>
-<pre>
 {% if results %}{% for key, result in results.items() %}
 {{ key }}: {{ result }}
 {% endfor %}
 {% endif %}
-</pre>
-{% include "footer.html" %}
-</body>
