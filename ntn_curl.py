@@ -3,10 +3,13 @@ import requests
 def ntn_curl(url):
 
     try:
-        return requests.get(url).headers
+        response = requests.get(url)
     except requests.exceptions.MissingSchema:
         return ntn_curl('https://' + url)
+
+    try:
+        return response.headers, response.elapsed.total_seconds()
     except requests.exceptions.SSLError:
-        return {'Error':'Invalid SSL Certificate'}
+        return {'Error':'Invalid SSL Certificate'}, response.elapsed.total_seconds()
     except requests.exceptions.ConnectionError:
-        return {'Error':'Connection timed out'}
+        return {'Error':'Connection timed out'}, response.elapsed.total_seconds()

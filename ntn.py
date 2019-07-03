@@ -22,8 +22,8 @@ def dns_check():
 @app.route('/curl', methods=['GET', 'POST'])
 def curl():
     if request.method == 'POST':
-        return render_template('curl.html', results = ntn_curl(request.form['url']),
-                        url = request.form['url'])
+        results, elapsed_time = ntn_curl(request.form['url'])
+        return render_template('curl.html', results = results, elapsed_time = elapsed_time, url = request.form['url'])
     return render_template('curl_app.html')
 
 @app.route('/subnet', methods=['GET', 'POST'])
