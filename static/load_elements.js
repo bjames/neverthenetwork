@@ -31,7 +31,7 @@ $(document).ready(function() {
             $.ajax({
                 url: 'dns',
                 type: 'post',
-                data: {dns_lookup: $('[name=dns_lookup]').val(), record_type: $('[name=record_type').val()},
+                data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
                 success: function(data) {
 
                     $("#term").append(data);

@@ -1,17 +1,15 @@
 <form id="app" class="dns" method="POST">
     <input type = "text" name = "dns_lookup" value = {{ dns_lookup or "neverthenetwork.com" }}>
     <select name = "record_type">
-        <option value = {{ record_type or "A" }} > {{ record_type or "A" }}</option>
-        <option value = "A">A</option>
-        <option value = "AAAA">AAAA</option>
-        <option value = "CNAME">CNAME</option>
-        <option value = "DNAME">DNAME</option>
-        <option value = "MX">MX</option>
-        <option value = "NS">NS</option>
-        <option value = "PTR">PTR</option>
-        <option value = "SOA">SOA</option>
-        <option value = "SRV">SRV</option>
-        <option value = "TXT">TXT</option>
+        {% for record_type in dns_record_types %}
+        <option value = {{ record_type }}>{{ record_type }}</option>
+        {% endfor %}
+    </select>
+    <select name = "user_resolver">
+        <option value = "All" >All</option>
+        {% for dns_resolver in dns_resolver_list %}
+        <option value = {{ dns_resolver["name"] }}>{{ dns_resolver["name"] }}</option>
+        {% endfor %}
     </select>
     <input type="submit" value="Submit" formaction="dns">
 </form>
