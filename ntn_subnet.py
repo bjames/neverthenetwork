@@ -2,13 +2,19 @@ import ipaddress
 
 def ntn_subnet(ip_address, subnet_mask):
 
-    if '/' in subnet_mask:
+    try:
 
-        subnet = (ipaddress.ip_network(ip_address + subnet_mask, strict=False))
+        if '/' in subnet_mask:
 
-    else:
+            subnet = (ipaddress.ip_network(ip_address + subnet_mask, strict=False))
 
-        subnet = (ipaddress.ip_network(ip_address + '/' + subnet_mask, strict=False))
+        else:
+
+            subnet = (ipaddress.ip_network(ip_address + '/' + subnet_mask, strict=False))
+
+    except ValueError:
+
+        return {'Error': 'Invalid input'}
 
     return {
         'Network Address': subnet.network_address,        

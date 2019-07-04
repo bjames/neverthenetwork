@@ -1,9 +1,10 @@
 import requests
+from urllib3.util.url import parse_url
 
 def ntn_curl(url):
 
     try:
-        response = requests.get(url)
+        response = requests.head(url)
     except requests.exceptions.MissingSchema:
         return ntn_curl('https://' + url)
 
