@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     for request in test_request:
 
-        results = ntn_dns(request['hostname'], request['record_type'])
+        results = ntn_dns(request['hostname'], 'all', request['record_type'])
 
         for result in results:
 
