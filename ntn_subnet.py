@@ -12,16 +12,38 @@ def ntn_subnet(ip_address, subnet_mask):
 
             subnet = (ipaddress.ip_network(ip_address + '/' + subnet_mask, strict=False))
 
+
     except ValueError:
 
         return {'Error': 'Invalid input'}
 
-    return {
-        'Network Address': subnet.network_address,        
-        'Subnet Mask': subnet.netmask,
-        'Wildcard Bits': subnet.hostmask,
-        'Broadcast Address': subnet.broadcast_address,
-        'Number of Address': subnet.num_addresses,
-        'First Host': subnet.network_address + 1,
-        'Last Host': subnet.broadcast_address - 1
-    }
+    if subnet.num_addresses == 1:
+
+        return {
+            'Network Address': subnet.network_address,        
+            'Subnet Mask': subnet.netmask,
+            'Wildcard Bits': subnet.hostmask,
+            'Number of Addresses': subnet.num_addresses
+        }
+        
+    elif subnet.num_addresses == 2:
+
+        return {
+            'Subnet Mask': subnet.netmask,
+            'Wildcard Bits': subnet.hostmask,
+            'Number of Addresses': subnet.num_addresses,
+            'First Host': subnet.network_address,
+            'Last Host': subnet.broadcast_address
+        }
+
+    else:
+
+        return {
+            'Network Address': subnet.network_address,        
+            'Subnet Mask': subnet.netmask,
+            'Wildcard Bits': subnet.hostmask,
+            'Broadcast Address': subnet.broadcast_address,
+            'Number of Addresses': subnet.num_addresses,
+            'First Host': subnet.network_address + 1,
+            'Last Host': subnet.broadcast_address - 1
+        }

@@ -2,7 +2,8 @@
 curl -I {{ url }}
 ___________________________
 {% if results %}{% for key, result in results.items() %}
-{{ key }}: {{ result }}
+ {{ key }}: {{ result }}
 {% endfor %}
-Response time {{ elapsed_time }} seconds
+ Response time {{ elapsed_time }} seconds
+
 {% endif %}

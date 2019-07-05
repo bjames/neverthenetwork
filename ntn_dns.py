@@ -12,8 +12,6 @@ def ntn_dns(hostname, user_resolver, record_type):
 
     dns_resolver = dns.resolver.Resolver()
 
-    print(user_resolver)
-
     if user_resolver == 'All':
 
         resolvers = DNS_RESOLVER_LIST

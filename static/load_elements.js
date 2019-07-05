@@ -62,7 +62,9 @@ $(document).ready(function() {
     $('#curl_nav').click(function(){
         load_app('curl');
     })
+    
 });
+
 function update_term(term_data) {
 
     $("#term").append(term_data);
