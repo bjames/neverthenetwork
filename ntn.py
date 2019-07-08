@@ -32,3 +32,7 @@ def subnet():
         return render_template('subnet.html', results = ntn_subnet(request.form['ip_address'], request.form['subnet_mask']),
                         ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
     return render_template('subnet_app.html')
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')

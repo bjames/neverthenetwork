@@ -20,3 +20,9 @@ DNS_RESOLVER_LIST = [
 DNS_RECORD_TYPES = [
     'A', 'AAAA', 'CNAME', 'MX', 'NS', 'PTR', 'SOA', 'SRV', 'TXT'
 ]
+
+OUI_FILES = [
+    {'url': 'http://standards-oui.ieee.org/oui/oui.csv', 'file_name': 'oui.sqlite', 'oui_length': 6},
+    {'url': 'http://standards-oui.ieee.org/oui28/mam.csv', 'file_name': 'mam.sqlite', 'oui_length': 7},
+    {'url': 'http://standards-oui.ieee.org/oui36/oui36.csv', 'file_name': 'oui36.sqlite', 'oui_length': 9}
+]
