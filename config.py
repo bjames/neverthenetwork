@@ -22,7 +22,11 @@ DNS_RECORD_TYPES = [
 ]
 
 OUI_FILES = [
-    {'url': 'http://standards-oui.ieee.org/oui/oui.csv', 'file_name': 'oui.sqlite', 'oui_length': 6},
-    {'url': 'http://standards-oui.ieee.org/oui28/mam.csv', 'file_name': 'mam.sqlite', 'oui_length': 7},
-    {'url': 'http://standards-oui.ieee.org/oui36/oui36.csv', 'file_name': 'oui36.sqlite', 'oui_length': 9}
+    {'url': 'http://standards-oui.ieee.org/oui/oui.csv', 'oui_length': 6, 'table_name': 'OUI_MAL'},
+    {'url': 'http://standards-oui.ieee.org/oui28/mam.csv', 'oui_length': 7, 'table_name': 'OUI_MAM'},
+    {'url': 'http://standards-oui.ieee.org/oui36/oui36.csv', 'oui_length': 9, 'table_name': 'OUI_MAS'}
 ]
+
+DATABASE = 'sqlite:///ntn.db'
+
+DATABASE_KEY = 'Th!s !s n0t cUst0mer Data'

@@ -1,10 +1,17 @@
 from flask import Flask, request, render_template
-from config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST
+from flask_sqlalchemy import SQLAlchemy
 from ntn_dns import ntn_dns
 from ntn_curl import ntn_curl
 from ntn_subnet import ntn_subnet
 
+from config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
+
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = DATABASE_KEY
+
+db = SQLAlchemy(app)
 
 
 @app.route('/', methods=['GET', 'POST'])

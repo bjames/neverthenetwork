@@ -1,7 +1,7 @@
 import requests
-import sqlite3
 
 from config import OUI_FILES
+
 
 def download_oui_lists():
 
