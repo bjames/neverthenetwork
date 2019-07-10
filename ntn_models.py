@@ -19,6 +19,10 @@ class OUI_MAL(Base):
         self.organization = organization
         self.organization_address = organization_address
 
+    def __repr__(self):
+
+        return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)
+
 
 class OUI_MAM(Base):
     __tablename__ = "OUI_MAM"
@@ -38,6 +42,10 @@ class OUI_MAM(Base):
         self.organization = organization
         self.organization_address = organization_address
 
+    def __repr__(self):
+
+        return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)
+
 
 class OUI_MAS(Base):
     __tablename__ = "OUI_MAS"
@@ -56,3 +64,7 @@ class OUI_MAS(Base):
         self.assignment = assignment
         self.organization = organization
         self.organization_address = organization_address
+
+    def __repr__(self):
+
+        return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)

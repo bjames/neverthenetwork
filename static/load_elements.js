@@ -47,6 +47,18 @@ $(document).ready(function() {
                 }
             });
 
+        }else if (classes.contains("oui")){
+
+            $.ajax({
+                url: 'oui',
+                type: 'post',
+                data: $('[name=mac_address]'),
+                success: function(data) {
+
+                    update_term(data);    
+                
+                }
+            });
         }
 
        return false;
@@ -61,6 +73,9 @@ $(document).ready(function() {
     })
     $('#curl_nav').click(function(){
         load_app('curl');
+    })
+    $('#oui_nav').click(function(){
+        load_app('oui');
     })
 
 });
@@ -90,6 +105,8 @@ function load_anchor() {
             break;
         case '#subnet':
             load_app('subnet');
+        case '#oui':
+            load_app('oui');
             break;
     }
 }

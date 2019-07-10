@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from ntn_dns import ntn_dns
 from ntn_curl import ntn_curl
 from ntn_subnet import ntn_subnet
+from ntn_oui import ntn_oui
 from ntn_db import db_session
 
 from config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
@@ -47,6 +48,14 @@ def subnet():
                         ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
     return render_template('subnet_app.html')
 
+@app.route('/oui', methods=['GET', 'POST'])
+def oui():
+    try:
+        if request.method == 'POST':
+            return render_template('oui.html', results = ntn_oui(request.form['mac_address']))
+    except ValueError as e:
+        return render_template('oui.html', error = e)
+    return render_template('oui_app.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
