@@ -20,11 +20,8 @@ def ntn_dns(hostname, user_resolver, record_type):
 
         for resolver in DNS_RESOLVER_LIST:
 
-            print(resolver["name"])
-
             if resolver["name"] == user_resolver:
                 
-                print("match")
                 resolvers.append(resolver)
 
 
@@ -42,8 +39,12 @@ def ntn_dns(hostname, user_resolver, record_type):
             response = ['SERVFAIL']
         except dns.resolver.NXDOMAIN:
             response = ['NXDOMAIN']
-        
-        results.append({'response': response[:], 'resolver': resolver})
+        except dns.resolver.Timeout:
+            response = ['Response timed out']
+
+        result = [str(answer).strip('"') for answer in response]
+
+        results.append({'response': sorted(result[:]), 'resolver': resolver})
 
 
     try:

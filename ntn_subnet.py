@@ -15,13 +15,14 @@ def ntn_subnet(ip_address, subnet_mask):
 
     except ValueError:
 
-        return {'Error': 'Invalid input'}
+        return {'Error': 'Invalid subnet mask or IP address'}
 
     if subnet.num_addresses == 1:
 
         return {
             'Network Address': subnet.network_address,        
             'Subnet Mask': subnet.netmask,
+            'CIDR': '/{}'.format(subnet.prefixlen),
             'Wildcard Bits': subnet.hostmask,
             'Number of Addresses': subnet.num_addresses
         }
@@ -30,6 +31,7 @@ def ntn_subnet(ip_address, subnet_mask):
 
         return {
             'Subnet Mask': subnet.netmask,
+            'CIDR': '/{}'.format(subnet.prefixlen),
             'Wildcard Bits': subnet.hostmask,
             'Number of Addresses': subnet.num_addresses,
             'First Host': subnet.network_address,
@@ -41,6 +43,7 @@ def ntn_subnet(ip_address, subnet_mask):
         return {
             'Network Address': subnet.network_address,        
             'Subnet Mask': subnet.netmask,
+            'CIDR': '/{}'.format(subnet.prefixlen),
             'Wildcard Bits': subnet.hostmask,
             'Broadcast Address': subnet.broadcast_address,
             'Number of Addresses': subnet.num_addresses,
