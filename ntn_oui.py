@@ -1,7 +1,7 @@
 from re import sub
 
 from config import OUI_FILES
-from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS
+from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS, OUI_CID
 from ntn_db import db_session
 
 
@@ -18,6 +18,11 @@ def mam_lookup(mac_address, Session):
 def mas_lookup(mac_address, Session):
 
     return(Session.query(OUI_MAS).filter(OUI_MAS.assignment == mac_address[:9]).all())
+
+
+def cid_lookup(mac_address, Session):
+
+    return(Session.query(OUI_CID).filter(OUI_CID.assignment == mac_address[:6]).all())
 
 
 def ntn_oui(mac_address):
@@ -40,15 +45,31 @@ def ntn_oui(mac_address):
 
     results = mal_lookup(mac_address, Session)
 
+    if len(results) == 0:
+
+        results = cid_lookup(mac_address, Session)
+
+        if len(results) == 0:
+
+            raise ValueError('No matching OUI found')
+
     for result in results:
 
         if 'IEEE' in result.organization:
 
-            result = mam_lookup(mac_address, Session)
+            mam_result = mam_lookup(mac_address, Session)
 
-            if len(result) == 0:
+            if len(mam_result) == 0:
 
-                result = mas_lookup(mac_address, Session)
+                mas_result = mas_lookup(mac_address, Session)
+
+                if len(mas_result) > 0:
+
+                    return mas_result
+            
+            else:
+
+                return mam_result
 
     return results
 
@@ -68,3 +89,6 @@ if __name__ == '__main__':
 
     # Requires a lookup into the MAM table
     print(ntn_oui('70B3.D556.F000'))
+
+    # Requires a lookup into the CID table
+    print(ntn_oui('6A1F6C000000'))

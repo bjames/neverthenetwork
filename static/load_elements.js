@@ -107,6 +107,5 @@ function load_anchor() {
             load_app('subnet');
         case '#oui':
             load_app('oui');
-            break;
     }
 }

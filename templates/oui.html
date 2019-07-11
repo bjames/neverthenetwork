@@ -5,7 +5,10 @@ ___________________________
  OUI: {{ result.assignment }}
 
  Assigned to:
+
     {{ result.organization }}
     {{ result.organization_address }}
 {% endfor %}{% endif %}
-{% if error %}{{ error }}{% endif %}
+{% if error %}{{ error }}
+
+{% endif %}

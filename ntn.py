@@ -7,6 +7,7 @@ from ntn_curl import ntn_curl
 from ntn_subnet import ntn_subnet
 from ntn_oui import ntn_oui
 from ntn_db import db_session
+from ntn_pubip import ntn_pubip
 
 from config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
 
@@ -24,7 +25,7 @@ def shutdown_session(exception = None):
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    return render_template('index.html')
+    return render_template('index.html', public_ip = ntn_pubip())
 
 @app.route('/dns', methods=['GET', 'POST'])
 def dns_check():
@@ -56,6 +57,7 @@ def oui():
     except ValueError as e:
         return render_template('oui.html', error = e)
     return render_template('oui_app.html')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

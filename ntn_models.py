@@ -65,6 +65,26 @@ class OUI_MAS(Base):
         self.organization = organization
         self.organization_address = organization_address
 
+
+class OUI_CID(Base):
+    __tablename__ = "OUI_CID"
+
+    '''
+        CID's are 24 bit prefixes used in applications where the MAC address does not need to be unique
+    '''
+
+    id = Column(Integer, primary_key=True)
+    assignment = Column(CHAR(6))
+    organization = Column(String)
+    organization_address = Column(String)
+
+    def __init__(self, assignment = None, organization = None, organization_address = None):
+
+        self.assignment = assignment
+        self.organization = organization
+        self.organization_address = organization_address
+
+
     def __repr__(self):
 
         return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)
