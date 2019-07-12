@@ -12,6 +12,7 @@ def ntn_dns(hostname, user_resolver, record_type):
 
     dns_resolver = dns.resolver.Resolver()
 
+    # if the user selects all resolvers, query all default resolvers (Does not include root servers)
     if user_resolver == 'All':
 
         resolvers = DNS_RESOLVER_LIST
@@ -22,12 +23,18 @@ def ntn_dns(hostname, user_resolver, record_type):
 
     else:
 
+        # if the user selects a single resolver, we set that here
         for resolver in DNS_RESOLVER_LIST:
 
             if resolver["name"] == user_resolver:
+
+                print('match found for {}'.format(user_resolver))
                 
                 resolvers.append(resolver)
 
+            else:
+
+                print('no match found for {}'.format(user_resolver))
 
 
     for resolver in resolvers:

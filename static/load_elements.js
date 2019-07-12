@@ -186,7 +186,6 @@ function update_term(term_data) {
 
 // loads the form above the terminal box
 function load_app(app) {
-    console.log(app)
     $('#app').load(app + ' #app');
     active($('#' + app + '_nav'))
     document.title = 'NTN - '+ app;
