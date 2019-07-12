@@ -1,70 +1,39 @@
+var count = 30
+var timer = null
+var watch_intervall = null
+
 $(document).ready(function() {
     load_anchor();
     $('#app').submit(function(event){
 
         event.preventDefault();
 
-        var curr_app = document.getElementById("app").firstChild;
+        submit_form();
 
-        classes = curr_app.classList;
-
-        if(classes.contains("curl")){
-
-            $.ajax({
-                url: 'curl',
-                type: 'post',
-                data: $('[name=url]'),
-                success: function(data) {
-
-                    update_term(data);
-         
-                }
-            });
-
-        }else if (classes.contains("dns")){
-
-            $.ajax({
-                url: 'dns',
-                type: 'post',
-                data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
-                success: function(data) {
-
-                    update_term(data);         
-          
-                }
-            });
-
-        }else if (classes.contains("subnet")){
-
-            $.ajax({
-                url: 'subnet',
-                type: 'post',
-                data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask').val()},
-                success: function(data) {
-
-                    update_term(data);    
-                
-                }
-            });
-
-        }else if (classes.contains("oui")){
-
-            $.ajax({
-                url: 'oui',
-                type: 'post',
-                data: $('[name=mac_address]'),
-                success: function(data) {
-
-                    update_term(data);    
-                
-                }
-            });
-        }
-
-       return false;
+        return false;
     
     })
 
+    $('#watch').click(function() {
+
+        var checked = $(this).is(':checked');
+
+        if(checked) {
+            timer = setInterval(function() {
+                countdown()
+            }, 1000)
+            watch_interval = setInterval(function() {
+                submit_form();
+            }, 30000);
+
+        }else{
+            clearInterval(watch_interval)
+            clearInterval(timer)
+            document.getElementById('timer').innerHTML='';
+        }
+    })
+
+    // navbar clicks are handled here
     $('#dns_nav').click(function(){
         load_app('dns');
     })
@@ -77,9 +46,117 @@ $(document).ready(function() {
     $('#oui_nav').click(function(){
         load_app('oui');
     })
-
+    $('#ping_nav').click(function(){
+        load_app('ping');
+    })
+    $('#traceroute_nav').click(function(){
+        load_app('traceroute');
+    })    
+    $('#clear_scrollback').click(function(){
+        $('#term').empty();
+    })
 });
 
+// used to submit the app forms via ajax
+function submit_form() {
+
+    var curr_app = document.getElementById("app").firstChild;
+
+    classes = curr_app.classList;
+
+    if(classes.contains("curl")){
+
+        $.ajax({
+            url: 'curl',
+            type: 'post',
+            data: $('[name=url]'),
+            success: function(data) {
+
+                update_term(data);
+     
+            }
+        });
+
+    }else if (classes.contains("dns")){
+
+        $.ajax({
+            url: 'dns',
+            type: 'post',
+            data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
+            success: function(data) {
+
+                update_term(data);         
+      
+            }
+        });
+
+    }else if (classes.contains("subnet")){
+
+        $.ajax({
+            url: 'subnet',
+            type: 'post',
+            data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask').val()},
+            success: function(data) {
+
+                update_term(data);    
+            
+            }
+        });
+
+    }else if (classes.contains("oui")){
+
+        $.ajax({
+            url: 'oui',
+            type: 'post',
+            data: $('[name=mac_address]'),
+            success: function(data) {
+
+                update_term(data);    
+            
+            }
+        });
+    }else if (classes.contains("ping")){
+
+        $.ajax({
+            url: 'ping',
+            type: 'post',
+            data: $('[name=hostname]'),
+            success: function(data) {
+
+                update_term(data);    
+            
+            }
+        });
+    }else if (classes.contains("traceroute")){
+
+        $.ajax({
+            url: 'traceroute',
+            type: 'post',
+            data: $('[name=hostname]'),
+            success: function(data) {
+
+                update_term(data);    
+            
+            }
+        });
+    }
+}
+
+// countdown timer for the watch function
+function countdown(timer) {
+
+    count = count - 1;
+
+    if (count <= 0)
+    {
+        count = 30;
+        return;
+    }
+
+    document.getElementById('timer').innerHTML=count;
+}
+
+// used to append data to the terminal
 function update_term(term_data) {
 
     $("#term").append(term_data);
@@ -89,11 +166,13 @@ function update_term(term_data) {
 
 }
 
+// loads the form above the terminal box
 function load_app(app) {
     $('#app').load(app + ' #app');
     document.title = 'NTN - '+ app;
 }
 
+// allows bookmarks to function - if the request URL is #app, the app is loaded
 function load_anchor() {
     console.log(window.location.pathname)
     switch ($(location).attr('hash')) {
@@ -105,7 +184,16 @@ function load_anchor() {
             break;
         case '#subnet':
             load_app('subnet');
+            break;
         case '#oui':
             load_app('oui');
+            break;
+        case '#ping':
+            load_app('ping');
+            break;
+        case '#traceroute':
+            load_app('traceroute');
+            break;
     }
+
 }

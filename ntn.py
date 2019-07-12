@@ -8,6 +8,8 @@ from ntn_subnet import ntn_subnet
 from ntn_oui import ntn_oui
 from ntn_db import db_session
 from ntn_pubip import ntn_pubip
+from ntn_ping import ntn_ping
+from ntn_traceroute import ntn_traceroute
 
 from config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
 
@@ -58,6 +60,19 @@ def oui():
         return render_template('oui.html', error = e)
     return render_template('oui_app.html')
 
+
+@app.route('/ping', methods=['GET', 'POST'])
+def ping():
+    if request.method == 'POST':
+        return render_template('ping.html', results = ntn_ping(request.form['hostname']), hostname = request.form['hostname'])
+    return render_template('ping_app.html')
+
+
+@app.route('/traceroute', methods=['GET', 'POST'])
+def traceroute():
+    if request.method == 'POST':
+        return render_template('traceroute.html', results = ntn_traceroute(request.form['hostname']), hostname = request.form['hostname'])
+    return render_template('traceroute_app.html')
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

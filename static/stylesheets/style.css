@@ -68,3 +68,8 @@ pre {
 .footer a {
     color: grey;
 }
+
+#bottom_buttons table {
+    margin-right: auto;
+    margin-left: auto;
+}
