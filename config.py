@@ -1,9 +1,17 @@
 DNS_ROOT_SERVERS = [
-    'a.root-servers.net', 'b.root-servers.net', 'c.root-servers.net',
-    'd.root-servers.net', 'e.root-servers.net', 'f.root-servers.net',
-    'g.root-servers.net', 'h.root-servers.net', 'i.root-servers.net',
-    'j.root-servers.net', 'k.root-servers.net', 'l.root-servers.net',
-    'm.root-servers.net'
+    {'name': 'a.root-servers.net', 'ip': '198.41.0.4'},
+    {'name': 'b.root-servers.net', 'ip': '199.9.14.201'},
+    {'name': 'c.root-servers.net', 'ip': '192.33.4.12'},
+    {'name': 'd.root-servers.net', 'ip': '199.7.91.13'},
+    {'name': 'e.root-servers.net', 'ip': '192.203.230.10'},
+    {'name': 'f.root-servers.net', 'ip': '192.5.5.241'},
+    {'name': 'g.root-servers.net', 'ip': '192.112.36.4'},
+    {'name': 'h.root-servers.net', 'ip': '198.97.190.53'},
+    {'name': 'i.root-servers.net', 'ip': '192.36.148.17'},
+    {'name': 'j.root-servers.net', 'ip': '192.58.128.30'},
+    {'name': 'k.root-servers.net', 'ip': '193.0.14.129'},
+    {'name': 'l.root-servers.net', 'ip': '199.7.83.42'},
+    {'name': 'm.root-servers.net', 'ip': '202.12.27.33'}
 ]
 
 DNS_RESOLVER_LIST = [

@@ -16,6 +16,10 @@ def ntn_dns(hostname, user_resolver, record_type):
 
         resolvers = DNS_RESOLVER_LIST
 
+    elif user_resolver == 'Root Servers':
+
+        resolvers = DNS_ROOT_SERVERS
+
     else:
 
         for resolver in DNS_RESOLVER_LIST:
@@ -71,7 +75,7 @@ if __name__ == "__main__":
 
     for request in test_request:
 
-        results = ntn_dns(request['hostname'], 'all', request['record_type'])
+        results = ntn_dns(request['hostname'], 'Root Servers', request['record_type'])
 
         for result in results:
 

@@ -6,10 +6,11 @@
         {% endfor %}
     </select>
     <select name = "user_resolver">
-        <option value = "All" >All</option>
+        <option value = "All">All</option>
         {% for dns_resolver in dns_resolver_list %}
         <option value = {{ dns_resolver["name"] }}>{{ dns_resolver["name"] }}</option>
         {% endfor %}
+        <option value = "Root Servers">Root Servers</option>
     </select>
     <input type="submit" id="submit_app" value="Submit" formaction="dns">
 </form>
