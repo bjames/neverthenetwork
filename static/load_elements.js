@@ -1,6 +1,7 @@
 var count = 30
 var timer = null
 var watch_intervall = null
+var curr_active = null
 
 $(document).ready(function() {
     load_anchor();
@@ -35,27 +36,44 @@ $(document).ready(function() {
 
     // navbar clicks are handled here
     $('#dns_nav').click(function(){
+        active(this)
         load_app('dns');
     })
     $('#subnet_nav').click(function(){
+        active(this)
         load_app('subnet');
     })
     $('#curl_nav').click(function(){
+        active(this)
         load_app('curl');
     })
     $('#oui_nav').click(function(){
+        active(this)
         load_app('oui');
     })
     $('#ping_nav').click(function(){
+        active(this)
         load_app('ping');
     })
     $('#traceroute_nav').click(function(){
+        active(this)
         load_app('traceroute');
     })    
     $('#clear_scrollback').click(function(){
         $('#term').empty();
     })
 });
+
+function active(element) {
+
+    if(curr_active != null){
+        $(curr_active).attr('class', '');
+    }
+    curr_active = element
+    $(element).attr('class', 'active')
+
+}
+
 
 // used to submit the app forms via ajax
 function submit_form() {
@@ -168,7 +186,9 @@ function update_term(term_data) {
 
 // loads the form above the terminal box
 function load_app(app) {
+    console.log(app)
     $('#app').load(app + ' #app');
+    active($('#' + app + '_nav'))
     document.title = 'NTN - '+ app;
 }
 
