@@ -1,10 +1,15 @@
-var count = 30
+var count = 20
 var timer = null
 var watch_intervall = null
 var curr_active = null
 
 $(document).ready(function() {
+
     load_anchor();
+
+    // handle watch lready being set on a reload
+    watch();
+
     $('#app').submit(function(event){
 
         event.preventDefault();
@@ -17,21 +22,8 @@ $(document).ready(function() {
 
     $('#watch').click(function() {
 
-        var checked = $(this).is(':checked');
+        watch();
 
-        if(checked) {
-            timer = setInterval(function() {
-                countdown()
-            }, 1000)
-            watch_interval = setInterval(function() {
-                submit_form();
-            }, 30000);
-
-        }else{
-            clearInterval(watch_interval)
-            clearInterval(timer)
-            document.getElementById('timer').innerHTML='';
-        }
     })
 
     // navbar clicks are handled here
@@ -75,12 +67,43 @@ function active(element) {
 }
 
 
+function watch() {
+
+    var checked = $('#watch').is(':checked');
+
+    if(checked) {
+
+        timer = setInterval(function() {
+            countdown()
+        }, 1000)
+
+        watch_interval = setInterval(function() {
+            submit_form();
+        }, 30000);
+
+    }else{
+
+        try {
+            clearInterval(watch_interval)
+            clearInterval(timer)
+            document.getElementById('timer').innerHTML='';
+        }catch(e){
+            // ignore errors due to unset watch_interval here
+        }
+
+    }
+}
+
+
 // used to submit the app forms via ajax
 function submit_form() {
 
     var curr_app = document.getElementById("app").firstChild;
 
     classes = curr_app.classList;
+
+    // disable the submit button to show the user we are working on the request
+    $('#submit_app').attr('disabled', true);
 
     if(classes.contains("curl")){
 
@@ -91,6 +114,7 @@ function submit_form() {
             success: function(data) {
 
                 update_term(data);
+                $('#submit_app').attr('disabled', false);
      
             }
         });
@@ -103,7 +127,8 @@ function submit_form() {
             data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
             success: function(data) {
 
-                update_term(data);         
+                update_term(data);  
+                $('#submit_app').attr('disabled', false);       
       
             }
         });
@@ -116,7 +141,9 @@ function submit_form() {
             data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask').val()},
             success: function(data) {
 
-                update_term(data);    
+                update_term(data);  
+                $('#submit_app').attr('disabled', false);
+  
             
             }
         });
@@ -129,10 +156,13 @@ function submit_form() {
             data: $('[name=mac_address]'),
             success: function(data) {
 
-                update_term(data);    
+                update_term(data);  
+                $('#submit_app').attr('disabled', false);
+  
             
             }
         });
+
     }else if (classes.contains("ping")){
 
         $.ajax({
@@ -141,10 +171,13 @@ function submit_form() {
             data: $('[name=hostname]'),
             success: function(data) {
 
-                update_term(data);    
+                update_term(data);   
+                $('#submit_app').attr('disabled', false);
+ 
             
             }
         });
+
     }else if (classes.contains("traceroute")){
 
         $.ajax({
@@ -153,7 +186,9 @@ function submit_form() {
             data: $('[name=hostname]'),
             success: function(data) {
 
-                update_term(data);    
+                update_term(data);  
+                $('#submit_app').attr('disabled', false);
+  
             
             }
         });
@@ -167,7 +202,7 @@ function countdown(timer) {
 
     if (count <= 0)
     {
-        count = 30;
+        count = 20;
         return;
     }
 
