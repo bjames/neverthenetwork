@@ -1,7 +1,8 @@
-var count = 20
+var static_count = 10
+var variable_count = static_count
 var timer = null
-var watch_intervall = null
 var curr_active = null
+var paused = false
 
 $(document).ready(function() {
 
@@ -66,6 +67,34 @@ function active(element) {
 
 }
 
+function start_timer() {
+
+    timer = setInterval(function() {
+        countdown()
+    }, 1000)
+
+}
+
+// countdown timer for the watch function
+function countdown(timer) {
+
+
+    if (!paused) {
+
+        variable_count = variable_count - 1;
+
+        document.getElementById('timer').innerHTML=variable_count;
+
+        if (variable_count == 0)
+        {
+            paused = true;
+            submit_form();
+            variable_count = static_count;
+        }
+    
+    }
+
+}
 
 function watch() {
 
@@ -73,18 +102,11 @@ function watch() {
 
     if(checked) {
 
-        timer = setInterval(function() {
-            countdown()
-        }, 1000)
-
-        watch_interval = setInterval(function() {
-            submit_form();
-        }, 30000);
+        start_timer()
 
     }else{
 
         try {
-            clearInterval(watch_interval)
             clearInterval(timer)
             document.getElementById('timer').innerHTML='';
         }catch(e){
@@ -93,7 +115,6 @@ function watch() {
 
     }
 }
-
 
 // used to submit the app forms via ajax
 function submit_form() {
@@ -114,6 +135,7 @@ function submit_form() {
             success: function(data) {
 
                 update_term(data);
+                paused = false
                 $('#submit_app').attr('disabled', false);
      
             }
@@ -127,7 +149,8 @@ function submit_form() {
             data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
             success: function(data) {
 
-                update_term(data);  
+                update_term(data);
+                paused = false  
                 $('#submit_app').attr('disabled', false);       
       
             }
@@ -142,6 +165,7 @@ function submit_form() {
             success: function(data) {
 
                 update_term(data);  
+                paused = false
                 $('#submit_app').attr('disabled', false);
   
             
@@ -157,6 +181,7 @@ function submit_form() {
             success: function(data) {
 
                 update_term(data);  
+                paused = false
                 $('#submit_app').attr('disabled', false);
   
             
@@ -171,7 +196,8 @@ function submit_form() {
             data: $('[name=hostname]'),
             success: function(data) {
 
-                update_term(data);   
+                update_term(data);
+                paused = false   
                 $('#submit_app').attr('disabled', false);
  
             
@@ -187,26 +213,14 @@ function submit_form() {
             success: function(data) {
 
                 update_term(data);  
+                paused = false
                 $('#submit_app').attr('disabled', false);
   
             
             }
         });
     }
-}
 
-// countdown timer for the watch function
-function countdown(timer) {
-
-    count = count - 1;
-
-    if (count <= 0)
-    {
-        count = 20;
-        return;
-    }
-
-    document.getElementById('timer').innerHTML=count;
 }
 
 // used to append data to the terminal
