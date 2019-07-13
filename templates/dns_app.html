@@ -11,5 +11,5 @@
         <option value = {{ dns_resolver["name"] }}>{{ dns_resolver["name"] }}</option>
         {% endfor %}
     </select>
-    <input type="submit" id="submit_app" value="Submit" formaction="dns">
+    {% include "submit.html" %}
 </form>

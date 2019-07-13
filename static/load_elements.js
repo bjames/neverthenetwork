@@ -8,7 +8,7 @@ $(document).ready(function() {
 
     load_anchor();
 
-    // handle watch lready being set on a reload
+    // handle watch already being set on a reload
     watch();
 
     $('#app').submit(function(event){
@@ -102,7 +102,8 @@ function watch() {
 
     if(checked) {
 
-        start_timer()
+        variable_count = static_count;
+        start_timer();
 
     }else{
 
@@ -125,6 +126,7 @@ function submit_form() {
 
     // disable the submit button to show the user we are working on the request
     $('#submit_app').attr('disabled', true);
+    $('#term').addClass('spinner');
 
     if(classes.contains("curl")){
 
@@ -137,6 +139,7 @@ function submit_form() {
                 update_term(data);
                 paused = false
                 $('#submit_app').attr('disabled', false);
+                $('#term').removeClass('spinner');
      
             }
         });
@@ -152,7 +155,8 @@ function submit_form() {
                 update_term(data);
                 paused = false  
                 $('#submit_app').attr('disabled', false);       
-      
+                $('#term').removeClass('spinner');
+
             }
         });
 
@@ -167,7 +171,7 @@ function submit_form() {
                 update_term(data);  
                 paused = false
                 $('#submit_app').attr('disabled', false);
-  
+                $('#term').removeClass('spinner');
             
             }
         });
@@ -183,7 +187,7 @@ function submit_form() {
                 update_term(data);  
                 paused = false
                 $('#submit_app').attr('disabled', false);
-  
+                $('#term').removeClass('spinner');
             
             }
         });
@@ -199,7 +203,7 @@ function submit_form() {
                 update_term(data);
                 paused = false   
                 $('#submit_app').attr('disabled', false);
- 
+                $('#term').removeClass('spinner');
             
             }
         });
@@ -215,7 +219,7 @@ function submit_form() {
                 update_term(data);  
                 paused = false
                 $('#submit_app').attr('disabled', false);
-  
+                $('#term').removeClass('spinner');
             
             }
         });

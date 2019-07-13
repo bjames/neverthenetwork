@@ -74,3 +74,26 @@ pre {
     margin-right: auto;
     margin-left: auto;
 }
+
+
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+  }
+   
+  .spinner:before {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: grey;
+    border-bottom-color: grey;
+    animation: spinner 1s ease infinite;
+  }

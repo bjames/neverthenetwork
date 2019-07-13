@@ -1,4 +1,4 @@
 <form id="app" class="traceroute" method="POST">
         <input type="text" name="hostname" value={{ url or "neverthenetwork.com" }}>
-        <input type="submit" id="submit_app" value="Submit" formaction='traceroute'>
+        {% include "submit.html" %}
 </form>

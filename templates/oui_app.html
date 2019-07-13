@@ -1,4 +1,4 @@
 <form id="app" class="oui" method="POST">
         <input type="text" name="mac_address" value={{ mac_address or "00:00:5e:00:01:00" }}>
-        <input type="submit" id="submit_app" value="Submit" formaction='oui'>
+        {% include "submit.html" %}
 </form>
