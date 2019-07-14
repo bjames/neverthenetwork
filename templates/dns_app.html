@@ -1,8 +1,8 @@
 <form id="app" class="dns" method="POST">
-    <input type = "text" name = "dns_lookup" value = {{ dns_lookup or "neverthenetwork.com" }}>
+    <input type = "text" name = "dns_lookup" value = {{ dns_lookup or "neverthenetwork.com" }} required>
     <select name = "record_type">
         {% for record_type in dns_record_types %}
-        <option value = {{ record_type }}>{{ record_type }}</option>
+        <option value = {{ record_type }} required>{{ record_type }}</option>
         {% endfor %}
     </select>
     <select name = "user_resolver">

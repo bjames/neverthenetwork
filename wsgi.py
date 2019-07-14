@@ -1,5 +1,5 @@
-from ntn import app
+from ntn import app as application
 
 if __name__ == "__main__":
 
-    app.run()
+    application.run()

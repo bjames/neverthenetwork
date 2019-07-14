@@ -14,10 +14,7 @@ $(document).ready(function() {
     $('#app').submit(function(event){
 
         event.preventDefault();
-
         submit_form();
-
-        return false;
     
     })
 
@@ -29,33 +26,53 @@ $(document).ready(function() {
 
     // navbar clicks are handled here
     $('#dns_nav').click(function(){
-        active(this)
+        active(this);
         load_app('dns');
+        enable_watch();
     })
     $('#subnet_nav').click(function(){
-        active(this)
+        active(this);
         load_app('subnet');
+        disable_watch();
     })
     $('#curl_nav').click(function(){
-        active(this)
+        active(this);
         load_app('curl');
+        enable_watch();
     })
     $('#oui_nav').click(function(){
         active(this)
         load_app('oui');
+        disable_watch();
     })
     $('#ping_nav').click(function(){
-        active(this)
+        active(this);
         load_app('ping');
+        enable_watch();
     })
     $('#traceroute_nav').click(function(){
-        active(this)
+        active(this);
         load_app('traceroute');
+        enable_watch();
     })    
     $('#clear_scrollback').click(function(){
         $('#term').empty();
     })
+    $('#nav_icon').click(function(){
+        response_navbar();
+    })
 });
+
+function disable_watch() {
+    $('#watch').attr('disabled', true);
+    $('#watch').attr('checked', false);
+    clearInterval(timer);
+    document.getElementById('timer').innerHTML='';
+}
+
+function enable_watch() {
+    $('#watch').attr('disabled', false)
+}
 
 function active(element) {
 
@@ -63,21 +80,20 @@ function active(element) {
         $(curr_active).attr('class', '');
     }
     curr_active = element
-    $(element).attr('class', 'active')
+    $(element).attr('class', 'active');
 
 }
 
 function start_timer() {
 
     timer = setInterval(function() {
-        countdown()
+        countdown();
     }, 1000)
 
 }
 
 // countdown timer for the watch function
 function countdown(timer) {
-
 
     if (!paused) {
 
@@ -101,17 +117,15 @@ function watch() {
     var checked = $('#watch').is(':checked');
 
     if(checked) {
-
         variable_count = static_count;
         start_timer();
-
     }else{
 
         try {
-            clearInterval(timer)
+            clearInterval(timer);
             document.getElementById('timer').innerHTML='';
         }catch(e){
-            // ignore errors due to unset watch_interval here
+            // ignore errors due to unset timer here
         }
 
     }
@@ -135,12 +149,10 @@ function submit_form() {
             type: 'post',
             data: $('[name=url]'),
             success: function(data) {
-
-                update_term(data);
-                paused = false
-                $('#submit_app').attr('disabled', false);
-                $('#term').removeClass('spinner');
-     
+                post_success(data);
+            },
+            error: function() {
+                post_failed();
             }
         });
 
@@ -149,14 +161,14 @@ function submit_form() {
         $.ajax({
             url: 'dns',
             type: 'post',
-            data: {dns_lookup: $('[name=dns_lookup]').val(), user_resolver: $('[name=user_resolver]').val(), record_type: $('[name=record_type').val()},
+            data: {dns_lookup: $('[name=dns_lookup]').val(), record_type: $('[name=record_type]').val(), user_resolver: $('[name=user_resolver]').val()},
             success: function(data) {
 
-                update_term(data);
-                paused = false  
-                $('#submit_app').attr('disabled', false);       
-                $('#term').removeClass('spinner');
+                post_success(data);
 
+            },
+            error: function() {
+                post_failed();
             }
         });
 
@@ -165,14 +177,14 @@ function submit_form() {
         $.ajax({
             url: 'subnet',
             type: 'post',
-            data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask').val()},
+            data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask]').val()},
             success: function(data) {
 
-                update_term(data);  
-                paused = false
-                $('#submit_app').attr('disabled', false);
-                $('#term').removeClass('spinner');
+                post_success(data);
             
+            },
+            error: function() {
+                post_failed();
             }
         });
 
@@ -184,11 +196,11 @@ function submit_form() {
             data: $('[name=mac_address]'),
             success: function(data) {
 
-                update_term(data);  
-                paused = false
-                $('#submit_app').attr('disabled', false);
-                $('#term').removeClass('spinner');
+                post_success(data);
             
+            },
+            error: function() {
+                post_failed();
             }
         });
 
@@ -200,11 +212,11 @@ function submit_form() {
             data: $('[name=hostname]'),
             success: function(data) {
 
-                update_term(data);
-                paused = false   
-                $('#submit_app').attr('disabled', false);
-                $('#term').removeClass('spinner');
+                post_success(data);
             
+            },
+            error: function() {
+                post_failed()
             }
         });
 
@@ -216,15 +228,29 @@ function submit_form() {
             data: $('[name=hostname]'),
             success: function(data) {
 
-                update_term(data);  
-                paused = false
-                $('#submit_app').attr('disabled', false);
-                $('#term').removeClass('spinner');
+                post_success(data);
             
+            },
+            error: function() {
+                post_failed();
             }
         });
     }
 
+}
+
+function post_success(data) {
+    console.log('post success');
+    update_term(data);  
+    paused = false;
+    $('#submit_app').attr('disabled', false);
+    $('#term').removeClass('spinner');
+}
+
+function post_failed() {
+    paused = false;
+    $('#submit_app').attr('disabled', false);
+    $('#term').removeClass('spinner');
 }
 
 // used to append data to the terminal
@@ -269,3 +295,12 @@ function load_anchor() {
     }
 
 }
+
+function response_navbar() {
+    var element = document.getElementById("navbar");
+    if (element.className === "navbar") {
+      element.className += " responsive";
+    } else {
+      element.className = "navbar";
+    }
+} 
