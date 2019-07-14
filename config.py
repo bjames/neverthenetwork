@@ -21,8 +21,14 @@ DNS_RESOLVER_LIST = [
     {'name': 'Quad9', 'ip': '9.9.9.9'},
     {'name': 'OpenDNS', 'ip': '208.67.222.222'},
     {'name': 'Verisign', 'ip': '64.6.64.6'},
-    {'name': 'AdGuard', 'ip': '176.103.130.131'},
-    {'name': 'CleanBrowsing', 'ip': '185.228.168.168'}
+    {'name': 'AdGuard', 'ip': '176.103.130.130'},
+    {'name': 'SafeDNS', 'ip': '195.46.39.39'},
+    {'name': 'CleanBrowsing Security Filter', 'ip': '185.228.168.9'},
+    {'name': 'CleanBrowsing Adult Filter', 'ip': '185.228.168.10'},
+    {'name': 'CleanBrowsing Family Filter', 'ip': '185.228.168.168'},
+    {'name': 'NeustarDNS Threat Prevention', 'ip': '156.154.70.2'},
+    {'name': 'NeustarDNS Family Secure', 'ip': '156.154.70.3'},
+    {'name': 'NeustarDNS Business Secure', 'ip': '156.154.70.4'},
 ]
 
 DNS_RECORD_TYPES = [

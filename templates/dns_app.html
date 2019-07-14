@@ -2,13 +2,13 @@
     <input type = "text" name = "dns_lookup" value = {{ dns_lookup or "neverthenetwork.com" }} required>
     <select name = "record_type">
         {% for record_type in dns_record_types %}
-        <option value = {{ record_type }} required>{{ record_type }}</option>
+        <option value = {{ record_type }}>{{ record_type }}</option>
         {% endfor %}
     </select>
     <select name = "user_resolver">
         <option value = "All">All</option>
         {% for dns_resolver in dns_resolver_list %}
-        <option value = {{ dns_resolver["name"] }}>{{ dns_resolver["name"] }}</option>
+        <option value = "{{ dns_resolver["name"] }}">{{ dns_resolver["name"] }}</option>
         {% endfor %}
     </select>
     {% include "submit.html" %}

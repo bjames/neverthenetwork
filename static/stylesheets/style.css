@@ -1,5 +1,6 @@
 * {
-    font-family: 'monospace';
+    font-family: monospace;
+    font-size: 1em;
 }
 
 body {
@@ -27,7 +28,7 @@ table {
     outline: 0;
 }
 
-.navbar a:hover {
+.navbar a:hover:not(:last-child):not(:first-child) {
     background-color: #ddd;
     color: black;
 }
@@ -106,12 +107,17 @@ pre {
       padding-right: 0px;
       padding-left: 0px;
     }
-    .navbar a:not(:first-child) {display: none;}
+    .navbar a:not(:first-child) {
+      display: none;
+    }
     .navbar a#nav_icon {
       float: right;
       display: block;
+      height: 0;
     }
-    .navbar.responsive {position: relative;}
+    .navbar.responsive {
+     position: relative;
+    }
     .navbar.responsive a#nav_icon {
       position: absolute;
       right: 0;
@@ -122,4 +128,5 @@ pre {
       display: block;
       text-align: left;
     }
+    
   }
