@@ -80,6 +80,18 @@ pre {
     display: none;
 }
 
+#app gitinput {
+  width: 20em;
+}
+
+.subnet_mask {
+  width: 10em;
+}
+
+.oui input {
+  width: 10em;
+}
+
 @keyframes spinner {
     to {transform: rotate(360deg);}
   }
