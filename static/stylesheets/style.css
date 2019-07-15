@@ -80,15 +80,15 @@ pre {
     display: none;
 }
 
+#app.subnet input[name='subnet_mask'] {
+  width: 10em;
+}
+
 #app input[type='text'] {
   width: 20em;
 }
 
-.subnet_mask {
-  width: 10em;
-}
-
-.oui input {
+.oui input[type='text'] {
   width: 10em;
 }
 
