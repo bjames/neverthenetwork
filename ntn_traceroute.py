@@ -12,7 +12,10 @@ def ntn_traceroute(hostname):
 
         return(e)
 
-    tracepath_response = subprocess.Popen(["/bin/traceroute", validated_hostname], stdout=subprocess.PIPE).stdout.read()
+    try:
+        tracepath_response = subprocess.Popen(["/bin/traceroute", validated_hostname], stdout=subprocess.PIPE).stdout.read()
+    except FileNotFoundError:
+        tracepath_response = subprocess.Popen(["usr/sbin/traceroute", validated_hostname], stdout=subprocess.PIPE).stdout.read()
 
     tracepath_response = tracepath_response.decode('ascii')
 
