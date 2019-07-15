@@ -147,6 +147,7 @@ function submit_form() {
         $.ajax({
             url: 'curl',
             type: 'post',
+            cache: false,
             data: $('[name=url]'),
             success: function(data) {
                 post_success(data);
@@ -161,6 +162,7 @@ function submit_form() {
         $.ajax({
             url: 'dns',
             type: 'post',
+            cache: false,
             data: {dns_lookup: $('[name=dns_lookup]').val(), record_type: $('[name=record_type]').val(), user_resolver: $('[name=user_resolver]').val()},
             success: function(data) {
 
@@ -177,6 +179,7 @@ function submit_form() {
         $.ajax({
             url: 'subnet',
             type: 'post',
+            cache: false,
             data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask]').val()},
             success: function(data) {
 
@@ -193,6 +196,7 @@ function submit_form() {
         $.ajax({
             url: 'oui',
             type: 'post',
+            cache: false,
             data: $('[name=mac_address]'),
             success: function(data) {
 
@@ -209,6 +213,7 @@ function submit_form() {
         $.ajax({
             url: 'ping',
             type: 'post',
+            cache: false,
             data: $('[name=hostname]'),
             success: function(data) {
 
@@ -225,6 +230,7 @@ function submit_form() {
         $.ajax({
             url: 'traceroute',
             type: 'post',
+            cache: false,
             data: $('[name=hostname]'),
             success: function(data) {
 
