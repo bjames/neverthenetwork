@@ -282,9 +282,11 @@ function load_anchor() {
     switch ($(location).attr('hash')) {
         case '#curl':
             load_app('curl');
+            enable_watch();
             break;
         case '#dns':
             load_app('dns');
+            enable_watch();
             break;
         case '#subnet':
             load_app('subnet');
@@ -294,9 +296,11 @@ function load_anchor() {
             break;
         case '#ping':
             load_app('ping');
+            enable_watch();
             break;
         case '#traceroute':
             load_app('traceroute');
+            enable_watch();
             break;
     }
 
