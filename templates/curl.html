@@ -4,6 +4,6 @@ ___________________________
 {% if results %}{% for key, result in results.items() %}
  {{ key }}: {{ result }}
 {% endfor %}
- Response time {{ elapsed_time }} seconds
+{% if elapsed_time %} Response time {{ elapsed_time }} seconds{% endif %}
 
 {% endif %}

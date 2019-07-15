@@ -18,15 +18,15 @@ def ntn_curl(url):
         error_str = str(e)
 
         if 'timed' in error_str:
-            return {'Error':'Connection timed out'}
+            return {'Error':'Connection timed out'}, None
         elif 'refused' in error_str:
-            return {'Error':'Connection refused'}
+            return {'Error':'Connection refused'}, None
         elif 'Name or service' in error_str:
-            return {'Error':'DNS resolution failed'}
+            return {'Error':'DNS resolution failed'}, None
         elif 'Invalid' in error_str:
-            return {'Error':'Check provided hostname, valid input includes IP addresses and hostnames'}
+            return {'Error':'Check provided hostname, valid input includes IP addresses and hostnames'}, None
         else:
-            return {'Error': error_str}
+            return {'Error': error_str}, None
 
 
 if __name__ == '__main__':
