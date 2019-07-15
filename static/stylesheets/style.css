@@ -80,7 +80,7 @@ pre {
     display: none;
 }
 
-#app input text{
+#app input[type='text'] {
   width: 20em;
 }
 
