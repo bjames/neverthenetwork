@@ -1,5 +1,6 @@
 
-curl -I {{ url }}
+curl -I {{ url }} 
+{{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
 {% if results %}{% for key, result in results.items() %}
  {{ key }}: {{ result }}

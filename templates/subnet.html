@@ -1,5 +1,6 @@
 
 Subnet {{ ip_address }} {{ subnet_mask }}
+{{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
 {% if results %}
 <table>
