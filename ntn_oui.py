@@ -77,7 +77,7 @@ def ntn_oui(mac_address):
     mac_address = mac_address.upper()
 
     # strip all non-alpha numeric characters
-    mac_address = sub('\W+', '', mac_address)
+    mac_address = sub(r'\W+', '', mac_address)
 
     try:
 
