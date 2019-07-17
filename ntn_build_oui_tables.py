@@ -4,7 +4,7 @@ from csv import reader
 from sqlalchemy.exc import OperationalError, IntegrityError
 
 from config import OUI_FILES
-from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS, OUI_CID
+from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS, OUI_CID, OUI_IAB
 from ntn_db import db_session, init_db
 
 
@@ -18,6 +18,8 @@ def clear_tables():
         Session.query(OUI_MAM).delete()
         Session.query(OUI_MAS).delete()
         Session.query(OUI_CID).delete()
+        Session.query(OUI_IAB).delete()
+
 
         Session.commit()
 
@@ -56,6 +58,10 @@ def update_table(oui_csv, table_name):
             Session.add(OUI_CID(row[1], row[2], row[3]))
             Session.commit()
 
+        elif table_name == 'OUI_IAB':
+
+            Session.add(OUI_IAB(row[1], row[2], row[3]))
+            Session.commit()
 
 def download_oui_lists():
 

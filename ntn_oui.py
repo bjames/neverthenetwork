@@ -1,7 +1,7 @@
 from re import sub
 
 from config import OUI_FILES
-from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS, OUI_CID
+from ntn_models import OUI_MAL, OUI_MAM, OUI_MAS, OUI_CID, OUI_IAB
 from ntn_db import db_session
 
 
@@ -26,7 +26,61 @@ def cid_lookup(mac_address, Session):
 
 def iab_lookup(mac_address, Session):
 
-    return(Session.query(OUI_MAS).filter(OUI_MAS.assignment == mac_address[:9]).all())
+    return(Session.query(OUI_IAB).filter(OUI_IAB.assignment == mac_address[:9]).all())
+
+
+def check_iab(results, mac_address, Session):
+
+    iab_results = []
+
+    for result in results:
+
+        if 'IEEE' in str(result):
+
+            iab_result = iab_lookup(mac_address, Session)
+
+            if len(iab_result) > 0:
+
+                iab_results.append(iab_result)
+
+    if len(iab_results) > 0:
+
+        return iab_results
+
+    else:
+
+        return results
+
+
+def check_mam_mas(mal_results, mac_address, Session):
+
+    secondary_results = []
+
+    for result in mal_results:
+
+        if 'IEEE' in result.organization:
+
+            mam_result = mam_lookup(mac_address, Session)
+
+            if len(mam_result) == 0:
+
+                mas_result = mas_lookup(mac_address, Session)
+
+                if len(mas_result) > 0:
+
+                    secondary_results.append(mas_result)
+            
+            else:
+
+                secondary_results.append(mam_result)
+
+    if len(secondary_results) > 0:
+
+        return secondary_results
+
+    else:
+
+        return mal_results
 
 
 def ntn_oui(mac_address):
@@ -57,31 +111,8 @@ def ntn_oui(mac_address):
 
             raise ValueError('No matching OUI found')
 
-    for result in results:
-
-        if 'IEEE' in result.organization:
-
-            mam_result = mam_lookup(mac_address, Session)
-
-            if len(mam_result) == 0:
-
-                mas_result = mas_lookup(mac_address, Session)
-
-                if len(mas_result) > 0:
-
-                    return mas_result
-
-                else:
-
-                    iab_result = iab_lookup(mac_address, Session)
-
-                    if len(iab_result) > 0:
-
-                        return iab_result
-            
-            else:
-
-                return mam_result
+    results = check_mam_mas(results, mac_address, Session)
+    results = check_iab(results, mac_address, Session)
 
     return results
 
@@ -106,6 +137,4 @@ if __name__ == '__main__':
     print(ntn_oui('6A1F6C000000'))
 
     # Requires a lookup into the IAB table
-    print(ntn_oui('6A1F6C000000'))
-
     print(ntn_oui('0050C2F93000'))
