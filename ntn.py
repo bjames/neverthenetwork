@@ -1,5 +1,6 @@
 import ntn_models
 
+from datetime import datetime
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from ntn_dns import ntn_dns
@@ -24,6 +25,9 @@ app.secret_key = DATABASE_KEY
 def shutdown_session(exception = None):
     db_session.remove()
 
+@app.context_processor
+def inject_now():
+    return {'now': datetime.utcnow()}
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
