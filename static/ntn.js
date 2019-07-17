@@ -27,32 +27,32 @@ $(document).ready(function() {
     // navbar clicks are handled here
     $('#dns_nav').click(function(){
         active(this);
-        load_app('dns');
+        load_app('dns', 'DNS');
         enable_watch();
     })
     $('#subnet_nav').click(function(){
         active(this);
-        load_app('subnet');
+        load_app('subnet', 'Subnet');
         disable_watch();
     })
     $('#curl_nav').click(function(){
         active(this);
-        load_app('curl');
+        load_app('curl', 'cURL');
         enable_watch();
     })
     $('#oui_nav').click(function(){
         active(this)
-        load_app('oui');
+        load_app('oui', 'OUI');
         disable_watch();
     })
     $('#ping_nav').click(function(){
         active(this);
-        load_app('ping');
+        load_app('ping', 'Ping');
         enable_watch();
     })
     $('#traceroute_nav').click(function(){
         active(this);
-        load_app('traceroute');
+        load_app('traceroute', 'Traceroute');
         enable_watch();
     })    
     $('#clear_scrollback').click(function(){
@@ -270,10 +270,10 @@ function update_term(term_data) {
 }
 
 // loads the form above the terminal box
-function load_app(app) {
+function load_app(app, title) {
     $('#app').load(app + ' #app');
     active($('#' + app + '_nav'))
-    document.title = 'NTN - '+ app;
+    document.title = 'NTN - '+ title;
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
@@ -281,25 +281,25 @@ function load_anchor() {
     console.log(window.location.pathname)
     switch ($(location).attr('hash')) {
         case '#curl':
-            load_app('curl');
+            load_app('curl', 'cURL');
             enable_watch();
             break;
         case '#dns':
-            load_app('dns');
+            load_app('dns', 'DNS');
             enable_watch();
             break;
         case '#subnet':
-            load_app('subnet');
+            load_app('subnet', 'Subnet');
             break;
         case '#oui':
-            load_app('oui');
+            load_app('oui', 'OUI');
             break;
         case '#ping':
-            load_app('ping');
+            load_app('ping', 'Ping');
             enable_watch();
             break;
         case '#traceroute':
-            load_app('traceroute');
+            load_app('traceroute', 'Traceroute');
             enable_watch();
             break;
     }
