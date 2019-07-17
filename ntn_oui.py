@@ -24,6 +24,10 @@ def cid_lookup(mac_address, Session):
 
     return(Session.query(OUI_CID).filter(OUI_CID.assignment == mac_address[:6]).all())
 
+def iab_lookup(mac_address, Session):
+
+    return(Session.query(OUI_MAS).filter(OUI_MAS.assignment == mac_address[:9]).all())
+
 
 def ntn_oui(mac_address):
 
@@ -66,6 +70,14 @@ def ntn_oui(mac_address):
                 if len(mas_result) > 0:
 
                     return mas_result
+
+                else:
+
+                    iab_result = iab_lookup(mac_address, Session)
+
+                    if len(iab_result) > 0:
+
+                        return iab_result
             
             else:
 
@@ -92,3 +104,8 @@ if __name__ == '__main__':
 
     # Requires a lookup into the CID table
     print(ntn_oui('6A1F6C000000'))
+
+    # Requires a lookup into the IAB table
+    print(ntn_oui('6A1F6C000000'))
+
+    print(ntn_oui('0050C2F93000'))

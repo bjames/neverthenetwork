@@ -88,3 +88,27 @@ class OUI_CID(Base):
     def __repr__(self):
 
         return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)
+
+
+class OUI_IAB(Base):
+    __tablename__ = "OUI_IAB"
+
+    '''
+        IAB's are 36 bit prefixes used in applications where the MAC address does not need to be unique
+    '''
+
+    id = Column(Integer, primary_key=True)
+    assignment = Column(CHAR(9))
+    organization = Column(String)
+    organization_address = Column(String)
+
+    def __init__(self, assignment = None, organization = None, organization_address = None):
+
+        self.assignment = assignment
+        self.organization = organization
+        self.organization_address = organization_address
+
+
+    def __repr__(self):
+
+        return 'OUI %s\nRegistered to %s\n%s' % (self.assignment, self.organization, self.organization_address)
