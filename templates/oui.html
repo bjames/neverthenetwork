@@ -1,6 +1,5 @@
 
 OUI Lookup: {{ mac_address }}
-{{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
 {% if results %}{% for result in results %}
  OUI: {{ result.assignment }}
