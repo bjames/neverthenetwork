@@ -31,8 +31,6 @@ def iab_lookup(mac_address, Session):
 
 def check_iab(results, mac_address, Session):
 
-    iab_results = []
-
     for result in results:
 
         if 'IEEE' in str(result):
@@ -41,20 +39,13 @@ def check_iab(results, mac_address, Session):
 
             if len(iab_result) > 0:
 
-                iab_results.append(iab_result)
+                return iab_result
 
-    if len(iab_results) > 0:
-
-        return iab_results
-
-    else:
-
-        return results
+    return results
 
 
 def check_mam_mas(mal_results, mac_address, Session):
 
-    secondary_results = []
 
     for result in mal_results:
 
@@ -68,19 +59,14 @@ def check_mam_mas(mal_results, mac_address, Session):
 
                 if len(mas_result) > 0:
 
-                    secondary_results.append(mas_result)
+                    return mas_result
             
             else:
 
-                secondary_results.append(mam_result)
+                return mam_result
 
-    if len(secondary_results) > 0:
 
-        return secondary_results
-
-    else:
-
-        return mal_results
+    return mal_results
 
 
 def ntn_oui(mac_address):
