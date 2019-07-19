@@ -1,5 +1,6 @@
 
 ping {{ hostname }}
+{{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
 {% if results %}
  {{ results }}

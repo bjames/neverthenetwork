@@ -59,7 +59,7 @@ def subnet():
 def oui():
     try:
         if request.method == 'POST':
-            return render_template('oui.html', results = ntn_oui(request.form['mac_address']))
+            return render_template('oui.html', results = ntn_oui(request.form['mac_address']), mac_address = request.form['mac_address'])
     except ValueError as e:
         return render_template('oui.html', error = e)
     return render_template('oui_app.html')
