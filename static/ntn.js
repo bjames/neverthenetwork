@@ -66,8 +66,8 @@ $(document).ready(function() {
 function disable_watch() {
     $('#watch').attr('disabled', true);
     $('#watch').attr('checked', false);
+    $('#timer').css('visibility', 'hidden');
     clearInterval(timer);
-    document.getElementById('timer').innerHTML='';
 }
 
 function enable_watch() {
@@ -88,6 +88,7 @@ function start_timer() {
 
     timer = setInterval(function() {
         countdown();
+        $('#timer').css('visibility', 'visible');
     }, 1000)
 
 }
@@ -123,7 +124,7 @@ function watch() {
 
         try {
             clearInterval(timer);
-            document.getElementById('timer').innerHTML='';
+            $('#timer').css('visibility', 'hidden');
         }catch(e){
             // ignore errors due to unset timer here
         }
