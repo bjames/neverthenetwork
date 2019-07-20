@@ -29,31 +29,37 @@ $(document).ready(function() {
         active(this);
         load_app('dns', 'DNS');
         enable_watch();
+        response_navbar();
     })
     $('#subnet_nav').click(function(){
         active(this);
         load_app('subnet', 'Subnet');
         disable_watch();
+        response_navbar();
     })
     $('#curl_nav').click(function(){
         active(this);
         load_app('curl', 'cURL');
         enable_watch();
+        response_navbar();
     })
     $('#oui_nav').click(function(){
         active(this)
         load_app('oui', 'OUI');
         disable_watch();
+        response_navbar();
     })
     $('#ping_nav').click(function(){
         active(this);
         load_app('ping', 'Ping');
         enable_watch();
+        response_navbar();
     })
     $('#traceroute_nav').click(function(){
         active(this);
         load_app('traceroute', 'Traceroute');
         enable_watch();
+        response_navbar();
     })    
     $('#clear_scrollback').click(function(){
         $('#term').empty();
