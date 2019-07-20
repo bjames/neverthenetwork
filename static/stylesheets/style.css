@@ -12,6 +12,10 @@ table {
     border-spacing: 10px 2px;
 }
 
+.hidethis {
+  visibility: hidden;
+}
+
 .navbar {
     background-color: #333;
     overflow: hidden;
