@@ -5,7 +5,7 @@ def curl(url):
 
     try:
         response = requests.head(url)
-        return response.headers, response.elapsed.total_seconds()
+        return response.headers, response.status_code, response.elapsed.total_seconds()
 
     except requests.exceptions.MissingSchema:
         return curl('https://' + url)

@@ -2,8 +2,10 @@
 curl -I {{ url }} 
 {{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
-{% if results %}{% for key, result in results.items() %}
- {{ key }}: {{ result }}
+
+{% if status_code %} HTML Status Code: {{ status_code }} {% endif %}
+{% if headers %}{% for key, header in headers.items() %}
+ {{ key }}: {{ header }}
 {% endfor %}
 {% if elapsed_time %} Response time {{ elapsed_time }} seconds{% endif %}
 
