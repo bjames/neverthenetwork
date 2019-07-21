@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, CHAR, Integer
-from ntn_db import Base
+from .ntndb import Base
 
 class OUI_MAL(Base):
     __tablename__ = "OUI_MAL"

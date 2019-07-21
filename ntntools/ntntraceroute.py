@@ -1,8 +1,9 @@
 import subprocess
 
-from ntn_util import validate_ip_or_hostname
+from .ntnutil import validate_ip_or_hostname
 
-def ntn_traceroute(hostname):
+
+def traceroute(hostname):
 
     try:
 
@@ -29,4 +30,4 @@ if __name__ == '__main__':
     for case in test_cases:
 
         print(case)
-        print(ntn_traceroute(case))
+        print(traceroute(case))

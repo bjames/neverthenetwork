@@ -1,6 +1,7 @@
 import subprocess
 
-from ntn_util import validate_ip_or_hostname
+from .ntnutil import validate_ip_or_hostname
+
 
 def ping_host(hostname, count=10, deadtime=5):
 
@@ -8,10 +9,10 @@ def ping_host(hostname, count=10, deadtime=5):
 
     ping_response = ping_response.decode('ascii')
 
-    return(ping_response)
+    return ping_response
 
 
-def ntn_ping(hostname, count = 10, deadtime = 5):
+def ping(hostname, count = 10, deadtime = 5):
 
     try:
         
@@ -35,5 +36,5 @@ if __name__ == '__main__':
     for case in test_cases:
 
         print(case)
-        print(ntn_ping(case))
+        print(ping(case))
 

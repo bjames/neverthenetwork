@@ -1,6 +1,6 @@
 import ipaddress
 
-def ntn_subnet(ip_address, subnet_mask):
+def subnet(ip_address, subnet_mask):
 
     try:
 

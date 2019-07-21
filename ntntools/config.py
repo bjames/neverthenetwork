@@ -43,6 +43,6 @@ OUI_FILES = [
     {'url': 'http://standards-oui.ieee.org/iab/iab.csv', 'oui_length': 9, 'table_name': 'OUI_IAB'}
 ]
 
-DATABASE = 'sqlite:///ntn.db'
+DATABASE = 'sqlite:///ntntools/ntn.db'
 
 DATABASE_KEY = 'Th!s !s n0t cUst0mer Data'

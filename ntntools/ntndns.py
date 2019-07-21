@@ -1,11 +1,8 @@
 import dns.resolver
-from config import DNS_RESOLVER_LIST, DNS_ROOT_SERVERS
+from .config import DNS_RESOLVER_LIST, DNS_ROOT_SERVERS
 
-def ntn_ns(hostname):
 
-    pass
-
-def ntn_dns(hostname, user_resolver, record_type):
+def dnslookup(hostname, user_resolver, record_type):
 
     results = []
     resolvers = []
@@ -75,7 +72,7 @@ if __name__ == "__main__":
 
     for request in test_request:
 
-        results = ntn_dns(request['hostname'], 'Root Servers', request['record_type'])
+        results = dnslookup(request['hostname'], 'Root Servers', request['record_type'])
 
         for result in results:
 
