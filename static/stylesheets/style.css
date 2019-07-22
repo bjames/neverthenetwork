@@ -128,7 +128,6 @@ pre {
       width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
       padding-right: 0px;
       padding-left: 0px;
-      font-size: .8em;
       height: 50vh;
     }
     .navbar a:not(:first-child) {
