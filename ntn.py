@@ -41,7 +41,27 @@ def dns_check():
 def curl():
     if request.method == 'POST':
         headers, status_code, elapsed_time = ntncurl.curl(request.form['url'])
-        return render_template('curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
+        
+        render_buffer = render_template('curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
+        
+        # JQuery returns a string instead of a bool
+        if 'true' in request.form['follow_redirects']:
+
+            counter = 1        
+
+            while status_code == 301:
+                new_url = headers['location']
+                headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
+                render_buffer += render_template('curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
+                render_buffer += ' Redirect Count {}\n'.format(counter)
+                counter += 1
+
+                if counter == 30:
+
+                    render_buffer += 'MAX REDIRECTS EXCEEDED'
+
+        return render_buffer
+
     return render_template('curl_app.html')
 
 

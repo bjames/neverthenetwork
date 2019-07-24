@@ -155,7 +155,7 @@ function submit_form() {
             url: 'curl',
             type: 'post',
             cache: false,
-            data: $('[name=url]'),
+            data: {url: $('[name=url]').val(), follow_redirects: $('[name=follow_redirects]').is(':checked')},
             success: function(data) {
                 post_success(data);
             },
