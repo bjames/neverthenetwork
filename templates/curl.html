@@ -3,7 +3,7 @@ curl -I {{ url }}
 {{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
 
-{% if status_code %} HTML Status Code: {{ status_code }} {% endif %}
+{% if status_code %} HTTP Status Code: {{ status_code }} {% endif %}
 {% if headers %}{% for key, header in headers.items() %}
  {{ key }}: {{ header }}
 {% endfor %}
