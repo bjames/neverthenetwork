@@ -49,7 +49,7 @@ def curl():
 
             counter = 1        
 
-            while status_code == 301:
+            while status_code == 301 or status_code == 302 or status_code == 303 or status_code == 307 or status_code == 308:
                 new_url = headers['location']
                 headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
                 render_buffer += render_template('curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
