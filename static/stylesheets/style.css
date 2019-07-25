@@ -151,7 +151,7 @@ pre {
       display: block;
       text-align: left;
     }
-    section.wrapper {
+    span.wrapper {
       min-width: 400px;
       display: inline-block;
     }
