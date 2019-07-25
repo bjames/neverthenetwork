@@ -255,7 +255,6 @@ function submit_form() {
 }
 
 function post_success(data) {
-    console.log('post success');
     update_term(data);  
     paused = false;
     $('#submit_app').attr('disabled', false);
@@ -287,7 +286,6 @@ function load_app(app, title) {
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
 function load_anchor() {
-    console.log(window.location.pathname)
     switch ($(location).attr('hash')) {
         case '#curl':
             load_app('curl', 'cURL');
