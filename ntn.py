@@ -32,8 +32,8 @@ def main():
 def dns_check():
     if request.method == 'POST':
         return render_template('dns.html', 
-                        dns_results = ntndns.dnslookup(request.form['dns_lookup'], request.form['user_resolver'],request.form['record_type']),
-                    dns_lookup = request.form['dns_lookup'], record_type = request.form['record_type'])
+                        dns_results = ntndns.dnslookup(request.form['url'], request.form['user_resolver'],request.form['record_type']),
+                    url = request.form['url'], record_type = request.form['record_type'])
     return render_template('dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
 
 

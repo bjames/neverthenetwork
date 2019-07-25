@@ -151,5 +151,9 @@ pre {
       display: block;
       text-align: left;
     }
+    section.wrapper {
+      min-width: 400px;
+      display: inline-block;
+    }
     
   }

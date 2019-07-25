@@ -1,5 +1,5 @@
 <form id="app" class="curl" method="POST">
         <input type="text" name="url" value={{ url or "http://neverthenetwork.com" }} required>
-        <input type="checkbox" name="follow_redirects"> Follow Redirects 
+        <section class="wrapper"><input type="checkbox" name="follow_redirects"> Follow Redirects </section>
         {% include "submit.html" %}
 </form>

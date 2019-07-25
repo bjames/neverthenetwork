@@ -3,6 +3,7 @@ var variable_count = static_count
 var timer = null
 var curr_active = null
 var paused = false
+var user_url = 'neverthenetwork.com'
 
 $(document).ready(function() {
 
@@ -42,6 +43,7 @@ $(document).ready(function() {
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
+        $('[name=url]').val(user_url)
     })
     $('#oui_nav').click(function(){
         active(this)
@@ -170,7 +172,7 @@ function submit_form() {
             url: 'dns',
             type: 'post',
             cache: false,
-            data: {dns_lookup: $('[name=dns_lookup]').val(), record_type: $('[name=record_type]').val(), user_resolver: $('[name=user_resolver]').val()},
+            data: {url: $('[name=url]').val(), record_type: $('[name=record_type]').val(), user_resolver: $('[name=user_resolver]').val()},
             success: function(data) {
 
                 post_success(data);
