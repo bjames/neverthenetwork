@@ -1,0 +1,18 @@
+{% include "head.html" %}
+<body>
+{% include "notes/nav.html" %}
+<div class="note">
+<table>
+{% for page in pages %}
+    <tr>
+        <td><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></td>
+        <td> {{ page.published }} </td>
+        <td> {{ page.category }}</td>
+    </tr>
+    {% else %}
+        Nothing here
+    {% endfor %}
+</table>
+</div>
+{% include "footer.html" %}
+</body>

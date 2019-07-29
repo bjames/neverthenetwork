@@ -1,11 +1,5 @@
-* {
-    font-family: monospace;
-    font-size: 1em;
-}
-
 body {
     text-align: center;
-    max-height: 100%;
 }
 
 table {
@@ -21,6 +15,8 @@ table {
     background-color: #333;
     overflow: hidden;
     width: 100%;
+    font-size: .8em;
+    font-family: sans-serif;
 }
 
 .navbar a {
@@ -76,6 +72,12 @@ pre {
     color: grey;
 }
 
+.note {
+  height: auto;
+  font-family: sans-serif;
+  min-height: 70vh;
+}
+
 #bottom_buttons table {
     margin-right: auto;
     margin-left: auto;
@@ -121,7 +123,6 @@ pre {
   @media screen and (max-width: 800px) {
 
     * {
-      font-family: monospace;
       font-size: 16px;
     }
     pre {
@@ -129,6 +130,7 @@ pre {
       padding-right: 0px;
       padding-left: 0px;
       height: 50vh;
+      font-family: monospace;
     }
     .navbar a:not(:first-child) {
       display: none;

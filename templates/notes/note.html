@@ -1,0 +1,9 @@
+{% include "head.html" %}
+<body>
+{% include "notes/nav.html" %}
+<div class="note">
+    <h2>{{ page.title }}</h2>
+    {{ page.html|safe }}
+</div>
+{% include "footer.html" %}
+</body>
