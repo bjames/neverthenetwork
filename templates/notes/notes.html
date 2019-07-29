@@ -1,18 +1,29 @@
 {% include "head.html" %}
 <body>
 {% include "notes/nav.html" %}
-<div class="note">
-<table>
+<div class="summary_page">
 {% for page in pages %}
-    <tr>
-        <td><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></td>
-        <td> {{ page.published }} </td>
-        <td> {{ page.category }}</td>
-    </tr>
-    {% else %}
-        Nothing here
-    {% endfor %}
-</table>
+    <div class="summary_block">
+        <a href="{{ url_for("page", path=page.path) }}" class="thumbnail">
+            {% if page.post_image %}
+                <img src={{ page.post_image }}>
+            {% else %}
+            <img src=/static/images/logo/30915073_padded_logo.png>
+            {% endif %}
+        </a>
+        <h3><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></h3>
+        <div class = "summary_subtitle">
+            By {{ page.author }}
+            {{ page.published }}
+            Filed Under: {% set comma = joiner(",") %}{% for category in page.category %}{{ comma() }} {{ category }}{% endfor %}
+        </div>
+        <div class = "summary_text">
+            {{ page.summary }}
+        </div>
+    </div>
+{% else %}
+    Nothing yet!
+{% endfor %}
 </div>
 {% include "footer.html" %}
 </body>

@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['FLATPAGES_EXTENSION'] = '.md'
+app.config['FLATPAGES_MARKDOWN_EXTENSIONS'] = ['codehilite', 'fenced_code']
 app.secret_key = DATABASE_KEY
 
 pages = FlatPages(app)
@@ -105,13 +106,23 @@ def traceroute():
 def latest():
     return redirect('/notes', code=302)
 
+@app.route('/notes/programming')
+def programming():
+    # Only published articles
+    all_articles = (p for p in pages if 'published' in p.meta)
+
+    articles = (p for p in all_articles if 'Programming' in p.meta['category'])
+    # Show the 10 most recent articles, most recent first.
+    latest = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+    return render_template('notes/notes.html', pages=latest[:10], active='programming')
 
 @app.route('/notes/automation')
 def automation():
     # Only published articles
     all_articles = (p for p in pages if 'published' in p.meta)
     # articles are pages in the automation category
-    articles = (p for p in all_articles if p.meta['category'] == 'Automation')
+    articles = (p for p in all_articles if 'Automation' in p.meta['category'])
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
@@ -123,7 +134,7 @@ def routeswitch():
     # Only published articles
     all_articles = (p for p in pages if 'published' in p.meta)
     
-    articles = (p for p in all_articles if p.meta['category'] == 'Route/Switch')
+    articles = (p for p in all_articles if 'Route/Switch' in p.meta['category'])
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
@@ -135,7 +146,7 @@ def sdn():
     # Only published articles
     all_articles = (p for p in pages if 'published' in p.meta)
     
-    articles = (p for p in all_articles if p.meta['category'] == 'SDN')
+    articles = (p for p in all_articles if 'SDN' in p.meta['category'])
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
@@ -147,7 +158,7 @@ def web():
     # Only published articles
     all_articles = (p for p in pages if 'published' in p.meta)
     
-    articles = (p for p in all_articles if p.meta['category'] == 'Web')
+    articles = (p for p in all_articles if 'Web' in p.meta['category'])
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
@@ -159,7 +170,7 @@ def unfiled():
     # Only published articles
     all_articles = (p for p in pages if 'published' in p.meta)
     
-    articles = (p for p in all_articles if p.meta['category'] == 'Unfiled')
+    articles = (p for p in all_articles if 'Unfiled' in p.meta['category'])
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
@@ -173,7 +184,7 @@ def notes():
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
-    return render_template('notes/notes.html', pages=latest[:10], active='latest')
+    return render_template('notes/notes.html', pages=latest[:7], active='latest')
 
 @app.route('/notes/<path:path>/')
 def page(path):

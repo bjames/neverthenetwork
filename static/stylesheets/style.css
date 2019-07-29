@@ -44,7 +44,7 @@ table {
     color: white;
 }
 
-pre {
+#term {
     background-color: #333;
     color: white;
     padding-right: 10px;
@@ -52,7 +52,7 @@ pre {
     overflow: scroll;
     display: inline-block;
     width: 80%;
-    height: 70vh;
+    height: 60vh;
     line-height: 100%;
     text-align: left;
     border-color: grey;
@@ -74,8 +74,103 @@ pre {
 
 .note {
   height: auto;
-  font-family: sans-serif;
+  margin: auto;
   min-height: 70vh;
+  width: 70%;
+  text-align: left;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.6em;
+  line-height: 1.5;
+  color: #333;
+}
+
+.note h1{
+  text-align: center;
+}
+
+.note blockquote {
+  margin: 0 auto;
+  border-left: 5px solid #333;
+  padding: .25em 1em;
+}
+
+.note img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  padding: 1em;
+}
+
+.note table {
+  margin: auto;
+  border: 1px solid grey;
+  border-collapse: collapse;
+}
+
+.note td, th {
+  border: 1px solid grey;
+  padding: 5px;
+}
+
+.title_block .title {
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+.title_block .subtitle {
+  text-align: center;
+  font-size: .7em;
+  color: gray;
+}
+
+.summary_page {
+  min-height: 70vh;
+}
+
+.summary_block {
+  box-sizing: border-box;
+  width: 50%;
+  height: 10vh;
+  margin: auto;
+  text-align: left;
+  color: #333;
+  padding: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.summary_block a {
+  text-decoration: none;
+  color: #333;
+}
+
+.summary_block h3 {
+  padding: 0;
+  margin: 0;
+}
+
+.summary_subtitle {
+  color: grey;
+  font-size: 0.7em;
+}
+
+.summary_text {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.thumbnail img{
+  float: left;
+  max-width: 100%;
+  max-height: 100%;
+  padding-right: 10px;
 }
 
 #bottom_buttons table {
@@ -125,7 +220,7 @@ pre {
     * {
       font-size: 16px;
     }
-    pre {
+    #term {
       width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
       padding-right: 0px;
       padding-left: 0px;
@@ -156,6 +251,10 @@ pre {
     span.wrapper {
       min-width: 400px;
       display: inline-block;
+    }
+
+    .summary_block {
+      width: 100%;
     }
     
   }

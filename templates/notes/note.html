@@ -1,8 +1,11 @@
 {% include "head.html" %}
 <body>
 {% include "notes/nav.html" %}
-<div class="note">
-    <h2>{{ page.title }}</h2>
+    <div class="title_block">
+        <div class="title">{{ page.title }}</div>
+        <div class="subtitle">By {{ page.author }} on {{ page.published }}</div>
+    </div>
+    <div class="note">
     {{ page.html|safe }}
 </div>
 {% include "footer.html" %}
