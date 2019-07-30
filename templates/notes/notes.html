@@ -13,8 +13,7 @@
         </a>
         <h3><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></h3>
         <div class = "summary_subtitle">
-            By {{ page.author }}
-            {{ page.published }}
+            By {{ page.author }} on {{ page.published }}
             Filed Under: {% set comma = joiner(",") %}{% for category in page.category %}{{ comma() }} {{ category }}{% endfor %}
         </div>
         <div class = "summary_text">

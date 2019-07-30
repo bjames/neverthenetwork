@@ -3,11 +3,23 @@
     <a {% if active == 'latest' %} class="active" {% endif %} id="latest" href="/notes/latest">Latest</a>
     <a {% if active == 'automation' %} class="active" {% endif %} id="automation" href="/notes/automation">Automation</a>
     <a {% if active == 'routeswitch' %} class="active" {% endif %} id="routeswitch" href="/notes/routeswitch">Routing/Switching</a>
-    <a {% if active == 'sdn' %} class="active" {% endif %} id="sdn" href="/notes/sdn">SDN</a>
+    <a {% if active == 'security' %} class="active" {% endif %} id="security" href="/notes/security">Security</a>
     <a {% if active == 'web' %} class="active" {% endif %} id="web" href="/notes/web">Web</a>
     <a {% if active == 'programming' %} class="active" {% endif %} id="programming" href="/notes/programming">Programming</a>
-    <a {% if active == 'unfiled' %} class="active" {% endif %} id="unfiled" href="/notes/unfiled">Unfiled</a>
-    <a {% if active == 'tools' %} class="active" {% endif %} id="tools" href="/">Tools</a>
+    <a {% if active == 'ntn' %} class="active" {% endif %} id="ntn" href="/notes/ntn">NTN</a>
+    <div class="dropdown">
+        <button class="dropbtn">Tools
+            <i class="fa fa-caret-down"></i></a>
+        </button>
+        <div class="dropdown-content">
+            <a href="/#curl">cURL</a>
+            <a href="/#dns">DNS</a>
+            <a href="/#ping">Ping</a>
+            <a href="/#subnet">Subnet Calculator</a>
+            <a href="/#traceroute">Traceroute</a>
+            <a href="/#oui">OUI Lookup</a>            
+        </div>
+    </div>
     <a href="#" id="nav_icon">
         <i class="fa fa-bars"></i>
     </a>

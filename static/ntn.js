@@ -316,8 +316,8 @@ function load_anchor() {
 function response_navbar() {
     var element = document.getElementById("navbar");
     if (element.className === "navbar") {
-      element.className += " responsive";
+        element.className += " responsive";
     } else {
-      element.className = "navbar";
+        element.className = "navbar";
     }
 } 
