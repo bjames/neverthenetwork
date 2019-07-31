@@ -133,7 +133,7 @@ table {
 .note {
   height: auto;
   margin: auto;
-  min-height: 70vh;
+  min-height: 80vh;
   width: 70%;
   text-align: left;
   font-family: Georgia, 'Times New Roman', Times, serif;
@@ -194,14 +194,10 @@ table {
   padding-bottom: 30px;
 }
 
-.summary_page {
-  min-height: 70vh;
-}
-
 .summary_block {
   box-sizing: border-box;
   width: 50%;
-  height: 10vh;
+  height: 100px;
   margin: auto;
   text-align: left;
   color: #333;
@@ -308,7 +304,7 @@ table {
       width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
       padding-right: 0px;
       padding-left: 0px;
-      height: 50vh;
+      height: 70vh;
       font-family: monospace;
     }
     .navbar.responsive {position: relative;}
