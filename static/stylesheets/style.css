@@ -138,12 +138,17 @@ table {
   text-align: left;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: 1.2em;
-  line-height: 1.5;
+  line-height: 2;
   color: #333;
 }
 
 .note h1{
   text-align: center;
+}
+
+.note code{
+  color: #272822;
+  background: #f8f8f2;
 }
 
 .note blockquote {
@@ -182,6 +187,11 @@ table {
   text-align: center;
   font-size: .7em;
   color: gray;
+}
+
+.title_block {
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 .summary_page {

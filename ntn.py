@@ -156,7 +156,6 @@ def security():
                     key=lambda p: p.meta['published'])
     return render_template('notes/notes.html', pages=latest[:10], active='security')
 
-
 @app.route('/notes/web')
 def web():
     # Only published articles
@@ -180,6 +179,29 @@ def ntnnotes():
                     key=lambda p: p.meta['published'])
     return render_template('notes/notes.html', pages=latest[:10], active='ntn')
 
+
+@app.route('/notes/cheatsheets')
+def cheatsheets():
+    # Only published articles
+    all_articles = (p for p in pages if 'published' in p.meta)
+    
+    articles = (p for p in all_articles if 'Cheatsheets' in p.meta['category'])
+    # Show the 10 most recent articles, most recent first.
+    latest = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+    return render_template('notes/notes.html', pages=latest[:10], active='cheatsheets')
+
+
+@app.route('/notes/wireless')
+def wireless():
+    # Only published articles
+    all_articles = (p for p in pages if 'published' in p.meta)
+    
+    articles = (p for p in all_articles if 'Wireless' in p.meta['category'])
+    # Show the 10 most recent articles, most recent first.
+    latest = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+    return render_template('notes/notes.html', pages=latest[:10], active='wireless')
 
 @app.route('/notes')
 def notes():

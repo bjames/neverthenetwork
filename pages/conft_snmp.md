@@ -9,8 +9,11 @@ Lately we've been hitting bugs that cause switches (specifically Cisco 4500-E's)
 
 To do this, you'll need the following:
 1. A tftp server
+
 2. A text editor
+
 3. A program that can sent SNMP SET requests (I used snmpset on a linux jumpbox)
+
 4. A Cisco device without it's SSH keys. If you'd like to test this, you could use the 'crypto key zeroize rsa' command from config mode.
 
 In your text editor, create a new text document. The name doesn't matter. Then input the config you'd like to upload. In this case: 
