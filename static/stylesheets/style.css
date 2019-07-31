@@ -344,7 +344,7 @@ table {
     }
 
     #term {
-      width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+      width: 95%; /* The width is 100%, when the viewport is 800px or smaller */
       padding-right: 0px;
       padding-left: 0px;
       height: 70vh;
@@ -379,7 +379,7 @@ table {
     }
 
     .note {
-      width: 100%
+      width: 90%
     }
     
     .note img {
