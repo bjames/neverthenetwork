@@ -1,3 +1,43 @@
+body {
+  text-align: center;
+  position: relative;
+  min-height: 100%;
+  top: 0px;
+  margin: 0;
+}
+
+.topcontainer {
+  position: relative;
+  height: 70px;
+  line-height: 50px;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.topcontainer::before {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.ntntop table {
+  width: 100%;
+}
+
+.ntntop img {
+  float: left;
+  height: 70px;
+}
+
+.topslogan {
+  float: right;
+  color: white;
+  padding-top: 30px;
+  letter-spacing: 5px;
+  font-variant: small-caps;
+  font-family: sans-serif;
+}
+
 /* https://www.w3schools.com/howto/howto_js_responsive_navbar_dropdown.asp */
 
 /* Add a black background color to the top navigation */
@@ -5,6 +45,8 @@
   background-color: #333;
   overflow: hidden;
   font-family: sans-serif;
+  left: 0;
+  width: 100%;
 }
 
 /* Style the links inside the navigation bar */
@@ -87,10 +129,6 @@
 /* Show the dropdown menu when the user moves the mouse over the dropdown button */
 .dropdown:hover .dropdown-content {
   display: block;
-}
-
-body {
-    text-align: center;
 }
 
 table {
@@ -300,6 +338,11 @@ table {
     * {
       font-size: 16px;
     }
+
+    .topcontainer {
+      display: none;
+    }
+
     #term {
       width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
       padding-right: 0px;
