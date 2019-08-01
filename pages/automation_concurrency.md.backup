@@ -61,4 +61,4 @@ if __name__ == "__main__":
 
 #### pool.map()
 
-Map takes a function and an iterable as input, then based on the number of processes you've given it, it cuts the iterable (of length _n_) into _n/processes_ chunks and then executes them in order. We can then 
+Map takes a function and an iterable as input, then based on the number of processes you've given it, it cuts the iterable (of length _n_) into _n/processes_ chunks and then executes them in order. Expanding on our previous example, we 
