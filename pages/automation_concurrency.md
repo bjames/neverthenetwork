@@ -4,7 +4,7 @@ category:
 - Automation
 - Programming
 author: Brandon James
-summary: If you need to push configuration changes to more than one device at a time, you need concurrency.
+summary: Interacting with Network Devices can often be I/O limited. A function runs, waits for a response from the device, then another function runs so on and so forth. This is made worse by the fact that scripts are often run against multiple devices. After all the purpose of scripting is to speed up repetitive tasks. 
 
 Interacting with Network Devices can often be I/O limited. A function runs, waits for a response from the device, then another function runs so on and so forth. This is made worse by the fact that scripts are often run against multiple devices. After all the purpose of scripting is to speed up repetitive tasks. 
 
@@ -14,7 +14,7 @@ As a little bit of background on my process; I typically write scripts without c
 
 ### Using the Multiprocessing Library
 
-Python provides two easy ways to add concurrency to your scripts. The first is [threading](https://docs.python.org/3/library/threading.html) and the second is [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). I use the multiprocessing primarily because it offers an extremely conveniant function called 'Pool'. There are technical reason to use one over the other. Python has someting called the Global Interpreter Lock or GIL. The GIL prevents more than one thread from controlling the Python interpeter at any given time. This means that for any CPU bound tasks, threading won't provide much of a speedup. The multiprocessing library works around this by spawning one Python process per thread. Since Network Automation is IO bound, one could use the threading library, but I don't mind the extra overhead and enjoy the convenience of the pool function.
+Python provides two easy ways to add concurrency to your scripts. The first is [threading](https://docs.python.org/3/library/threading.html) and the second is [multiprocessing](https://docs.python.org/3/library/multiprocessing.html). I use the multiprocessing primarily because it offers an extremely convenient function called 'Pool'. There are technical reason to use one over the other. Python has something called the Global Interpreter Lock or GIL. The GIL prevents more than one thread from controlling the Python interpreter at any given time. This means that for any CPU bound tasks, threading won't provide much of a speedup. The multiprocessing library works around this by spawning one Python process per thread. Since Network Automation is IO bound, one could use the threading library, but I don't mind the extra overhead and enjoy the convenience of the pool function.
 
 #### functools.partial()
 
