@@ -4,6 +4,7 @@ body {
   min-height: 100%;
   top: 0px;
   margin: 0;
+  font-family: sans-serif;
 }
 
 .topcontainer {
@@ -29,11 +30,16 @@ body {
   height: 70px;
 }
 
+.ntntop a {
+  text-decoration: none;
+  color: white;
+}
+
 .topslogan {
   float: right;
   color: white;
   padding-top: 30px;
-  letter-spacing: 5px;
+  letter-spacing: 3px;
   font-variant: small-caps;
   font-family: sans-serif;
 }
@@ -57,7 +63,7 @@ body {
   text-align: center;
   padding: 10px 10px;
   text-decoration: none;
-  font-size: .8em;
+  font-size: 1em;
 }
 
 .navbar a.home {
@@ -84,7 +90,7 @@ body {
 
 /* Style the dropdown button to fit inside the navbar */
 .dropdown .dropbtn {
-  font-size: .8em;
+  font-size: 1em;
   border: none;
   outline: none;
   color: white;
@@ -131,6 +137,10 @@ body {
   display: block;
 }
 
+.dropbtn:hover {
+  cursor: pointer;
+}
+
 table {
     border-spacing: 10px 2px;
 }
@@ -174,7 +184,7 @@ table {
   min-height: 80vh;
   width: 70%;
   text-align: left;
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: sans-serif;
   font-size: 1.2em;
   line-height: 2;
   color: #333;
@@ -187,6 +197,11 @@ table {
 .note code{
   color: #272822;
   background: #f8f8f2;
+  overflow: scroll;
+}
+
+.codehilite {
+  overflow: scroll;
 }
 
 .note blockquote {
@@ -296,6 +311,7 @@ table {
 
 #app input[type='text'] {
   width: 20em;
+  font-size: inherit;
 }
 
 .oui input[type='text'] {
@@ -323,7 +339,7 @@ table {
     animation: spinner 1s ease infinite;
   }
   
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 800px) {
     .navbar a:not(:first-child), .dropdown .dropbtn {
       display: none;
     }
@@ -333,7 +349,7 @@ table {
     }
   }
 
-  @media screen and (max-width: 600px) {
+  @media screen and (max-width: 800px) {
 
     * {
       font-size: 16px;

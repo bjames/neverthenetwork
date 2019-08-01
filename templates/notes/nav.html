@@ -1,13 +1,4 @@
-<div class="topcontainer">
-    <div class="ntntop">
-        <table>
-            <tr>
-                <td><img src="/static/images/logo/Color logo - no background.svg"></td>
-                <td><span class="topslogan">It's Never The Network</span></td>
-            </tr>
-        </table>    
-    </div>
-</div>
+{% include "ntntop.html" %}
 <div id="navbar" class="navbar">
     <a class="home" href="/notes">NTN Notes</a>
     <a {% if active == 'latest' %} class="active" {% endif %} id="latest" href="/notes/latest">Latest</a>
@@ -20,7 +11,7 @@
     <a {% if active == 'web' %} class="active" {% endif %} id="web" href="/notes/web">Web</a>
     <a {% if active == 'ntn' %} class="active" {% endif %} id="ntn" href="/notes/ntn">NTN</a>
     <div class="dropdown">
-        <button class="dropbtn">Tools
+        <button class="dropbtn" onclick="window.location.href = '/';">Tools
             <i class="fa fa-caret-down"></i></a>
         </button>
         <div class="dropdown-content">
