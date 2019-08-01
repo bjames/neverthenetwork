@@ -148,6 +148,7 @@ table {
 .hidethis {
   visibility: hidden;
   width: 1px;
+  font-size: inherit;
 }
 
 #term {
