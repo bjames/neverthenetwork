@@ -197,11 +197,11 @@ table {
 .note code{
   color: #272822;
   background: #f8f8f2;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .codehilite {
-  overflow: scroll;
+  overflow: auto;
 }
 
 .note blockquote {
