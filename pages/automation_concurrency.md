@@ -1,5 +1,5 @@
 title: How I Automate - Concurrency
-published: 2019-08-02
+published: 2019-08-01
 category:
 - Automation
 - Programming
