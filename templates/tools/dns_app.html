@@ -1,5 +1,5 @@
 <form id="app" class="dns" method="POST">
-    <input type = "text" name = "url" value = {{ url or "neverthenetwork.com" }} required>
+    <input type = "text" name = "url" placeholder="neverthenetwork.com" required pattern="^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}\.)*(xn--)?([a-z0-9][a-z0-9\-]{0,60}|[a-z0-9-]{1,30}\.[a-z]{2,})$">
     <select name = "record_type">
         {% for record_type in dns_record_types %}
         <option value = {{ record_type }}>{{ record_type }}</option>

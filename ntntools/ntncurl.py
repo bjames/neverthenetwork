@@ -5,28 +5,35 @@ def curl(url):
 
     try:
         response = requests.head(url)
+        print(response)
         return response.headers, response.status_code, response.elapsed.total_seconds()
 
     except requests.exceptions.MissingSchema:
         return curl('https://' + url)
 
     except requests.exceptions.SSLError:
-        return {'Error': 'Invalid SSL Certificate'}
+        return {'Error': 'Invalid SSL Certificate'}, None, None
+
+    except requests.exceptions.InvalidURL:
+        return {'Error': 'Check provided hostname, valid input includes IP addresses and hostnames'}, None, None
+
+    except requests.exceptions.InvalidSchema:
+        return {'Error': 'Invalid protocol, valid protocols include HTTP and HTTPS'}, None, None
 
     except requests.exceptions.ConnectionError as e:
 
         error_str = str(e)
 
         if 'timed' in error_str:
-            return {'Error': 'Connection timed out'}, None
+            return {'Error': 'Connection timed out'}, None, None
         elif 'refused' in error_str:
-            return {'Error': 'Connection refused'}, None
+            return {'Error': 'Connection refused'}, None, None
         elif 'Name or service' in error_str:
-            return {'Error': 'DNS resolution failed'}, None
+            return {'Error': 'DNS resolution failed or an invalid hostname was provided'}, None, None
         elif 'Invalid' in error_str:
-            return {'Error': 'Check provided hostname, valid input includes IP addresses and hostnames'}, None
+            return {'Error': 'Check provided hostname, valid input includes IP addresses and hostnames'}, None, None
         else:
-            return {'Error': error_str}, None
+            return {'Error': error_str}, None, None
 
 
 if __name__ == '__main__':
