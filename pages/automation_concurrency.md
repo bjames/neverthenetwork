@@ -10,7 +10,7 @@ Interacting with Network Devices can often be I/O limited. A function runs, wait
 
 One of the scripts I maintain is used to test the POTS lines my enterprise uses for out-of-band connectivity at our branches and call centers. Dial-up modems are slow, you make a call, the line rings, remote end picks up, the modems eventually train up and you finally get a connection. With some of our international locations I've seen this process take nearly a full minute. Before I added multiprocessing, this script could take over 2 hours to complete. Now it finishes in roughly 20 minutes.
 
-As a little bit of background on my process; I typically write scripts without concurrency first using my little 3560-CX as a test device. Once the script is complete, I write a bit of logic to execute the script against multiple devices simultaneously. That logic is discussed below.
+I typically write scripts without concurrency first, using my little 3560-CX as a test device. Once the script is complete, I write a bit of logic to execute the script against multiple devices simultaneously. That logic is discussed below.
 
 ### Using the Multiprocessing Library
 
