@@ -322,18 +322,30 @@ function load_anchor() {
             return;
     }
 
+    console.log($(location).attr('pathname'))
+
     switch ($(location).attr('pathname')) {
         case '/tools/curl':
             enable_watch();
+            active($('#curl_nav'));
             return;
         case '/tools/dns':
             enable_watch();
+            active($('#dns_nav'));
             return;
         case '/tools/ping':
             enable_watch();
+            active($('#ping_nav'));
+            return;
+        case '/tools/oui':
+            active($('#oui_nav'));
+            return;
+        case '/tools/subnet':
+            active($('#subnet_nav'));
             return;
         case '/tools/traceroute':
             enable_watch();
+            active($('#traceroute_nav'));
             return;
     }
 }
