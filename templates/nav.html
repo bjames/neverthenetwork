@@ -1,7 +1,33 @@
+{% include "ntntop.html" %}
 <div id="navbar" class="navbar">
-    <a class="home" href="/">NTN</a>
-    <a id = "tools" href="/tools">Tools</a>
-    <a id = "notes_nav" href="/notes">Notes</a>
+    <a class="home" href="/">NTN Home</a>
+    <div class="dropdown">
+            <button class="dropbtn" onclick="window.location.href = '/tools';">Tools
+                <i class="fa fa-caret-down"></i></a>
+            </button>
+            <div class="dropdown-content">
+                <a href="/tools/curl">cURL</a>
+                <a href="/tools/dns">DNS</a>
+                <a href="/tools/ping">Ping</a>
+                <a href="/tools/subnet">Subnet Calculator</a>
+                <a href="/tools/traceroute">Traceroute</a>
+                <a href="/tools/oui">OUI Lookup</a>
+            </div>
+        </div>
+    <div class="dropdown">
+        <button class="dropbtn" onclick="window.location.href = '/notes';">Notes
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/notes/latest">Latest</a>
+            <a href="/notes/automation">Automation</a>
+            <a href="/notes/cheatsheets">Cheatsheets</a>
+            <a href="/notes/programming">Programming</a>
+            <a href="/notes/routeswitch">Route/Switch</a>
+            <a href="/notes/security">Security</a>
+            <a href="/notes/wireless">Wireless</a>          
+        </div>
+    </div>
     <a href="#" id="nav_icon">
         <i class="fa fa-bars"></i>
     </a>

@@ -261,6 +261,10 @@ table {
   overflow: hidden;
 }
 
+.homecolumn .summary_block {
+  width: 100%;
+}
+
 .summary_block a {
   text-decoration: none;
   color: #333;
@@ -319,6 +323,46 @@ table {
   width: 10em;
 }
 
+#bottom_buttons {
+  display: none;
+}
+
+#nojs_text {
+  color: red;
+}
+
+.hometext {
+  text-align: center;
+  color: #333;
+  font-size: x-large;
+  padding: 3% 10%;
+}
+
+.homecolumn {
+  float: left;
+  width: 40%;
+  padding: 0 5%;
+}
+
+.toollist {
+  text-align: left;
+}
+
+.homerow h2{
+  color: #333;
+}
+
+.homerow a{
+  color: black;
+}
+
+/* Clear floats after the columns */
+.homerow:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 @keyframes spinner {
     to {transform: rotate(360deg);}
   }
@@ -356,8 +400,16 @@ table {
       font-size: 16px;
     }
 
+    .homecolumn {
+      width: 90%;
+    }
+
     .topcontainer {
       display: none;
+    }
+
+    .homerow h2{
+      font-size: xx-large;
     }
 
     #term {
@@ -384,6 +436,14 @@ table {
       display: block;
       width: 100%;
       text-align: left;
+    }
+
+    .navbar A{
+      font-size: 22px;
+    }
+
+    .dropdown .dropbtn{
+      font-size: 22px;
     }
 
     span.wrapper {

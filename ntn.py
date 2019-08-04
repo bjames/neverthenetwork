@@ -2,7 +2,7 @@ from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubi
 from ntntools.ntndb import db_session
 
 from datetime import datetime
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, send_from_directory
 from flask_flatpages import FlatPages, pygments_style_defs
 
 from ntntools.config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
@@ -29,39 +29,58 @@ def shutdown_session(exception = None):
 
 @app.context_processor
 def inject_now():
-    return {'now': datetime.utcnow()}
-
+    return {'now': datetime.utcnow(),
+            'public_ip': request.environ.get('HTTP_X_REAL_IP', request.remote_addr)}
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    return render_template('index.html', public_ip=ntnpubip.pubip())
+    # Articles are pages with a publication date
+    articles = (p for p in pages if 'published' in p.meta)
+    # Show the 10 most recent articles, most recent first.
+    latest = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+    return render_template('index.html', pages=latest[:4])
 
+@app.route('/tools', methods=['GET', 'POST'])
+def tools():
+    return render_template('tools/tools.html')
 
-@app.route('/dns', methods=['GET', 'POST'])
+@app.route('/tools/dns', methods=['GET', 'POST'])
 def dns_check():
     if request.method == 'POST':
-        return render_template('tools/dns.html', 
+
+        render_buffer = render_template('tools/dns_results.html',
                         dns_results = ntndns.dnslookup(request.form['url'], request.form['user_resolver'],request.form['record_type']),
-                    url = request.form['url'], record_type = request.form['record_type'])
-    return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+                        url = request.form['url'], record_type = request.form['record_type'])
+
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/dns.html', results = render_buffer, dns_record_types = DNS_RECORD_TYPES,
+                                    dns_resolver_list = DNS_RESOLVER_LIST, url = request.form['url'])
+
+    if request.is_xhr:
+        return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+    else:
+        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
 
 
-@app.route('/curl', methods=['GET', 'POST'])
+@app.route('/tools/curl', methods=['GET', 'POST'])
 def curl():
     if request.method == 'POST':
         headers, status_code, elapsed_time = ntncurl.curl(request.form['url'])
         
-        render_buffer = render_template('tools/curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
+        render_buffer = render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
         
-        # JQuery returns a string instead of a bool
-        if 'true' in request.form['follow_redirects']:
+        # 
+        if request.form.get('follow_redirects') == 'on' or (request.is_xhr and 'true' in request.form['follow_redirects']):
 
             counter = 1        
 
             while status_code == 301 or status_code == 302 or status_code == 303 or status_code == 307 or status_code == 308:
                 new_url = headers['location']
                 headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
-                render_buffer += render_template('tools/curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
+                render_buffer += render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
                 render_buffer += ' Redirect Count {}\n'.format(counter)
                 counter += 1
 
@@ -69,42 +88,84 @@ def curl():
 
                     render_buffer += 'MAX REDIRECTS EXCEEDED'
 
-        return render_buffer
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/curl.html', results = render_buffer, url = request.form['url'])
 
-    return render_template('tools/curl_app.html')
+    if request.is_xhr:
+        return render_template('tools/curl_app.html')
+    else:
+        return render_template('tools/curl.html')
 
 
-@app.route('/subnet', methods=['GET', 'POST'])
+@app.route('/tools/subnet', methods=['GET', 'POST'])
 def subnet():
     if request.method == 'POST':
-        return render_template('tools/subnet.html', results = ntnsubnet.subnet(request.form['ip_address'], request.form['subnet_mask']),
-                        ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
-    return render_template('tools/subnet_app.html')
+        
+        render_buffer = render_template('tools/subnet_results.html', results = ntnsubnet.subnet(request.form['ip_address'], request.form['subnet_mask']),
+                                        ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
 
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/subnet.html', results = render_buffer, ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
+        
+    if request.is_xhr:
+        return render_template('tools/subnet_app.html')
+    else:
+        return render_template('tools/subnet.html')
 
-@app.route('/oui', methods=['GET', 'POST'])
+@app.route('/tools/oui', methods=['GET', 'POST'])
 def oui():
-    try:
-        if request.method == 'POST':
-            return render_template('tools/oui.html', results = ntnoui.ouilookup(request.form['mac_address']), mac_address = request.form['mac_address'])
-    except ValueError as e:
-        return render_template('tools/oui.html', error=e)
-    return render_template('tools/oui_app.html')
+
+    if request.method == 'POST':
+
+        try:
+            render_buffer = render_template('tools/oui_results.html', results = ntnoui.ouilookup(request.form['mac_address']), mac_address = request.form['mac_address'])
+        except ValueError as e:
+            render_buffer = render_template('tools/oui_results.html', error=e)
+
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/oui.html', results = render_buffer, mac_address = request.form['mac_address']) 
+
+    if request.is_xhr:
+        return render_template('tools/oui_app.html')
+    else:
+        return render_template('tools/oui.html')
 
 
-@app.route('/ping', methods=['GET', 'POST'])
+@app.route('/tools/ping', methods=['GET', 'POST'])
 def ping():
     if request.method == 'POST':
-        return render_template('tools/ping.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
-    return render_template('tools/ping_app.html')
 
+        render_buffer = render_template('tools/ping_results.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
 
-@app.route('/traceroute', methods=['GET', 'POST'])
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/ping.html', results = render_buffer, url = request.form['hostname'])
+    if request.is_xhr:
+        return render_template('tools/ping_app.html')
+    else:
+        return render_template('tools/ping.html')
+
+@app.route('/tools/traceroute', methods=['GET', 'POST'])
 def traceroute():
     if request.method == 'POST':
-        return render_template('tools/traceroute.html', results=ntntraceroute.traceroute(request.form['hostname']), hostname=request.form['hostname'])
-    return render_template('tools/traceroute_app.html')
 
+        render_buffer = render_template('tools/traceroute_results.html', results=ntntraceroute.traceroute(request.form['hostname']), hostname=request.form['hostname'])
+
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/traceroute.html', results = render_buffer, url = request.form['hostname'])
+    if request.is_xhr:
+        return render_template('tools/traceroute_app.html')
+    else:
+        return render_template('tools/traceroute.html')
 
 @app.route('/notes/latest')
 def latest():
@@ -210,7 +271,7 @@ def notes():
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
-    return render_template('notes/notes.html', pages=latest[:7], active='latest')
+    return render_template('notes/notes.html', pages=latest[:10], active='latest')
 
 @app.route('/notes/<path:path>/')
 def page(path):
@@ -222,6 +283,12 @@ def page(path):
 @app.route('/pygments.css')
 def pygments_css():
     return pygments_style_defs('tango'), 200, {'Content-Type': 'text/css'}
+
+
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

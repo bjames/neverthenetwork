@@ -1,12 +1,3 @@
-
-Subnet {{ ip_address }} {{ subnet_mask }}
-___________________________
-{% if results %}
-<table>
-{% for key, value in results.items() %}
-<tr>
-<td>{{ key }}</td><td>{{ value }}</td>
-</tr>
-{% endfor %}
-</table>
-{% endif %}
+{% extends "tools/base.html" %}
+{% block title %}NTN - Subnet{% endblock %}
+{% block app %}{% include "tools/subnet_app.html" %}{% endblock %}

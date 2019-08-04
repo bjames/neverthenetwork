@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block nav %}{% include "tools/nav.html" %}{% endblock %}
+{% block content %}
+<div id="app">{% block app %}{% endblock %}</div>
+<pre id="term">
+
+Your Public IP Address: 
+
+ {{ public_ip }}
+ {{ results|safe }}
+</pre>
+{% include "tools/bottom_buttons.html" %}
+{% endblock %}

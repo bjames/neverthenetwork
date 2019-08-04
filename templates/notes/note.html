@@ -1,12 +1,12 @@
-{% include "head.html" %}
-<body>
-{% include "notes/nav.html" %}
-    <div class="title_block">
+{% extends "notes/base.html" %}
+{% block title %}NTN - Notes{% endblock %}
+{% block app %}<input class="hidethis">Select a tool above to get started<input class="hidethis">{% endblock %}
+{% block content %}
+<div class="title_block">
         <div class="title">{{ page.title }}</div>
         <div class="subtitle">By {{ page.author }} on {{ page.published }}</div>
     </div>
     <div class="note">
     {{ page.html|safe }}
 </div>
-{% include "footer.html" %}
-</body>
+{% endblock %}
