@@ -7,5 +7,7 @@
 Your Public IP Address: 
 
  {{ public_ip }}
+ {{ results|safe }}
 </pre>
+{% include "tools/bottom_buttons.html" %}
 {% endblock %}

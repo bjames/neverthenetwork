@@ -1,28 +1,28 @@
-{% include "head.html" %}
-<body>
-{% include "notes/nav.html" %}
+{% extends "notes/base.html" %}
+{% block title %}NTN - Notes{% endblock %}
+{% block app %}<input class="hidethis">Select a tool above to get started<input class="hidethis">{% endblock %}
+{% block content %}
 <div class="summary_page">
-{% for page in pages %}
-    <div class="summary_block">
-        <a href="{{ url_for("page", path=page.path) }}" class="thumbnail">
-            {% if page.post_image %}
-                <img src={{ page.post_image }}>
-            {% else %}
-            <img src=/static/images/logo/30915073_padded_logo.png>
-            {% endif %}
-        </a>
-        <h3><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></h3>
-        <div class = "summary_subtitle">
-            By {{ page.author }} on {{ page.published }}
-            Filed Under: {% set comma = joiner(",") %}{% for category in page.category %}{{ comma() }} {{ category }}{% endfor %}
-        </div>
-        <div class = "summary_text">
-            {{ page.summary }}
-        </div>
-    </div>
-{% else %}
-    Nothing yet!
-{% endfor %}
+        {% for page in pages %}
+            <div class="summary_block">
+                <a href="{{ url_for("page", path=page.path) }}" class="thumbnail">
+                    {% if page.post_image %}
+                        <img src={{ page.post_image }}>
+                    {% else %}
+                    <img src=/static/images/logo/30915073_padded_logo.png>
+                    {% endif %}
+                </a>
+                <h3><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></h3>
+                <div class = "summary_subtitle">
+                    By {{ page.author }} on {{ page.published }}
+                    Filed Under: {% set comma = joiner(",") %}{% for category in page.category %}{{ comma() }} {{ category }}{% endfor %}
+                </div>
+                <div class = "summary_text">
+                    {{ page.summary }}
+                </div>
+            </div>
+        {% else %}
+            Nothing yet!
+        {% endfor %}
 </div>
-{% include "footer.html" %}
-</body>
+{% endblock %}

@@ -1,3 +1,52 @@
-{% extends "tools/base.html" %}
-{% block title %}NTN - Tools{% endblock %}
-{% block app %}<input class="hidethis">Select a tool above to get started<input class="hidethis">{% endblock %}
+{% extends "base.html" %}
+{% block title %}It's Never The Network{% endblock %}
+{% block nav %}{% include "nav.html" %}{% endblock %}
+{% block content %}
+
+<div class="hometext">A site to help you plan, troubleshoot and learn about computer networks and other cutting edge infrastructure technologies.</div>
+
+<div class="homerow">
+    <div class="homecolumn">
+        <h2>Tools</h2>
+
+        A collection of tools to help you troubleshoot and plan your network. This list is constantly growing, so be sure to check back.<br><br>
+
+        <div class="toollist">
+            <a href="/tools/curl">cURL</a> - Send a HEAD request from the NTN Webserver<br>
+            <a href="/tools/dns">DNS</a> - Send DNS queries from the NTN Webserver<br>
+            <a href="/tools/ping">Ping</a> - Ping servers from the NTN Webserver<br>
+            <a href="/tools/subnet">Subnet Calculator</a> - Calculate IPv4 and IPv6 Subnets<br>
+            <a href="/tools/traceroute">Traceroute</a> - Find the path to servers from the NTN Webserver<br>
+            <a href="/tools/oui">OUI Lookup</a> - Find device manufacturers based on MAC Address<br> 
+        </div>
+    </div>
+        
+    <div class="homecolumn">
+        <h2>Latest Articles</h2>
+        <div class="summary_page">
+                {% for page in pages %}
+                    <div class="summary_block">
+                        <a href="{{ url_for("page", path=page.path) }}" class="thumbnail">
+                            {% if page.post_image %}
+                                <img src={{ page.post_image }}>
+                            {% else %}
+                            <img src=/static/images/logo/30915073_padded_logo.png>
+                            {% endif %}
+                        </a>
+                        <h3><a href="{{ url_for("page", path=page.path) }}">{{ page.title }}</a></h3>
+                        <div class = "summary_subtitle">
+                            By {{ page.author }} on {{ page.published }}
+                            Filed Under: {% set comma = joiner(",") %}{% for category in page.category %}{{ comma() }} {{ category }}{% endfor %}
+                        </div>
+                        <div class = "summary_text">
+                            {{ page.summary }}
+                        </div>
+                    </div>
+                {% else %}
+                    Nothing yet!
+                {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

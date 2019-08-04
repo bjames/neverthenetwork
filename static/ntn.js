@@ -6,6 +6,10 @@ var paused = false
 
 $(document).ready(function() {
 
+    $('#bottom_buttons').css('display', 'inherit');
+    $('#nojs_text').css('display', 'none');
+
+
     load_anchor();
 
     // handle watch already being set on a reload
