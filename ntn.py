@@ -2,7 +2,7 @@ from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubi
 from ntntools.ntndb import db_session
 
 from datetime import datetime
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, send_from_directory
 from flask_flatpages import FlatPages, pygments_style_defs
 
 from ntntools.config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
@@ -283,6 +283,12 @@ def page(path):
 @app.route('/pygments.css')
 def pygments_css():
     return pygments_style_defs('tango'), 200, {'Content-Type': 'text/css'}
+
+
+@app.route('/robots.txt')
+@app.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(app.static_folder, request.path[1:])
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
