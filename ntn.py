@@ -29,29 +29,36 @@ def shutdown_session(exception = None):
 
 @app.context_processor
 def inject_now():
-    return {'now': datetime.utcnow()}
-
+    return {'now': datetime.utcnow(),
+            'public_ip': request.environ.get('HTTP_X_REAL_IP', request.remote_addr)}
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    return render_template('index.html', public_ip=ntnpubip.pubip())
+    return render_template('index.html')
 
+@app.route('/tools', methods=['GET', 'POST'])
+def tools():
+    return render_template('index.html')
 
-@app.route('/dns', methods=['GET', 'POST'])
+@app.route('/tools/dns', methods=['GET', 'POST'])
 def dns_check():
     if request.method == 'POST':
-        return render_template('tools/dns.html', 
+        return render_template('tools/dns_results.html', 
                         dns_results = ntndns.dnslookup(request.form['url'], request.form['user_resolver'],request.form['record_type']),
                     url = request.form['url'], record_type = request.form['record_type'])
-    return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+
+    if request.is_xhr:
+        return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+    else:
+        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
 
 
-@app.route('/curl', methods=['GET', 'POST'])
+@app.route('/tools/curl', methods=['GET', 'POST'])
 def curl():
     if request.method == 'POST':
         headers, status_code, elapsed_time = ntncurl.curl(request.form['url'])
         
-        render_buffer = render_template('tools/curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
+        render_buffer = render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
         
         # JQuery returns a string instead of a bool
         if 'true' in request.form['follow_redirects']:
@@ -61,7 +68,7 @@ def curl():
             while status_code == 301 or status_code == 302 or status_code == 303 or status_code == 307 or status_code == 308:
                 new_url = headers['location']
                 headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
-                render_buffer += render_template('tools/curl.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
+                render_buffer += render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
                 render_buffer += ' Redirect Count {}\n'.format(counter)
                 counter += 1
 
@@ -71,40 +78,52 @@ def curl():
 
         return render_buffer
 
-    return render_template('tools/curl_app.html')
+    if request.is_xhr:
+        return render_template('tools/curl_app.html')
+    else:
+        return render_template('tools/curl.html')
 
 
-@app.route('/subnet', methods=['GET', 'POST'])
+@app.route('/tools/subnet', methods=['GET', 'POST'])
 def subnet():
     if request.method == 'POST':
-        return render_template('tools/subnet.html', results = ntnsubnet.subnet(request.form['ip_address'], request.form['subnet_mask']),
+        return render_template('tools/subnet_results.html', results = ntnsubnet.subnet(request.form['ip_address'], request.form['subnet_mask']),
                         ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
-    return render_template('tools/subnet_app.html')
+    if request.is_xhr:
+        return render_template('tools/subnet_app.html')
+    else:
+        return render_template('tools/subnet.html')
 
-
-@app.route('/oui', methods=['GET', 'POST'])
+@app.route('/tools/oui', methods=['GET', 'POST'])
 def oui():
     try:
         if request.method == 'POST':
-            return render_template('tools/oui.html', results = ntnoui.ouilookup(request.form['mac_address']), mac_address = request.form['mac_address'])
+            return render_template('tools/oui_results.html', results = ntnoui.ouilookup(request.form['mac_address']), mac_address = request.form['mac_address'])
     except ValueError as e:
-        return render_template('tools/oui.html', error=e)
-    return render_template('tools/oui_app.html')
+        return render_template('tools/oui_results.html', error=e)
+    if request.is_xhr:
+        return render_template('tools/oui_app.html')
+    else:
+        return render_template('tools/oui.html')
 
 
-@app.route('/ping', methods=['GET', 'POST'])
+@app.route('/tools/ping', methods=['GET', 'POST'])
 def ping():
     if request.method == 'POST':
-        return render_template('tools/ping.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
-    return render_template('tools/ping_app.html')
+        return render_template('tools/ping_results.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
+    if request.is_xhr:
+        return render_template('tools/ping_app.html')
+    else:
+        return render_template('tools/ping.html')
 
-
-@app.route('/traceroute', methods=['GET', 'POST'])
+@app.route('/tools/traceroute', methods=['GET', 'POST'])
 def traceroute():
     if request.method == 'POST':
-        return render_template('tools/traceroute.html', results=ntntraceroute.traceroute(request.form['hostname']), hostname=request.form['hostname'])
-    return render_template('tools/traceroute_app.html')
-
+        return render_template('tools/traceroute_results.html', results=ntntraceroute.traceroute(request.form['hostname']), hostname=request.form['hostname'])
+    if request.is_xhr:
+        return render_template('tools/traceroute_app.html')
+    else:
+        return render_template('tools/traceroute.html')
 
 @app.route('/notes/latest')
 def latest():

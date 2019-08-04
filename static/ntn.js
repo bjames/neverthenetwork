@@ -3,7 +3,6 @@ var variable_count = static_count
 var timer = null
 var curr_active = null
 var paused = false
-var user_url = 'neverthenetwork.com'
 
 $(document).ready(function() {
 
@@ -27,18 +26,21 @@ $(document).ready(function() {
 
     // navbar clicks are handled here
     $('#dns_nav').click(function(){
+        event.preventDefault();
         active(this);
         load_app('dns', 'DNS');
         enable_watch();
         response_navbar();
     })
     $('#subnet_nav').click(function(){
+        event.preventDefault();
         active(this);
         load_app('subnet', 'Subnet');
         disable_watch();
         response_navbar();
     })
     $('#curl_nav').click(function(){
+        event.preventDefault();
         active(this);
         load_app('curl', 'cURL');
         enable_watch();
@@ -46,18 +48,21 @@ $(document).ready(function() {
         $('[name=url]').val(user_url)
     })
     $('#oui_nav').click(function(){
+        event.preventDefault();
         active(this)
         load_app('oui', 'OUI');
         disable_watch();
         response_navbar();
     })
     $('#ping_nav').click(function(){
+        event.preventDefault();
         active(this);
         load_app('ping', 'Ping');
         enable_watch();
         response_navbar();
     })
     $('#traceroute_nav').click(function(){
+        event.preventDefault();
         active(this);
         load_app('traceroute', 'Traceroute');
         enable_watch();
@@ -280,37 +285,53 @@ function update_term(term_data) {
 // loads the form above the terminal box
 function load_app(app, title) {
     $('#app').load(app + ' #app');
-    active($('#' + app + '_nav'))
+    active($('#' + app + '_nav'));
     document.title = 'NTN - '+ title;
+    window.location.href='/tools/#' + app;
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
 function load_anchor() {
+
     switch ($(location).attr('hash')) {
         case '#curl':
             load_app('curl', 'cURL');
             enable_watch();
-            break;
+            return;
         case '#dns':
             load_app('dns', 'DNS');
             enable_watch();
-            break;
+            return;
         case '#subnet':
             load_app('subnet', 'Subnet');
-            break;
+            return;
         case '#oui':
             load_app('oui', 'OUI');
-            break;
+            return;
         case '#ping':
             load_app('ping', 'Ping');
             enable_watch();
-            break;
+            return;
         case '#traceroute':
             load_app('traceroute', 'Traceroute');
             enable_watch();
-            break;
+            return;
     }
 
+    switch ($(location).attr('pathname')) {
+        case '/tools/curl':
+            enable_watch();
+            return;
+        case '/tools/dns':
+            enable_watch();
+            return;
+        case '/tools/ping':
+            enable_watch();
+            return;
+        case '/tools/traceroute':
+            enable_watch();
+            return;
+    }
 }
 
 function response_navbar() {
