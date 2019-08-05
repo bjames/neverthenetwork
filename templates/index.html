@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block title %}It's Never The Network{% endblock %}
+{% block body_class %}"homepage"{% endblock %}
 {% block nav %}{% include "nav.html" %}{% endblock %}
 {% block content %}
 
@@ -9,7 +10,7 @@
 <div class="homerow">
     <div class="homecolumn">
         
-        <h2><i class="fa fa-wrench"></i> Tools</h2>
+        <h2><i class="fa fa-wrench"></i> <a href="/tools">Tools</a></h2>
 
         <div class="toolsdescription">
             This list is constantly growing, so be sure to check back.<br><br>
@@ -26,7 +27,7 @@
     </div>
         
     <div class="homecolumn">
-        <h2><i class="fa fa-pencil" aria-hidden="true"></i> Latest Articles</h2>
+        <h2><i class="fa fa-pencil" aria-hidden="true"></i> <a href="/notes">Latest Articles</a></h2>
         <div class="summary_page">
                 {% for page in pages %}
                     <div class="summary_block">

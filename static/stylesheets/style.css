@@ -7,6 +7,22 @@ body {
   font-family: sans-serif;
 }
 
+.homepage .navbar {
+  display: none;
+}
+
+.homepage .topslogan {
+  display: none;
+}
+
+.homepage .topcontainer {
+  height: 100px
+}
+
+.homepage .topcontainer img {
+  height: 100px;
+}
+
 .topcontainer {
   position: relative;
   height: 70px;
@@ -502,6 +518,10 @@ table {
 
     .tools_desktop {
       display: none;
+    }
+
+    .homepage .navbar {
+      display: inherit;
     }
 
   }
