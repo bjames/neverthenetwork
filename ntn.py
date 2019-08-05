@@ -285,8 +285,17 @@ def pygments_css():
     return pygments_style_defs('tango'), 200, {'Content-Type': 'text/css'}
 
 
-@app.route('/robots.txt')
 @app.route('/sitemap.xml')
+def sitemap():
+
+    articles = (p for p in pages if 'published' in p.meta)
+
+    sorted_articles = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+
+    return render_template('sitemap.xml', pages = sorted_articles)
+
+@app.route('/robots.txt')
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
 

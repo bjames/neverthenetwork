@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- manually added -->
+
+    <url>
+        <loc>https://neverthenetwork.com/</loc>
+        <changefreq>daily</changefreq>
+    </url>
+
+    <url>
+        <loc>https://neverthenetwork.com/notes</loc>
+        <changefreq>daily</changefreq>
+    </url>
+
+    <url>
+        <loc>https://neverthenetwork.com/tools</loc>
+        <changefreq>monthly</changefreq>
+    </url>
+
+    <!-- End manual sitemap content -->
+    <!-- Generated at first request -->
+    {% for page in pages %}
+    <url>
+        <loc>https://neverthenetwork.com/notes/{{ page.path }}</loc>
+        <lastmod>{% if page.modified %}{{ page.modified }}{% else %}{{ page.published }}{% endif %}</lastmod>
+        <changefreq>monthly</changefreq>
+    </url>
+    {% endfor %}
+    <!-- End Generated Content -->
+    
+</urlset>
