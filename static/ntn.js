@@ -322,8 +322,6 @@ function load_anchor() {
             return;
     }
 
-    console.log($(location).attr('pathname'))
-
     switch ($(location).attr('pathname')) {
         case '/tools/curl':
             enable_watch();

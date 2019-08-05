@@ -348,6 +348,10 @@ table {
   text-align: left;
 }
 
+.tools_mobile {
+  display: none;
+}
+
 .homerow h2{
   color: #333;
 }
@@ -438,7 +442,7 @@ table {
       text-align: left;
     }
 
-    .navbar A{
+    .navbar a{
       font-size: 22px;
     }
 
@@ -462,6 +466,28 @@ table {
     .note img {
       max-width: 100%;
       padding: 0px;
+    }
+
+    .hometext {
+      display: none;
+    }
+
+    .toolsdescription {
+      display: none;
+    }
+
+    .tools_mobile {
+      display: inherit;
+      text-align: left;
+      width: 95%;
+    }
+
+    .tools_mobile ul {
+      list-style-type: none;
+    }
+
+    .tools_desktop {
+      display: none;
     }
 
   }

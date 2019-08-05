@@ -474,4 +474,4 @@ acl_lines: |
  permit ip 192.168.10.0 0.0.0.255 any
 ```
 
-I hope this post has been both valuable and informative. If you have any questions or comments, please don't hesitate to send me an [email](mailto:brandon@brandonsjames.com).
+I hope this post has been both valuable and informative. If you have any questions or comments, please don't hesitate to send me an [email](mailto:brandon@neverthenetwork.com).
