@@ -331,11 +331,19 @@ table {
   color: red;
 }
 
+.hometitle {
+  text-align: center;
+  color: #333;
+  text-shadow: 3px 3px 3px grey;
+  font-size: 4em;
+  font-weight: bolder;
+}
+
 .hometext {
   text-align: center;
   color: #333;
   font-size: x-large;
-  padding: 3% 10%;
+  padding: 0 10% 3%;
 }
 
 .homecolumn {
@@ -466,6 +474,12 @@ table {
     .note img {
       max-width: 100%;
       padding: 0px;
+    }
+
+    .hometitle {
+      text-shadow: 1px 1px 1px grey;
+      font-size: 2em;
+      font-weight: bolder;
     }
 
     .hometext {
