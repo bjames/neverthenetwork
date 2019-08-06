@@ -49,7 +49,6 @@ $(document).ready(function() {
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
-        $('[name=url]').val(user_url)
     })
     $('#oui_nav').click(function(){
         event.preventDefault();
@@ -283,7 +282,6 @@ function update_term(term_data) {
 
     var term = document.getElementById("term");
     term.scrollTop = term.scrollHeight;
-
 }
 
 // loads the form above the terminal box
@@ -356,3 +354,7 @@ function response_navbar() {
         element.className = "navbar";
     }
 } 
+
+function get_query_string() {
+
+}

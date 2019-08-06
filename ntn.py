@@ -47,6 +47,7 @@ def tools():
 
 @app.route('/tools/dns', methods=['GET', 'POST'])
 def dns_check():
+
     if request.method == 'POST':
 
         render_buffer = render_template('tools/dns_results.html',
@@ -60,13 +61,22 @@ def dns_check():
                                     dns_resolver_list = DNS_RESOLVER_LIST, url = request.form['url'])
 
     if request.is_xhr:
+
         return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+
     else:
-        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
+
+        user_url = request.args.get('url')
+
+        if user_url is None:
+            user_url = ''
+
+        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST, url=user_url)
 
 
 @app.route('/tools/curl', methods=['GET', 'POST'])
 def curl():
+
     if request.method == 'POST':
         headers, status_code, elapsed_time = ntncurl.curl(request.form['url'])
         
@@ -139,6 +149,7 @@ def oui():
 
 @app.route('/tools/ping', methods=['GET', 'POST'])
 def ping():
+
     if request.method == 'POST':
 
         render_buffer = render_template('tools/ping_results.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
