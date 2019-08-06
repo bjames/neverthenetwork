@@ -30,7 +30,6 @@ img {
 .topcontainer {
   position: relative;
   height: 70px;
-  line-height: 50px;
   overflow: hidden;
   background-color: #333;
 }
