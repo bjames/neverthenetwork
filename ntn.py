@@ -4,6 +4,7 @@ from ntntools.ntndb import db_session
 from datetime import datetime
 from flask import Flask, request, render_template, redirect, send_from_directory
 from flask_flatpages import FlatPages, pygments_style_defs
+from urllib.parse import urlsplit
 
 from ntntools.config import DNS_RECORD_TYPES, DNS_RESOLVER_LIST, DATABASE, DATABASE_KEY
 
@@ -60,18 +61,39 @@ def dns_check():
             return render_template('tools/dns.html', results = render_buffer, dns_record_types = DNS_RECORD_TYPES,
                                     dns_resolver_list = DNS_RESOLVER_LIST, url = request.form['url'])
 
+    user_url = request.args.get('url') or ''
+    record_type = request.args.get('record_type') or 'A'
+    user_resolver = request.args.get('user_resolver') or 'All'
+
     if request.is_xhr:
 
         return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
 
     else:
 
-        user_url = request.args.get('url')
+        if user_url != '':
 
-        if user_url is None:
-            user_url = ''
+            try:
 
-        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST, url=user_url)
+                render_buffer = get_dns_results(user_url, record_type, user_resolver)
+
+            except ValueError:
+
+                render_buffer = ''
+        
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/dns.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST,
+                                url = user_url, record_type = record_type, user_resolver = user_resolver, results = render_buffer)
+
+def get_dns_results(user_url, record_type, user_resolver):
+
+    # input validation is handled by ntndns.py
+    return render_template('tools/dns_results.html',
+                        dns_results = ntndns.dnslookup(user_url, user_resolver, record_type),
+                        url = user_url, record_type = record_type)
 
 
 @app.route('/tools/curl', methods=['GET', 'POST'])
