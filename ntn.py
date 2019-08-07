@@ -191,7 +191,7 @@ def subnet():
             render_buffer = ''
 
         return render_template('tools/subnet.html', results = render_buffer, ip_address = ip_address, subnet_mask = subnet_mask)
-        
+
 
 def get_subnet_results(ip_address, subnet_mask):
 
@@ -204,20 +204,40 @@ def oui():
 
     if request.method == 'POST':
 
-        try:
-            render_buffer = render_template('tools/oui_results.html', results = ntnoui.ouilookup(request.form['mac_address']), mac_address = request.form['mac_address'])
-        except ValueError as e:
-            render_buffer = render_template('tools/oui_results.html', error=e)
+        mac_address = request.form['mac_address']
+
+        render_buffer = get_oui_results(mac_address)
 
         if request.is_xhr:
             return render_buffer
         else:
-            return render_template('tools/oui.html', results = render_buffer, mac_address = request.form['mac_address']) 
+            return render_template('tools/oui.html', results = render_buffer, mac_address = mac_address) 
 
     if request.is_xhr:
         return render_template('tools/oui_app.html')
     else:
-        return render_template('tools/oui.html')
+
+        # handle query strings
+        mac_address = request.args.get('mac_address') or ''
+        
+        if mac_address != '':
+
+            render_buffer = get_oui_results(mac_address)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/oui.html', results = render_buffer, mac_address = mac_address)
+
+def get_oui_results(mac_address):
+
+    try:
+        render_buffer = render_template('tools/oui_results.html', results = ntnoui.ouilookup(mac_address), mac_address = mac_address)
+    except ValueError as e:
+        render_buffer = render_template('tools/oui_results.html', error=e)
+
+    return render_buffer
 
 
 @app.route('/tools/ping', methods=['GET', 'POST'])
@@ -225,31 +245,73 @@ def ping():
 
     if request.method == 'POST':
 
-        render_buffer = render_template('tools/ping_results.html', results=ntnping.ping(request.form['hostname']), hostname=request.form['hostname'])
+        hostname = request.form['hostname']
+
+        render_buffer = get_ping_results(hostname)
 
         if request.is_xhr:
+
             return render_buffer
         else:
-            return render_template('tools/ping.html', results = render_buffer, url = request.form['hostname'])
+            return render_template('tools/ping.html', results = render_buffer, hostname = hostname)
+
     if request.is_xhr:
         return render_template('tools/ping_app.html')
+
     else:
-        return render_template('tools/ping.html')
+
+        # handle query strings
+        hostname = request.args.get('hostname') or ''
+        
+        if hostname != '':
+
+            render_buffer = get_ping_results(hostname)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/ping.html', results = render_buffer, hostname = hostname)
+
+
+def get_ping_results(hostname):
+
+    return render_template('tools/ping_results.html', results=ntnping.ping(hostname), hostname=hostname)
+
 
 @app.route('/tools/traceroute', methods=['GET', 'POST'])
 def traceroute():
     if request.method == 'POST':
 
-        render_buffer = render_template('tools/traceroute_results.html', results=ntntraceroute.traceroute(request.form['hostname']), hostname=request.form['hostname'])
+        hostname = request.form['hostname']
+
+        render_buffer = get_traceroute_results(hostname)
 
         if request.is_xhr:
             return render_buffer
         else:
-            return render_template('tools/traceroute.html', results = render_buffer, url = request.form['hostname'])
+            return render_template('tools/traceroute.html', results = render_buffer, hostname = hostname)
+            
     if request.is_xhr:
         return render_template('tools/traceroute_app.html')
     else:
-        return render_template('tools/traceroute.html')
+
+        # handle query strings
+        hostname = request.args.get('hostname') or ''
+        
+        if hostname != '':
+
+            render_buffer = get_traceroute_results(hostname)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/traceroute.html', results = render_buffer, hostname = hostname)
+
+def get_traceroute_results(hostname):
+
+    return render_template('tools/traceroute_results.html', results=ntntraceroute.traceroute(hostname), hostname=hostname)
 
 @app.route('/notes/latest')
 def latest():
