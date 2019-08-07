@@ -49,7 +49,6 @@ $(document).ready(function() {
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
-        $('[name=url]').val(user_url)
     })
     $('#oui_nav').click(function(){
         event.preventDefault();
@@ -162,12 +161,16 @@ function submit_form() {
 
     if(classes.contains("curl")){
 
+        var url = $('[name=url]').val();
+        var follow_redirects = $('[name=follow_redirects]').is(':checked');
+
         $.ajax({
             url: 'curl',
             type: 'post',
             cache: false,
-            data: {url: $('[name=url]').val(), follow_redirects: $('[name=follow_redirects]').is(':checked')},
+            data: {url: url, follow_redirects: follow_redirects},
             success: function(data) {
+                set_query_string('curl?url=' + url + '&follow_redirects=' + follow_redirects);
                 post_success(data);
             },
             error: function() {
@@ -177,13 +180,18 @@ function submit_form() {
 
     }else if (classes.contains("dns")){
 
+        var url = $('[name=url]').val();
+        var record_type = $('[name=record_type]').val();
+        var user_resolver = $('[name=user_resolver]').val();
+
         $.ajax({
             url: 'dns',
             type: 'post',
             cache: false,
-            data: {url: $('[name=url]').val(), record_type: $('[name=record_type]').val(), user_resolver: $('[name=user_resolver]').val()},
+            data: {url: url, record_type: record_type, user_resolver: user_resolver},
             success: function(data) {
 
+                set_query_string('dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
                 post_success(data);
 
             },
@@ -194,13 +202,17 @@ function submit_form() {
 
     }else if (classes.contains("subnet")){
 
+        var ip_address = $('[name=ip_address]').val();
+        var subnet_mask = $('[name=subnet_mask]').val();
+
         $.ajax({
             url: 'subnet',
             type: 'post',
             cache: false,
-            data: {ip_address: $('[name=ip_address]').val(), subnet_mask: $('[name=subnet_mask]').val()},
+            data: {ip_address: ip_address, subnet_mask: subnet_mask},
             success: function(data) {
 
+                set_query_string('subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
                 post_success(data);
             
             },
@@ -211,13 +223,16 @@ function submit_form() {
 
     }else if (classes.contains("oui")){
 
+        var mac_address = $('[name=mac_address]').val();
+
         $.ajax({
             url: 'oui',
             type: 'post',
             cache: false,
-            data: $('[name=mac_address]'),
+            data: {mac_address: mac_address},
             success: function(data) {
 
+                set_query_string('oui?mac_address=' + mac_address);
                 post_success(data);
             
             },
@@ -228,13 +243,16 @@ function submit_form() {
 
     }else if (classes.contains("ping")){
 
+        var hostname = $('[name=hostname]').val();
+
         $.ajax({
             url: 'ping',
             type: 'post',
             cache: false,
-            data: $('[name=hostname]'),
+            data: {hostname: hostname},
             success: function(data) {
 
+                set_query_string('ping?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -245,13 +263,16 @@ function submit_form() {
 
     }else if (classes.contains("traceroute")){
 
+        var hostname = $('[name=hostname]').val();
+
         $.ajax({
             url: 'traceroute',
             type: 'post',
             cache: false,
-            data: $('[name=hostname]'),
+            data: {hostname: hostname},
             success: function(data) {
 
+                set_query_string('traceroute?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -283,7 +304,6 @@ function update_term(term_data) {
 
     var term = document.getElementById("term");
     term.scrollTop = term.scrollHeight;
-
 }
 
 // loads the form above the terminal box
@@ -356,3 +376,7 @@ function response_navbar() {
         element.className = "navbar";
     }
 } 
+
+function set_query_string(url_location) {
+    window.history.pushState(null, null, url_location)
+}

@@ -1,5 +1,5 @@
 import dns.resolver
-from .config import DNS_RESOLVER_LIST, DNS_ROOT_SERVERS
+from .config import DNS_RESOLVER_LIST, DNS_ROOT_SERVERS, DNS_RECORD_TYPES
 
 
 def dnslookup(hostname, user_resolver, record_type):
@@ -7,16 +7,16 @@ def dnslookup(hostname, user_resolver, record_type):
     results = []
     resolvers = []
 
+    if record_type not in DNS_RECORD_TYPES:
+        
+        raise ValueError('No valid record type provided')
+
     dns_resolver = dns.resolver.Resolver()
 
     # if the user selects all resolvers, query all default resolvers (Does not include root servers)
     if user_resolver == 'All':
 
         resolvers = DNS_RESOLVER_LIST
-
-    elif user_resolver == 'Root Servers':
-
-        resolvers = DNS_ROOT_SERVERS
 
     else:
 
@@ -26,6 +26,10 @@ def dnslookup(hostname, user_resolver, record_type):
             if resolver['name'] == user_resolver:
                 
                 resolvers.append(resolver)
+
+    if len(resolvers) == 0:
+
+        raise ValueError('No valid resolver provided')
 
     for resolver in resolvers:
 
