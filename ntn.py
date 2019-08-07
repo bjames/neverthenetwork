@@ -51,25 +51,32 @@ def dns_check():
 
     if request.method == 'POST':
 
-        render_buffer = render_template('tools/dns_results.html',
-                        dns_results = ntndns.dnslookup(request.form['url'], request.form['user_resolver'],request.form['record_type']),
-                        url = request.form['url'], record_type = request.form['record_type'])
+        user_url = request.form['url']
+        user_resolver = request.form['user_resolver']
+        record_type = request.form['record_type']
+
+        render_buffer = get_dns_results(user_url, record_type, user_resolver)
 
         if request.is_xhr:
-            return render_buffer
-        else:
-            return render_template('tools/dns.html', results = render_buffer, dns_record_types = DNS_RECORD_TYPES,
-                                    dns_resolver_list = DNS_RESOLVER_LIST, url = request.form['url'])
 
-    user_url = request.args.get('url') or ''
-    record_type = request.args.get('record_type') or 'A'
-    user_resolver = request.args.get('user_resolver') or 'All'
+            return render_buffer
+
+        else:
+
+            return render_template('tools/dns.html', results = render_buffer, dns_record_types = DNS_RECORD_TYPES,
+                                    dns_resolver_list = DNS_RESOLVER_LIST, url = user_url)
+
 
     if request.is_xhr:
 
         return render_template('tools/dns_app.html', dns_record_types = DNS_RECORD_TYPES, dns_resolver_list = DNS_RESOLVER_LIST)
 
     else:
+
+        # handle query strings
+        user_url = request.args.get('url') or ''
+        record_type = request.args.get('record_type') or 'A'
+        user_resolver = request.args.get('user_resolver') or 'All'
 
         if user_url != '':
 
