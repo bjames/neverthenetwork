@@ -107,25 +107,8 @@ def get_dns_results(user_url, record_type, user_resolver):
 def curl():
 
     if request.method == 'POST':
-        headers, status_code, elapsed_time = ntncurl.curl(request.form['url'])
-        
-        render_buffer = render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = request.form['url'])
-        
-        # 
-        if request.form.get('follow_redirects') == 'on' or (request.is_xhr and 'true' in request.form['follow_redirects']):
 
-            counter = 1        
-
-            while status_code == 301 or status_code == 302 or status_code == 303 or status_code == 307 or status_code == 308:
-                new_url = headers['location']
-                headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
-                render_buffer += render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
-                render_buffer += ' Redirect Count {}\n'.format(counter)
-                counter += 1
-
-                if counter == 30:
-
-                    render_buffer += 'MAX REDIRECTS EXCEEDED'
+        render_buffer = get_curl_results(request.form['url'], request.form.get('follow_redirects'))
 
         if request.is_xhr:
             return render_buffer
@@ -133,27 +116,88 @@ def curl():
             return render_template('tools/curl.html', results = render_buffer, url = request.form['url'])
 
     if request.is_xhr:
-        return render_template('tools/curl_app.html')
-    else:
-        return render_template('tools/curl.html')
 
+        return render_template('tools/curl_app.html')
+
+    else:
+
+        # handle query strings
+        user_url = request.args.get('url') or ''
+        follow_redirects = request.args.get('follow_redirects') or 'false'
+
+        if user_url != '':
+
+            render_buffer = get_curl_results(user_url, follow_redirects)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/curl.html', results = render_buffer, url = user_url)
+
+def get_curl_results(user_url, follow_redirects):
+
+    headers, status_code, elapsed_time = ntncurl.curl(user_url)
+
+    render_buffer = render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = user_url)
+    
+    # follow_redirects may be on or true/false depending on whether the request comes from ajax or directly
+    if follow_redirects == 'on' or follow_redirects == 'true':
+
+        counter = 1        
+
+        while status_code == 301 or status_code == 302 or status_code == 303 or status_code == 307 or status_code == 308:
+            new_url = headers['location']
+            headers, status_code, elapsed_time = ntncurl.curl(headers['location'])
+            render_buffer += render_template('tools/curl_results.html', headers = headers, status_code = status_code, elapsed_time = elapsed_time, url = new_url)
+            render_buffer += ' Redirect Count {}\n'.format(counter)
+            counter += 1
+
+            if counter == 30:
+
+                render_buffer += 'MAX REDIRECTS EXCEEDED'
+
+    return render_buffer
 
 @app.route('/tools/subnet', methods=['GET', 'POST'])
 def subnet():
+
     if request.method == 'POST':
+
+        ip_address = request.form['ip_address']
+        subnet_mask = request.form['subnet_mask']
         
-        render_buffer = render_template('tools/subnet_results.html', results = ntnsubnet.subnet(request.form['ip_address'], request.form['subnet_mask']),
-                                        ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
+        render_buffer = get_subnet_results(ip_address, subnet_mask)
 
         if request.is_xhr:
             return render_buffer
         else:
-            return render_template('tools/subnet.html', results = render_buffer, ip_address = request.form['ip_address'], subnet_mask = request.form['subnet_mask'])
+            return render_template('tools/subnet.html', results = render_buffer, ip_address = ip_address, subnet_mask = subnet_mask)
         
     if request.is_xhr:
         return render_template('tools/subnet_app.html')
     else:
-        return render_template('tools/subnet.html')
+
+        # handle query strings
+        ip_address = request.args.get('ip_address') or ''
+        subnet_mask = request.args.get('subnet_mask') or ''
+
+        if ip_address != '':
+
+            render_buffer = get_subnet_results(ip_address, subnet_mask)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/subnet.html', results = render_buffer, ip_address = ip_address, subnet_mask = subnet_mask)
+        
+
+def get_subnet_results(ip_address, subnet_mask):
+
+    return render_template('tools/subnet_results.html', results = ntnsubnet.subnet(ip_address, subnet_mask),
+                                        ip_address = ip_address, subnet_mask = subnet_mask)
+
 
 @app.route('/tools/oui', methods=['GET', 'POST'])
 def oui():
