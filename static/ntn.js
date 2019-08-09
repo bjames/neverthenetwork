@@ -29,7 +29,7 @@ $(document).ready(function() {
     })
 
     // navbar clicks are handled here
-    $('#dns_nav').click(function(){
+    $('#dns_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('dns', 'DNS');
@@ -37,7 +37,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#subnet_nav').click(function(){
+    $('#subnet_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('subnet', 'Subnet');
@@ -45,7 +45,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#curl_nav').click(function(){
+    $('#curl_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('curl', 'cURL');
@@ -53,7 +53,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#oui_nav').click(function(){
+    $('#oui_nav').click(function(event){
         event.preventDefault(event);
         active(this)
         load_app('oui', 'OUI');
@@ -61,7 +61,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#ping_nav').click(function(){
+    $('#ping_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('ping', 'Ping');
@@ -69,7 +69,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#traceroute_nav').click(function(){
+    $('#traceroute_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('traceroute', 'Traceroute');
@@ -77,7 +77,7 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
-    $('#whois_nav').click(function(){
+    $('#whois_nav').click(function(event){
         event.preventDefault(event);
         active(this);
         load_app('whois', 'Whois');
