@@ -1,4 +1,4 @@
-from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubip, ntnoui, ntnmodels
+from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubip, ntnoui, ntnmodels, ntnwhois
 from ntntools.ntndb import db_session
 
 from datetime import datetime
@@ -45,6 +45,58 @@ def main():
 @app.route('/tools', methods=['GET', 'POST'])
 def tools():
     return render_template('tools/tools.html')
+
+@app.route('/tools/whois', methods=['GET', 'POST'])
+def whois():
+
+    if request.method == 'POST':
+        
+        hostname = request.form['hostname']
+
+        render_buffer = get_whois_results(hostname)
+
+        if request.is_xhr:
+
+            return render_buffer
+        
+        else:
+
+            return render_template('tools/whois.html',
+                                    results = render_buffer,
+                                    hostname = hostname)
+
+    if request.is_xhr:
+
+        return render_template('tools/whois_app.html')
+
+    else:
+
+        # handle query strings
+        hostname = request.args.get('hostname') or ''
+
+        if hostname != '':
+
+            try:
+
+                render_buffer = get_whois_results(hostname)
+
+            except ValueError:
+
+                render_buffer = ''
+        
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/whois.html',
+                                results = render_buffer,
+                                hostname = hostname)
+
+def get_whois_results(hostname):
+
+    return render_template('tools/whois_results.html',
+                            results = ntnwhois.ntnwhois(hostname),
+                            hostname = hostname)
 
 @app.route('/tools/dns', methods=['GET', 'POST'])
 def dns_check():
@@ -444,6 +496,11 @@ def sitemap():
 @app.route('/robots.txt')
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
+
+@app.errorhandler(404)
+def page_not_found(e):
+
+    return render_template('404.html'), 404
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

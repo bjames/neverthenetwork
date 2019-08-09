@@ -1,0 +1,14 @@
+
+whois {{ hostname }}
+{{ now.strftime('%FT%H:%M:%SZ') }} 
+___________________________
+{% if results %}
+<table>
+{% for key, value in results.items() %}
+<tr><td><{{ key }}</td>
+{% if value is iterable and value is not string %}</td>{% for subvalue in value %}<td>{{ subvalue }}</td>{% endfor %}
+{% else %}<td>{{ value }}</td>{% endif %}
+{% endfor %}
+</tr>
+</table>
+{% endif %}
