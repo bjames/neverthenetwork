@@ -30,49 +30,49 @@ $(document).ready(function() {
 
     // navbar clicks are handled here
     $('#dns_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('dns', 'DNS');
         enable_watch();
         response_navbar();
     })
     $('#subnet_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('subnet', 'Subnet');
         disable_watch();
         response_navbar();
     })
     $('#curl_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
     })
     $('#oui_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this)
         load_app('oui', 'OUI');
         disable_watch();
         response_navbar();
     })
     $('#ping_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('ping', 'Ping');
         enable_watch();
         response_navbar();
     })
     $('#traceroute_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('traceroute', 'Traceroute');
         enable_watch();
         response_navbar();
     })
     $('#whois_nav').click(function(){
-        event.preventDefault();
+        event.preventDefault(event);
         active(this);
         load_app('whois', 'Whois');
         enable_watch();
@@ -177,7 +177,7 @@ function submit_form() {
             cache: false,
             data: {url: url, follow_redirects: follow_redirects},
             success: function(data) {
-                set_query_string('/tools/curl?url=' + url + '&follow_redirects=' + follow_redirects);
+                set_location('/tools/curl?url=' + url + '&follow_redirects=' + follow_redirects);
                 post_success(data);
             },
             error: function() {
@@ -198,7 +198,7 @@ function submit_form() {
             data: {url: url, record_type: record_type, user_resolver: user_resolver},
             success: function(data) {
 
-                set_query_string('/tools/dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
+                set_location('/tools/dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
                 post_success(data);
 
             },
@@ -219,7 +219,7 @@ function submit_form() {
             data: {ip_address: ip_address, subnet_mask: subnet_mask},
             success: function(data) {
 
-                set_query_string('/tools/subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
+                set_location('/tools/subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
                 post_success(data);
             
             },
@@ -239,7 +239,7 @@ function submit_form() {
             data: {mac_address: mac_address},
             success: function(data) {
 
-                set_query_string('/tools/oui?mac_address=' + mac_address);
+                set_location('/tools/oui?mac_address=' + mac_address);
                 post_success(data);
             
             },
@@ -259,7 +259,7 @@ function submit_form() {
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('/tools/ping?hostname=' + hostname);
+                set_location('/tools/ping?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -279,7 +279,7 @@ function submit_form() {
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('/tools/traceroute?hostname=' + hostname);
+                set_location('/tools/traceroute?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -298,7 +298,7 @@ function submit_form() {
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('/tools/whois?hostname=' + hostname);
+                set_location('/tools/whois?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -337,39 +337,11 @@ function load_app(app, title) {
     $('#app').load('/tools/'+ app + ' #app');
     active($('#' + app + '_nav'));
     document.title = 'NTN - '+ title;
+    set_location('/tools/' + app)
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
 function load_anchor() {
-
-    switch ($(location).attr('hash')) {
-        case '#curl':
-            load_app('curl', 'cURL');
-            enable_watch();
-            return;
-        case '#dns':
-            load_app('dns', 'DNS');
-            enable_watch();
-            return;
-        case '#subnet':
-            load_app('subnet', 'Subnet');
-            return;
-        case '#oui':
-            load_app('oui', 'OUI');
-            return;
-        case '#ping':
-            load_app('ping', 'Ping');
-            enable_watch();
-            return;
-        case '#traceroute':
-            load_app('traceroute', 'Traceroute');
-            enable_watch();
-            return;
-        case '#whois':
-            load_app('whois', 'Whois');
-            enable_watch();
-            return;
-    }
 
     switch ($(location).attr('pathname')) {
         case '/tools/curl':
@@ -409,6 +381,6 @@ function response_navbar() {
     }
 } 
 
-function set_query_string(url_location) {
+function set_location(url_location) {
     window.history.pushState(null, null, url_location)
 }
