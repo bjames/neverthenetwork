@@ -172,12 +172,12 @@ function submit_form() {
         var follow_redirects = $('[name=follow_redirects]').is(':checked');
 
         $.ajax({
-            url: 'curl',
+            url: '/tools/curl',
             type: 'post',
             cache: false,
             data: {url: url, follow_redirects: follow_redirects},
             success: function(data) {
-                set_query_string('curl?url=' + url + '&follow_redirects=' + follow_redirects);
+                set_query_string('/tools/curl?url=' + url + '&follow_redirects=' + follow_redirects);
                 post_success(data);
             },
             error: function() {
@@ -192,13 +192,13 @@ function submit_form() {
         var user_resolver = $('[name=user_resolver]').val();
 
         $.ajax({
-            url: 'dns',
+            url: '/tools/dns',
             type: 'post',
             cache: false,
             data: {url: url, record_type: record_type, user_resolver: user_resolver},
             success: function(data) {
 
-                set_query_string('dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
+                set_query_string('/tools/dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
                 post_success(data);
 
             },
@@ -213,13 +213,13 @@ function submit_form() {
         var subnet_mask = $('[name=subnet_mask]').val();
 
         $.ajax({
-            url: 'subnet',
+            url: '/tools/subnet',
             type: 'post',
             cache: false,
             data: {ip_address: ip_address, subnet_mask: subnet_mask},
             success: function(data) {
 
-                set_query_string('subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
+                set_query_string('/tools/subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
                 post_success(data);
             
             },
@@ -233,13 +233,13 @@ function submit_form() {
         var mac_address = $('[name=mac_address]').val();
 
         $.ajax({
-            url: 'oui',
+            url: '/tools/oui',
             type: 'post',
             cache: false,
             data: {mac_address: mac_address},
             success: function(data) {
 
-                set_query_string('oui?mac_address=' + mac_address);
+                set_query_string('/tools/oui?mac_address=' + mac_address);
                 post_success(data);
             
             },
@@ -253,13 +253,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'ping',
+            url: '/tools/ping',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('ping?hostname=' + hostname);
+                set_query_string('/tools/ping?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -273,13 +273,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'traceroute',
+            url: '/tools/traceroute',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('traceroute?hostname=' + hostname);
+                set_query_string('/tools/traceroute?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -292,13 +292,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'whois',
+            url: '/tools/whois',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('whois?hostname=' + hostname);
+                set_query_string('/tools/whois?hostname=' + hostname);
                 post_success(data);
             
             },
