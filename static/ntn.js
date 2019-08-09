@@ -70,7 +70,14 @@ $(document).ready(function() {
         load_app('traceroute', 'Traceroute');
         enable_watch();
         response_navbar();
-    })    
+    })
+    $('#whois_nav').click(function(){
+        event.preventDefault();
+        active(this);
+        load_app('whois', 'Whois');
+        enable_watch();
+        response_navbar();
+    })
     $('#clear_scrollback').click(function(){
         $('#term').empty();
     })
@@ -280,6 +287,25 @@ function submit_form() {
                 post_failed();
             }
         });
+    }else if (classes.contains("whois")){
+
+        var hostname = $('[name=hostname]').val();
+
+        $.ajax({
+            url: 'whois',
+            type: 'post',
+            cache: false,
+            data: {hostname: hostname},
+            success: function(data) {
+
+                set_query_string('whois?hostname=' + hostname);
+                post_success(data);
+            
+            },
+            error: function() {
+                post_failed();
+            }
+        });
     }
 
 }
@@ -311,7 +337,6 @@ function load_app(app, title) {
     $('#app').load(app + ' #app');
     active($('#' + app + '_nav'));
     document.title = 'NTN - '+ title;
-    window.location.href='/tools/#' + app;
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
@@ -340,6 +365,10 @@ function load_anchor() {
             load_app('traceroute', 'Traceroute');
             enable_watch();
             return;
+        case '#whois':
+            load_app('whois', 'Whois');
+            enable_watch();
+            return;
     }
 
     switch ($(location).attr('pathname')) {
@@ -364,6 +393,9 @@ function load_anchor() {
         case '/tools/traceroute':
             enable_watch();
             active($('#traceroute_nav'));
+            return;
+        case '/tools/whois':
+            active($('#whois_nav'));
             return;
     }
 }
