@@ -35,6 +35,7 @@ $(document).ready(function() {
         load_app('dns', 'DNS');
         enable_watch();
         response_navbar();
+        return false;
     })
     $('#subnet_nav').click(function(){
         event.preventDefault(event);
@@ -42,6 +43,7 @@ $(document).ready(function() {
         load_app('subnet', 'Subnet');
         disable_watch();
         response_navbar();
+        return false;
     })
     $('#curl_nav').click(function(){
         event.preventDefault(event);
@@ -49,6 +51,7 @@ $(document).ready(function() {
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
+        return false;
     })
     $('#oui_nav').click(function(){
         event.preventDefault(event);
@@ -56,6 +59,7 @@ $(document).ready(function() {
         load_app('oui', 'OUI');
         disable_watch();
         response_navbar();
+        return false;
     })
     $('#ping_nav').click(function(){
         event.preventDefault(event);
@@ -63,6 +67,7 @@ $(document).ready(function() {
         load_app('ping', 'Ping');
         enable_watch();
         response_navbar();
+        return false;
     })
     $('#traceroute_nav').click(function(){
         event.preventDefault(event);
@@ -70,6 +75,7 @@ $(document).ready(function() {
         load_app('traceroute', 'Traceroute');
         enable_watch();
         response_navbar();
+        return false;
     })
     $('#whois_nav').click(function(){
         event.preventDefault(event);
@@ -77,7 +83,9 @@ $(document).ready(function() {
         load_app('whois', 'Whois');
         enable_watch();
         response_navbar();
+        return false;
     })
+    
     $('#clear_scrollback').click(function(){
         $('#term').empty();
     })
