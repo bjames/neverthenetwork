@@ -114,7 +114,7 @@ img {
   outline: none;
   color: white;
   padding: 10px 10px;
-  background-color: inherit;
+  background-color: #333;
   font-family: inherit;
   margin: 0;
 }

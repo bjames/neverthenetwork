@@ -29,55 +29,63 @@ $(document).ready(function() {
     })
 
     // navbar clicks are handled here
-    $('#dns_nav').click(function(){
-        event.preventDefault();
+    $('#dns_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('dns', 'DNS');
         enable_watch();
         response_navbar();
+        return false;
     })
-    $('#subnet_nav').click(function(){
-        event.preventDefault();
+    $('#subnet_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('subnet', 'Subnet');
         disable_watch();
         response_navbar();
+        return false;
     })
-    $('#curl_nav').click(function(){
-        event.preventDefault();
+    $('#curl_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('curl', 'cURL');
         enable_watch();
         response_navbar();
+        return false;
     })
-    $('#oui_nav').click(function(){
-        event.preventDefault();
+    $('#oui_nav').click(function(event){
+        event.preventDefault(event);
         active(this)
         load_app('oui', 'OUI');
         disable_watch();
         response_navbar();
+        return false;
     })
-    $('#ping_nav').click(function(){
-        event.preventDefault();
+    $('#ping_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('ping', 'Ping');
         enable_watch();
         response_navbar();
+        return false;
     })
-    $('#traceroute_nav').click(function(){
-        event.preventDefault();
+    $('#traceroute_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('traceroute', 'Traceroute');
         enable_watch();
         response_navbar();
+        return false;
     })
-    $('#whois_nav').click(function(){
-        event.preventDefault();
+    $('#whois_nav').click(function(event){
+        event.preventDefault(event);
         active(this);
         load_app('whois', 'Whois');
         enable_watch();
         response_navbar();
+        return false;
     })
+    
     $('#clear_scrollback').click(function(){
         $('#term').empty();
     })
@@ -172,12 +180,12 @@ function submit_form() {
         var follow_redirects = $('[name=follow_redirects]').is(':checked');
 
         $.ajax({
-            url: 'curl',
+            url: '/tools/curl',
             type: 'post',
             cache: false,
             data: {url: url, follow_redirects: follow_redirects},
             success: function(data) {
-                set_query_string('curl?url=' + url + '&follow_redirects=' + follow_redirects);
+                set_location('/tools/curl?url=' + url + '&follow_redirects=' + follow_redirects);
                 post_success(data);
             },
             error: function() {
@@ -192,13 +200,13 @@ function submit_form() {
         var user_resolver = $('[name=user_resolver]').val();
 
         $.ajax({
-            url: 'dns',
+            url: '/tools/dns',
             type: 'post',
             cache: false,
             data: {url: url, record_type: record_type, user_resolver: user_resolver},
             success: function(data) {
 
-                set_query_string('dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
+                set_location('/tools/dns?url=' + url + '&record_type=' + record_type + '&user_resolver=' + user_resolver);
                 post_success(data);
 
             },
@@ -213,13 +221,13 @@ function submit_form() {
         var subnet_mask = $('[name=subnet_mask]').val();
 
         $.ajax({
-            url: 'subnet',
+            url: '/tools/subnet',
             type: 'post',
             cache: false,
             data: {ip_address: ip_address, subnet_mask: subnet_mask},
             success: function(data) {
 
-                set_query_string('subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
+                set_location('/tools/subnet?ip_address=' + ip_address + '&subnet_mask=' + subnet_mask);
                 post_success(data);
             
             },
@@ -233,13 +241,13 @@ function submit_form() {
         var mac_address = $('[name=mac_address]').val();
 
         $.ajax({
-            url: 'oui',
+            url: '/tools/oui',
             type: 'post',
             cache: false,
             data: {mac_address: mac_address},
             success: function(data) {
 
-                set_query_string('oui?mac_address=' + mac_address);
+                set_location('/tools/oui?mac_address=' + mac_address);
                 post_success(data);
             
             },
@@ -253,13 +261,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'ping',
+            url: '/tools/ping',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('ping?hostname=' + hostname);
+                set_location('/tools/ping?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -273,13 +281,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'traceroute',
+            url: '/tools/traceroute',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('traceroute?hostname=' + hostname);
+                set_location('/tools/traceroute?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -292,13 +300,13 @@ function submit_form() {
         var hostname = $('[name=hostname]').val();
 
         $.ajax({
-            url: 'whois',
+            url: '/tools/whois',
             type: 'post',
             cache: false,
             data: {hostname: hostname},
             success: function(data) {
 
-                set_query_string('whois?hostname=' + hostname);
+                set_location('/tools/whois?hostname=' + hostname);
                 post_success(data);
             
             },
@@ -334,42 +342,14 @@ function update_term(term_data) {
 
 // loads the form above the terminal box
 function load_app(app, title) {
-    $('#app').load(app + ' #app');
+    $('#app').load('/tools/'+ app + ' #app');
     active($('#' + app + '_nav'));
     document.title = 'NTN - '+ title;
+    set_location('/tools/' + app)
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded
 function load_anchor() {
-
-    switch ($(location).attr('hash')) {
-        case '#curl':
-            load_app('curl', 'cURL');
-            enable_watch();
-            return;
-        case '#dns':
-            load_app('dns', 'DNS');
-            enable_watch();
-            return;
-        case '#subnet':
-            load_app('subnet', 'Subnet');
-            return;
-        case '#oui':
-            load_app('oui', 'OUI');
-            return;
-        case '#ping':
-            load_app('ping', 'Ping');
-            enable_watch();
-            return;
-        case '#traceroute':
-            load_app('traceroute', 'Traceroute');
-            enable_watch();
-            return;
-        case '#whois':
-            load_app('whois', 'Whois');
-            enable_watch();
-            return;
-    }
 
     switch ($(location).attr('pathname')) {
         case '/tools/curl':
@@ -409,6 +389,6 @@ function response_navbar() {
     }
 } 
 
-function set_query_string(url_location) {
+function set_location(url_location) {
     window.history.pushState(null, null, url_location)
 }

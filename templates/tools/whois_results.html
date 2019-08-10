@@ -2,11 +2,68 @@
 whois {{ hostname }}
 {{ now.strftime('%FT%H:%M:%SZ') }} 
 ___________________________
-{% if results %}
+{% if results.query %}
+<table>
+ASN Information
+<tr><td>ASN</td><td>AS{{ results.asn }}</td></tr>
+<tr><td>CIDR</td><td>{{ results.asn_cidr }}</td></tr>
+<tr><td>Country Code</td><td>{{ results.asn_country_code }}</td></tr>
+<tr><td>Allocation Date</td><td>{{ results.asn_date }}</td></tr>
+<tr><td>Registry</td><td>{{ results.asn_registry }}</td></tr>
+<tr><td>ASN Description</td><td>{{ results.asn_description }}</td></tr>
+</table>
+Network Information
+<table>
+<tr><td>CIDR</td><td>{{ results.network.cidr }}</td></tr>
+<tr><td>Country</td><td>{{ results.network.country }}</td></tr>
+<tr><td>Events</td>
+{% for event in results.network.events | reverse %}{% if loop.index > 1 %}<tr><td></td>{% endif %}
+<td>Event #</td><td>{{ loop.index }}</td></tr>
+<tr><td></td><td>Action</td><td>{{ event.action }}</td></tr>
+<tr><td></td><td>Actor</td><td>{{ event.actor }}</td></tr>
+<tr><td></td><td>Timestamp</td><td>{{ event.timestamp }}</td></tr>
+{% endfor %}
+<tr><td>Type</td><td>{{ results.network.type }}</td></tr>
+<tr><td>Handle</td><td>{{ results.network.handle }}</td></tr>
+<tr><td>Parent Handle</td><td>{{ results.network.parent_handle }}</td></tr>
+<tr><td>IP Version</td><td>{{ results.network.ip_version }}</td></tr>
+<tr><td>First Host</td><td>{{ results.network.start_address }}</td></tr>
+<tr><td>Last Host</td><td>{{ results.network.end_address }}</td></tr>
+{% if results.links %}<tr><td>Links</td>
+{% for link in results.network.link %}{% if loop.index > 1 %}<tr><td></td>{% endif %}
+<td>{{ link }}</td></tr>
+{% endfor %}{% endif %}
+<tr><td>Name</td><td>{{ results.network.name }}</td></tr>
+<tr><td>Notices</td>
+{% for notice in results.network.notices %}{% if loop.index > 1 %}<tr><td></td>{% endif %}
+<td>Notice #</td><td>{{ loop.index }}</td></tr>
+<tr><td></td><td>Title</td><td>{{ notice.title }}</td></tr>
+<tr><td></td><td>Description</td><td>{{ notice.description }}</td></tr>
+<tr><td></td><td>Links</td><td>{% if notice.links %}{% for link in notice.links %}{{ link }} {% endfor %}{% endif %}</td></tr>
+{% endfor %}
+{% if results.network.remarks %}
+<tr><td>Remarks</td>
+{% for remark in results.network.remarks %}{% if loop.index > 1 %}<tr><td></td>{% endif %}
+<td>Remark #</td><td>{{ loop.index }}</td></tr>
+<tr><td></td><td>Title</td><td>{{ remark.title }}</td></tr>
+<tr><td></td><td>Description</td><td>{{ remark.description }}</td></tr>
+<tr><td></td><td>Links</td><td>{% if remark.links %}{% for link in remark.links %}{{ link }} {% endfor %}{% endif %}</td></tr>
+{% endfor %}
+{% endif %}
+</table>
+<table>
+WHOIS Information
+{% for object in results.objects %}
+{{ object }}
+{{ object.contact }}
+<tr><td>Contact</td><td>Address</td></tr>
+{% endfor %}
+</table>
+{% else %}
 <table>
 {% for key, value in results.items() %}
-<tr><td><{{ key }}</td>
-{% if value is iterable and value is not string %}</td>{% for subvalue in value %}<td>{{ subvalue }}</td>{% endfor %}
+<tr><td>{{ key }}</td>
+{% if value is iterable and value is not string %}{% for subvalue in value %}{% if loop.index > 1 %}<tr><td></td>{% endif %}<td>{{ subvalue }}</td></tr>{% endfor %}
 {% else %}<td>{{ value }}</td>{% endif %}
 {% endfor %}
 </tr>
