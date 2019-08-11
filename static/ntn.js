@@ -81,6 +81,7 @@ $(document).ready(function() {
         event.preventDefault(event);
         active(this);
         load_app('whois', 'Whois');
+        disable_watch();
         response_navbar();
         return false;
     })
