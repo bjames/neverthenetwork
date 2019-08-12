@@ -5,8 +5,20 @@
 <div class="title_block">
         <div class="title">{{ page.title }}</div>
         <div class="subtitle">By {{ page.author }} on {{ page.published }}</div>
-    </div>
-    <div class="note">
+</div>
+<div class="note">
     {{ page.html|safe }}
 </div>
+<div id='discourse-comments'></div>
+
+<script type="text/javascript">
+  DiscourseEmbed = { discourseUrl: 'https://forum.neverthenetwork.com/',
+                     discourseEmbedUrl: {{ request.url }} };
+
+  (function() {
+    var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+    d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+  })();
+</script>
 {% endblock %}
