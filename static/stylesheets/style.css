@@ -210,6 +210,11 @@ table {
   color: #333;
 }
 
+#discourse-comments {
+  margin: auto;
+  width: 70%;
+}
+
 .note h1{
   text-align: center;
 }
@@ -487,7 +492,11 @@ table {
     }
 
     .note {
-      width: 90%
+      width: 90%;
+    }
+
+    #discourse-comments {
+      width: 90%;
     }
     
     .note img {
