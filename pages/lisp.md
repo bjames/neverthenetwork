@@ -33,13 +33,11 @@ _Note both RLOCs and EIDs are written using the traditional dotted decimal forma
 
 !NEEDS REVIEW
 
-LISP works by replacing IP addresses with two separate numbers, Routing Locators (RLOCs) and Endpoint Identifiers (EIDs). RLOCs are assigned based on region, whereas EIDs are assigned to specific endpoints. RLOCs are routable (using LISP), EIDs are not. RLOCs and EIDs are both 32 bit integers represented exactly like IP addresses (Note: These may also be represented as 128-bit integers, like IPv6). 
+LISP works by replacing IP addresses with two separate numbers, Routing Locators (RLOCs) and Endpoint Identifiers (EIDs). RLOCs are assigned based on region, whereas EIDs are assigned to specific endpoints. RLOCs are routable throughout a single AS, EIDs are not. RLOCs and EIDs are both 32 bit integers represented exactly like IP addresses (Note: These may also be represented as 128-bit integers, like IPv6). 
 
 ## Communication between endpoints
 
-LISP endpoints speak IP, exactly like they do today. From the perspective of LISP routers, each endpoint has an EID, but from the perspective of the endpoint itself, it just has an IP address.
-
-LISP routers also continue to speak IP. Towards other LISP routers, they forward the LISP encapsulated packet using the destination RLOC as the destination IP address. Towards endpoints, they forward standard IP packets. 
+LISP endpoints continue to speak IP exactly like they do today. From the perspective of a LISP router, each endpoint has an EID, but from the perspective of the endpoint itself, it has an IP address. In addition, endpoints only send traffic to EIDs. The general flow for a packet sent from an endpoint is (1) the endpoint sends a packet destined to an EID, (2) the LISP router receives the packet and looks up the destination EID in the EID-to-RLOC database, (3) the router encapsulates the packet and forwards it to the destination RLOC and (4) the destination router decapsulates the packet and forwards it to the destination endpoint.
 
 ### The EID-to-RLOC database
 
