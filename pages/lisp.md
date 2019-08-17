@@ -1,8 +1,9 @@
-title: Don't use FHRPs without Authentication
+title: LISP Overview
 category:
 - Route/Switch
 author: Brandon James
-summary: FHRPs have obvious benefits, but a misconfiguration could allow an attacker to MiTM your traffic.
+summary: If you're a Network Engineer, you've probably heard of LISP. You may be aware that SDN solutions such as Cisco DNA use it, you may have heard that it allows subnets to be used in multiple locations (without NAT) and you might even know that it's existence is owed largely to routing table growth in the default-free zone. However, if you aren't in the provider space, you've probably never touched it and unless you've bothered to learn about it in your free time, it's unlikely that you fully understand why it exists or what it does. 
+
 
 If you're a Network Engineer, you've probably heard of LISP. You may be aware that SDN solutions such as Cisco DNA use it, you may have heard that it allows subnets to be used in multiple locations (without NAT) and you might even know that it's existence is owed largely to routing table growth in the default-free zone. However, if you aren't in the provider space, you've probably never touched it and unless you've bothered to learn about it in your free time, it's unlikely that you fully understand why it exists or what it does. 
 
