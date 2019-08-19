@@ -1,13 +1,13 @@
-title: LISP Overview
+title: LISP - not just for Service Providers
 category:
 - Route/Switch
 author: Brandon James
-summary: If you're a Network Engineer, you've probably heard of LISP. You may be aware that SDN solutions such as Cisco DNA use it, you may have heard that it allows subnets to be used in multiple locations (without NAT) and you might even know that it's existence is owed largely to routing table growth in the default-free zone. However, if you aren't in the provider space, you've probably never touched it and unless you've bothered to learn about it in your free time, it's unlikely that you fully understand why it exists or what it does. 
+summary: 
 
 
 If you're a Network Engineer, you've probably heard of LISP. You may be aware that SDN solutions such as Cisco DNA use it, you may have heard that it allows subnets to be used in multiple locations (without NAT) and you might even know that it's existence is owed largely to routing table growth in the default-free zone. However, if you aren't in the provider space, you've probably never touched it and unless you've bothered to learn about it in your free time, it's unlikely that you fully understand why it exists or what it does. 
 
-# Why it exists
+# Why LISP exists
 
 The Location/Identifier Separation Protocol was formally ratified under [RFC 6830](https://tools.ietf.org/html/rfc6830). I think the following quote from the RFC is the best summary of the problem LISP attempts to solve:
 
