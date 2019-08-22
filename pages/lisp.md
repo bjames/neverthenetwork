@@ -4,12 +4,11 @@ category:
 author: Brandon James
 summary: 
 
+The Locator/ID Separation Protocol or LISP was originally designed for use on the wider Internet, but as the protocol matured it's use has made it's way into the enterprise[^1]. 
 
-If you're a Network Engineer, you've probably heard of LISP. You may be aware that SDN solutions such as Cisco DNA use it, you may have heard that it allows subnets to be used in multiple locations (without NAT) and you might even know that it's existence is owed largely to routing table growth in the default-free zone. However, if you aren't in the provider space, you've probably never touched it and unless you've bothered to learn about it in your free time, it's unlikely that you fully understand why it exists or what it does. 
+# Why LISP Exists
 
-# Why LISP exists
-
-The Location/Identifier Separation Protocol was formally ratified under [RFC 6830](https://tools.ietf.org/html/rfc6830). I think the following quote from the RFC is the best summary of the problem LISP attempts to solve:
+LISP was formally ratified under [RFC 6830](https://tools.ietf.org/html/rfc6830). I think the quote from the RFC is the best summary of the problem LISP solves:
 
 >for routing to be efficient, the [ip] address must be assigned topologically; for collections of devices to be easily and effectively managed, without the need for renumbering in response to topological change (such as that caused by adding or removing attachment points to the network or by mobility events), the address must explicitly not be tied to the topology.
 
@@ -42,6 +41,9 @@ LISP endpoints continue to speak IP exactly like they do today. From the perspec
 
 ### The EID-to-RLOC database
 
-Understanding that LISP uses a database mapping EIDs to RLOCs is probably enough for most network engineers. In order to aid with translation from standard IPv4 routing to LISP, EIDs (and EID-prefixs) can be routable IPv4 addresses (See [RFC 6832](https://tools.ietf.org/html/rfc6832) for how this transition is meant to look). In fact, from the perspective of endpoints nothing changes with LISP, it's still just speaking IP. 
+Understanding that LISP uses a database mapping EIDs to RLOCs is probably enough for most network engineers. In order to aid with translation from standard IPv4 routing to LISP, EIDs (and EID-prefixs) can be routable IPv4 addresses[^2]. In fact, from the perspective of endpoints nothing changes with LISP, it's still just speaking IP. 
  
 
+[^1]: The creators of LISP noted it's potential use in the enterprise. See Dino Farinacci's talk [here](http://www.youtube.com/watch?v=fxdm-Xouu-k)
+
+[^2]: See [RFC 6832](https://tools.ietf.org/html/rfc6832) for how this transition is meant to look
