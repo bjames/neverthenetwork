@@ -82,7 +82,8 @@ LISP operates as similarly to a tunnel using IP-in-IP encapsulation. I've copied
 
 I'm not going to go into detail on the packet format here, just note that the LISP header is sandwiched between the inner and outer IP headers.
 
-## EID-to-RLOC 
+## EID-to-RLOC Database
+
  
 
 [^1]: The creators of LISP noted it's potential use in the enterprise. See Dino Farinacci's talk [here](http://www.youtube.com/watch?v=fxdm-Xouu-k)
