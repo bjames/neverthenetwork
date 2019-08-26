@@ -4,7 +4,7 @@ category:
 author: Brandon James
 summary: 
 
-The Locator/ID Separation Protocol or LISP was originally designed to decrease the size of routing tables in Internet routers. As the protocol matured it made it's way into the enterprise[^1] though solutions like Cisco SDA[^2]. In this article I provide a summary of why LISP exists and how it functions. The purpose of this article isn't to provide a validated design, but to build an awareness around LISP.
+The Locator/ID Separation Protocol or LISP was originally designed to decrease the size of routing tables in Internet routers. As the protocol matured it made it's way into the enterprise[^1] though solutions like Cisco SDA[^2]. In this article I provide a summary of why LISP exists and how it functions. The purpose of this article isn't to cover the protocol in it's entirety, but to build an awareness of how the protocol works.
 
 # Why LISP Exists
 
@@ -187,9 +187,8 @@ A couple things to note. (1) Multiple records may be returned for a single Map-R
 
 ### LISP Map-Register
 
-### LISP Map-Notify
+Map-Register messages are sent by ETRs to register EID-Prefixes to the mapping database.
 
-### LISP Encapsulated Control Message
 
 [^1]: The creators of LISP noted it's potential use in the enterprise. See Dino Farinacci's talk [here](http://www.youtube.com/watch?v=fxdm-Xouu-k)
 
