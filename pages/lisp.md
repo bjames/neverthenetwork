@@ -19,12 +19,6 @@ Unfortunately, this simply isn't how things work. Overtime, ISPs have been force
 # Basic Terms
 
 
-* __Routing Locators (RLOCs)__ - RLOCs are 32 or 128-bit integers used to describe a location
-
-* __Endpoint Identifiers (EIDs)__ - EIDs are 32 or 128-bit integers used to identify an endpoint
-
-_Note: both RLOCs and EIDs are written using the traditional dotted decimal format we use for IPs_
-
 * __Tunnel Routers (xTR)__ - Encapsulates IP packets leaving LISP sites and decapsulates IP packets entering LISP sites.
 	- __Ingress Tunnel Router (ITR)__ - Tunnel Router that performs encapsulation and looks up EID-to-RLOC mappings
 	- __Egress Tunnel Router (ETR)__ - Tunnel Router that performs decapsulation and acts as an authoritative source for EID-to-RLOC mappings
@@ -33,9 +27,9 @@ _Note: both RLOCs and EIDs are written using the traditional dotted decimal form
 
 # How it works
 
-! Provide a better summary here
+LISP replaces IP addresses with Routing Locators (RLOCs) and Endpoint Identifiers (EIDs). RLOCs and EIDs are both 32 or 128-bit integers represented exactly like IPv4 or IPv6 addresses. RLOCs are assigned based on region and EIDs are assigned to specific endpoints. RLOCs should be globally routable IP addresses. The idea here is that RLOCs can be aggregated and EIDs cannot.
 
-LISP works by replacing IP addresses with Routing Locators and Endpoint Identifiers. RLOCs are assigned based on region, whereas EIDs are assigned to specific endpoints. RLOCs are routable throughout an AS, EIDs are not. RLOCs and EIDs are both 32 or 128-bit integers represented exactly like IP addresses. 
+When writing the LISP standard, the authors distinguish between Provider Independent (PI) and Provider Assigned (PA) address. Since PA addresses are assigned to service providers, it can be topographically aggregated. PI addresses might be assigned to a company, university or government and therefore can't be topographically aggregated. If NTN owned a /23 and had a data center in Dallas and a secondary data center in New York, we just increased the number of routes in the internet by two. LISP works around disagre
 
 ## Communication between endpoints
 
@@ -184,10 +178,6 @@ __Map-Reply message format from [RFC 6830](https://tools.ietf.org/html/rfc6830) 
 ```
 
 A couple things to note. (1) Multiple records may be returned for a single Map-Request, the Priority and Weight fields would then be used by the ITR to determine which RLOC to use. Lower priority is preferred. In the case of a tie, the weight is used to determine how load should be shared between the RLOC. The M Priority and M Weight fields are used for multicast traffic. (2) The Record TTL field determines how long the record may be cached.
-
-### LISP Map-Register
-
-Map-Register messages are sent by ETRs to register EID-Prefixes to the mapping database.
 
 
 [^1]: The creators of LISP noted it's potential use in the enterprise. See Dino Farinacci's talk [here](http://www.youtube.com/watch?v=fxdm-Xouu-k)
