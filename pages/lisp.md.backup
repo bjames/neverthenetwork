@@ -2,9 +2,9 @@ title: Locator/ID Separation Protocol - LISP
 category:
 - Route/Switch
 author: Brandon James
-summary: 
+summary: TBA
 
-The Locator/ID Separation Protocol or LISP was originally designed to decrease the size of routing tables in Internet routers. As the protocol matured it made it's way into the enterprise[^1] though solutions like Cisco SDA[^2]. In this article I provide a summary of why LISP exists and how it functions. The purpose of this article isn't to cover the protocol in it's entirety, but to build an awareness of how the protocol works.
+The Locator/ID Separation Protocol or LISP was originally designed to decrease the size of routing tables in Internet routers. As the protocol matured it made it's way into the enterprise[^1] though solutions like Cisco Software Defined Access[^2]. In this article I provide a summary of the problem LISP solves and how LISP functions. The purpose of this article isn't to cover the protocol in it's entirety, but to build an awareness of how the protocol works.
 
 # Why LISP Exists
 
@@ -18,11 +18,11 @@ Unfortunately, this simply isn't how things work. Overtime, ISPs have been force
 
 # How it works
 
-LISP separates Location and Identification by replacing IP addresses with RLOCs (Routing Locators) and EIDs (Endpoint Identifiers). RLOCs are assigned based on region so they can be topographically aggregated. EIDs are assigned to endpoints and don't need to be topographically assigned. When writing the LISP standard, the authors distinguished between Provider Independent (PI) and Provider Assigned (PA) address. Since PA addresses are assigned to service providers, they can be topographically aggregated. PI addresses on the other hand, might be assigned to a company, university or government and therefore can't be topographically aggregated. In the case of the Internet, it would make sense to use PA space for RLOCs and PI space as EIDs.
+LISP separates Location and Identification by replacing IP addresses with RLOCs (Routing Locators) and EIDs (Endpoint Identifiers). RLOCs are assigned to routers based on region so they can be topographically aggregated. EIDs are assigned to endpoints and don't need to be topographically assigned. When writing the LISP standard, the authors distinguished between Provider Independent (PI) and Provider Assigned (PA) address. Since PA addresses are assigned to service providers, they can be topographically aggregated. PI addresses on the other hand, might be assigned to a company, university or government and therefore can't be topographically aggregated. In the case of the Internet, it would make sense to use PA space for RLOCs and PI space as EIDs.
 
 LISP endpoints continue to speak IP exactly like they do today. From the perspective of a LISP router, each endpoint has an EID, but from the perspective of the endpoint itself, it has an IP address. In addition, endpoints only send traffic to EIDs. The general flow for a packet sent from an endpoint is (1) the endpoint sends a packet destined to an EID, (2) the LISP router receives the packet and looks up the destination EID in the EID-to-RLOC database, (3) the router encapsulates the packet and forwards it to the destination RLOC and (4) the destination router decapsulates the packet and forwards it to the destination endpoint.
 
-!PACKET WALK IMAGE
+[![LISP Overview](/static/images/lisp_overview.png "LISP Overview")](/static/images/lisp_overview.png)
 
 LISP can be thought of as a sort of dynamic tunneling protocol where instead of 
 

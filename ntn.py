@@ -462,6 +462,16 @@ def wireless():
                     key=lambda p: p.meta['published'])
     return render_template('notes/notes.html', pages=latest[:10], active='wireless')
 
+@app.route('/notes/unpublished')
+def unpublished():
+    # Articles without a publication date
+    articles = (p for p in pages if 'published' not in p.meta)
+
+    # Sort by title
+    article_list = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['title'])
+    return render_template('notes/notes.html', pages=article_list[:])
+
 @app.route('/notes')
 def notes():
     # Articles are pages with a publication date
