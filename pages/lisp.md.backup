@@ -18,13 +18,87 @@ Unfortunately, this simply isn't how things work. Overtime, ISPs have been force
 
 # How it works
 
-LISP separates Location and Identification by replacing IP addresses with RLOCs (Routing Locators) and EIDs (Endpoint Identifiers). RLOCs are assigned to routers based on region so they can be topographically aggregated. EIDs are assigned to endpoints and don't need to be topographically assigned. When writing the LISP standard, the authors distinguished between Provider Independent (PI) and Provider Assigned (PA) address. Since PA addresses are assigned to service providers, they can be topographically aggregated. PI addresses on the other hand, might be assigned to a company, university or government and therefore can't be topographically aggregated. In the case of the Internet, it would make sense to use PA space for RLOCs and PI space as EIDs.
+LISP separates Location and Identification by replacing IP addresses with RLOCs (Routing Locators) and EIDs (Endpoint Identifiers). RLOCs are assigned to routers based on region so they can be topologically aggregated. EIDs are assigned to endpoints and don't need to be topologically assigned. EIDs are only reachable through the RLOC on the edge of the LISP site where they reside. In contrast with typical IP routing, EID prefixes are not installed in routing tables. Instead LISP uses an EID-to-RLOC database to locate EIDs and deliver packets.
 
-LISP endpoints continue to speak IP exactly like they do today. From the perspective of a LISP router, each endpoint has an EID, but from the perspective of the endpoint itself, it has an IP address. In addition, endpoints only send traffic to EIDs. The general flow for a packet sent from an endpoint is (1) the endpoint sends a packet destined to an EID, (2) the LISP router receives the packet and looks up the destination EID in the EID-to-RLOC database, (3) the router encapsulates the packet and forwards it to the destination RLOC and (4) the destination router decapsulates the packet and forwards it to the destination endpoint.
+LISP endpoints continue to speak IP exactly like they do today. From the perspective of a LISP router, each endpoint has an EID, but from the perspective of the endpoint itself, it has an IP address. In addition, endpoints only send traffic to EIDs. The general flow for a LISP packet is (1) the endpoint sends a packet destined to an EID, (2) the LISP router receives the packet and looks up the destination EID in the EID-to-RLOC database, (3) the router encapsulates the packet and forwards it to the destination RLOC and (4) the destination router decapsulates the packet and forwards it to the destination endpoint.
 
 [![LISP Overview](/static/images/lisp_overview.png "LISP Overview")](/static/images/lisp_overview.png)
 
-LISP can be thought of as a sort of dynamic tunneling protocol where instead of 
+LISP can be thought of as a dynamic tunneling protocol. In fact, LISP data plane packets use IP-in-IP encapsulation where the outer IP header contains the source and destination RLOCs and the inner header contains the source and destination EIDs. As the packet enters the tunnel, the Ingress Tunnel Router (ITR) performs the encapsulation and as the packet leaves the tunnel, the Egress Tunnel Router (ETR) performs the decapsulation. XTRs are LISP routers that can perform both functions. 
+
+## LISP on the Internet
+
+When writing the LISP standard, the authors distinguished between Provider Independent (PI) and Provider Assigned (PA) addresses. Since PA addresses are assigned to service providers, they can be topologically aggregated. PI addresses on the other hand, might be assigned to a company, university or government and therefore aren't necessarily aggregatable. In the case of the Internet, it would make sense to use PA space for RLOCs and PI space as EIDs.
+
+## EID-to-RLOC Resolution
+
+The EID-to-RLOC Mapping service operates similarly to DNS, but instead of domain-to-IP mappings, it provides EID-to-RLOC mappings. The method used to provide mappings in the LISP beta network is called LISP Alternative Logical Topology or LISP+ALT. [RFC 6836](https://tools.ietf.org/html/rfc6836) describes LISP+ALT in detail. There are other standards for LISP databases and all provide a common interface for LISP routers. I'm not going to spend much time discussing the database implementation and instead we will focus on the standard interface they provide.
+
+In addition to the definitions found in [RFC 6830](https://tools.ietf.org/html/rfc6830), [RFC 6833](https://tools.ietf.org/html/rfc6833) defines the Map-Server interface and expands on the message types the interface uses. The message types are summarized below:
+
+### LISP Map-Requests and Map-Replies
+
+Map-Request messages are primarily used to request EID-to-RLOC mappings. Map-Requests originate from an ITR and are sent to Map-Resolvers. If the mapping is in the Map-Resolver's local database, the resolver will respond with a Map-Reply. Otherwise, the resolver may take a couple of different actions. (1) If the resolver can determine the EID does not exist it will respond with a "negative" Map-Reply. (2) If the resolver cannot determine the EID doesn't exist, it will forward the Map-Request to either an authoritative Map-Server or ETR, which will then respond to the request directly.[^3]
+
+__Map-Request message format from [RFC 6830](https://tools.ietf.org/html/rfc6830) section 6.1.2__
+
+```
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |Type=1 |A|M|P|S|p|s|    Reserved     |   IRC   | Record Count  |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Nonce . . .                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         . . . Nonce                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         Source-EID-AFI        |   Source EID Address  ...     |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         ITR-RLOC-AFI 1        |    ITR-RLOC Address 1  ...    |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                              ...                              |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |         ITR-RLOC-AFI n        |    ITR-RLOC Address n  ...    |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     / |   Reserved    | EID mask-len  |        EID-Prefix-AFI         |
+   Rec +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     \ |                       EID-Prefix  ...                         |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                   Map-Reply Record  ...                       |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
+
+A couple things to note. (1) The Map-Reply Record field. This contains the EID-to-RLOC mapping of the source, so the ETR that receives the Map-Request can update its cache upon receipt. (2) The Record Count field, multiple records may be requested in a single datagram.
+
+__Map-Reply message format from [RFC 6830](https://tools.ietf.org/html/rfc6830) section 6.1.3__
+
+```
+        0                   1                   2                   3
+        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |Type=2 |P|E|S|          Reserved               | Record Count  |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         Nonce . . .                           |
+       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       |                         . . . Nonce                           |
+   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |   |                          Record TTL                           |
+   |   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   R   | Locator Count | EID mask-len  | ACT |A|      Reserved         |
+   e   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   c   | Rsvd  |  Map-Version Number   |       EID-Prefix-AFI          |
+   o   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   r   |                          EID-Prefix                           |
+   d   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  /|    Priority   |    Weight     |  M Priority   |   M Weight    |
+   | L +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | o |        Unused Flags     |L|p|R|           Loc-AFI             |
+   | c +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  \|                             Locator                           |
+   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+```
+
+A couple things to note. (1) Multiple records may be returned for a single Map-Request, the Priority and Weight fields would then be used by the ITR to determine which RLOC to use. Lower priority is preferred. In the case of a tie, the weight is used to determine how load should be shared between the RLOC. The M Priority and M Weight fields are used for multicast traffic. (2) The Record TTL field determines how long the record may be cached.
 
 ## LISP Packet Formats
 
@@ -99,76 +173,6 @@ The IPv4 control plane packet format from section 6.1 is copied below. Note that
        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 ```
-
-## EID-to-RLOC Resolution
-
-The EID-to-RLOC Mapping service operates similarly to DNS, but instead of domain-to-IP mappings, it provides EID-to-RLOC mappings. The method used to provide mappings in the LISP beta network is called LISP Alternative Logical Topology or LISP+ALT. [RFC 6836](https://tools.ietf.org/html/rfc6836) describes LISP+ALT in detail. There are other standards for LISP databases and all provide a common interface for LISP routers. I'm not going to spend much time discussing the database implementation and instead we will focus on the standard interface they provide.
-
-In addition to the definitions found in [RFC 6830](https://tools.ietf.org/html/rfc6830), [RFC 6833](https://tools.ietf.org/html/rfc6833) defines the Map-Server interface and expands on the message types the interface uses. The message types are summarized below:
-
-### LISP Map-Requests and Map-Replies
-
-Map-Request messages are primarily used to request EID-to-RLOC mappings. Map-Requests originate from an ITR and are sent to Map-Resolvers. If the mapping is in the Map-Resolver's local database, the resolver will respond with a Map-Reply. Otherwise, the resolver may take a couple of different actions. (1) If the resolver can determine the EID does not exist it will respond with a "negative" Map-Reply. (2) If the resolver cannot determine the EID doesn't exist, it will forward the Map-Request to either an authoritative Map-Server or ETR, which will then respond to the request directly.[^3]
-
-__Map-Request message format from [RFC 6830](https://tools.ietf.org/html/rfc6830) section 6.1.2__
-
-```
-        0                   1                   2                   3
-        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |Type=1 |A|M|P|S|p|s|    Reserved     |   IRC   | Record Count  |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                         Nonce . . .                           |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                         . . . Nonce                           |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |         Source-EID-AFI        |   Source EID Address  ...     |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |         ITR-RLOC-AFI 1        |    ITR-RLOC Address 1  ...    |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                              ...                              |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |         ITR-RLOC-AFI n        |    ITR-RLOC Address n  ...    |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     / |   Reserved    | EID mask-len  |        EID-Prefix-AFI         |
-   Rec +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     \ |                       EID-Prefix  ...                         |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                   Map-Reply Record  ...                       |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
-A couple things to note. (1) The Map-Reply Record field. This contains the EID-to-RLOC mapping of the source, so the ETR that receives the Map-Request can update its cache upon receipt. (2) The Record Count field, multiple records may be requested in a single datagram.
-
-__Map-Reply message format from [RFC 6830](https://tools.ietf.org/html/rfc6830) section 6.1.3__
-
-```
-        0                   1                   2                   3
-        0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |Type=2 |P|E|S|          Reserved               | Record Count  |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                         Nonce . . .                           |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |                         . . . Nonce                           |
-   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |   |                          Record TTL                           |
-   |   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   R   | Locator Count | EID mask-len  | ACT |A|      Reserved         |
-   e   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   c   | Rsvd  |  Map-Version Number   |       EID-Prefix-AFI          |
-   o   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   r   |                          EID-Prefix                           |
-   d   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  /|    Priority   |    Weight     |  M Priority   |   M Weight    |
-   | L +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   | o |        Unused Flags     |L|p|R|           Loc-AFI             |
-   | c +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  \|                             Locator                           |
-   +-> +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
-A couple things to note. (1) Multiple records may be returned for a single Map-Request, the Priority and Weight fields would then be used by the ITR to determine which RLOC to use. Lower priority is preferred. In the case of a tie, the weight is used to determine how load should be shared between the RLOC. The M Priority and M Weight fields are used for multicast traffic. (2) The Record TTL field determines how long the record may be cached.
 
 ## LISP Terms
 
