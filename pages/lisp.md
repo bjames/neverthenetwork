@@ -1,4 +1,4 @@
-title: Locator/ID Separation Protocol - LISP
+title: Locator ID Separation Protocol - LISP
 category:
 - Route/Switch
 published: 2019-09-04
