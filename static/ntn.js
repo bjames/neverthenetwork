@@ -346,7 +346,6 @@ function load_app(app, title) {
     active($('#' + app + '_nav'));
     document.title = 'NTN - '+ title;
     set_location('/tools/' + app)
-    plausible('page')
 }
 
 // allows bookmarks to function - if the request URL is #app, the app is loaded

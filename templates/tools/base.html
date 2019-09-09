@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block head %}<script>plausible('trackPushState')</script>{% endblock %}
 {% block nav %}{% include "tools/nav.html" %}{% endblock %}
 {% block content %}
 <div id="app">{% block app %}{% endblock %}</div>
