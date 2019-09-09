@@ -5,7 +5,7 @@ ___________________________
 {% if results.query %}
 <table>
 ASN Information
-        <tr><td>ASN</td><td>AS{{ results.asn }}</td></tr>
+        <tr><td>ASN</td><td>{{ results.asn }}</td></tr>
         <tr><td>CIDR</td><td>{{ results.asn_cidr }}</td></tr>
         <tr><td>Country Code</td><td>{{ results.asn_country_code }}</td></tr>
         <tr><td>Allocation Date</td><td>{{ results.asn_date }}</td></tr>
