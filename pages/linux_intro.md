@@ -39,11 +39,21 @@ A few general notes on the Linux directory layout.
 
 i) The root of the Linux filesystem is `/` or the root directory (not to be confused with the root user). This is not quite the same as being in the root of the C:\\ drive on a Windows machine. In Linux, all drives are mounted under the root filesystem. 
 
-ii) All users have a home directory, it traditionally resides under `/home/<username>`. The `~` symbol refers to the home directory.
+ii) All users have a home directory, it traditionally resides under `/home/<username>`. The `~` symbol refers to the current users home directory.
 
-iii) When within a folder, you can refer to the folder as `.`. As an example, if you have a file called notes.txt within your home directory, when you are on the CLI and you are in your home directory, you can refer to the file as `./notes.txt`.
+iii) Files and folders can be referenced by either absolute or relative paths. 
 
-iv) All folders except the root directory have a subfolder called `..`. It refers to the parent directory. As an example `~/..` refers to `/home` and `~/../..` refers to `/`. This can be useful for navigation.
+	 * An absolute path is when you refer to the file or folder by it's full path starting at the root directory. As an example, if you have a folder called 'scripts' in your home directory the absolute path to a script within that directory is `/home/bjames/scripts/update_files.sh`. 
+	 
+	 * There a couple ways to refer to a file or folder by relative paths
+	 
+	 	1) Referencing the file or folder without a preceding `/` uses your current working directory as the base directory. Using the script above, the relative path from your home directory would be `scripts/update_files.sh`
+
+     	2) Linux provides two useful shortcuts for relative paths 
+     	
+     		* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
+
+	 		* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
 
 * `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to print include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors alias `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
 
