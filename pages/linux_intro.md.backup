@@ -35,28 +35,27 @@ As you read this article, I encourage you to skim the man pages for the utilitie
 
 ## File Navigation
 
-A few general notes on the Linux directory layout.
+* A few general notes on the Linux directory layout.
 
-i) The root of the Linux filesystem is `/` or the root directory (not to be confused with the root user). This is not quite the same as being in the root of the C:\\ drive on a Windows machine. In Linux, all drives are mounted under the root filesystem. 
+	i) The root of the Linux filesystem is `/` or the root directory (not to be confused with the root user). This is not quite the same as being in the root of the C:\\ drive on a Windows machine. In Linux, all drives are mounted under the root filesystem. 
 
-ii) All users have a home directory, it traditionally resides under `/home/<username>`. The `~` symbol refers to the current users home directory.
+	ii) All users have a home directory, it traditionally resides under `/home/<username>`. The `~` symbol refers to the current users home directory.
 
-iii) Files and folders can be referenced by either absolute or relative paths. 
+	iii) Files and folders can be referenced by either absolute or relative paths. 
 
-	 * An absolute path is when you refer to the file or folder by it's full path starting at the root directory. As an example, if you have a folder called 'scripts' in your home directory the absolute path to a script within that directory is `/home/bjames/scripts/update_files.sh`. 
+	 	 * An absolute path is when you refer to the file or folder by it's full path starting at the root directory. As an example, if you have a folder called 'scripts' in your home directory the absolute path to a script within that directory is `/home/bjames/scripts/update_files.sh`. 
 	 
-	 * There a couple ways to refer to a file or folder by relative paths
+	 	 * There a couple ways to refer to a file or folder by relative paths
 	 
-	 	1) Referencing the file or folder without a preceding `/` uses your current working directory as the base directory. Using the script above, the relative path from your home directory would be `scripts/update_files.sh`
+	 		1) Referencing the file or folder without a preceding `/` uses your current working directory as the base directory. Using the script above, the relative path from your home directory would be `scripts/update_files.sh`
 
-     	2) Linux provides two useful shortcuts for relative paths 
+     		2) Linux provides two useful shortcuts for relative paths 
      	
-     		* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
+     			* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
 
-	 		* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`
+	 			* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
 
 * `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to print include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors alias `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
-
 ```
 [bjames@lwks1 Documents]$ ls -lah
 total 183M
@@ -74,15 +73,119 @@ drwxrwxr-x.  6 bjames bjames 4.0K Jul 12 10:57  Zoom
 ```
 
 * `pwd` Prints the path of the current working directory
-
 ```
 [bjames@lwks1 Documents]$ pwd
 /home/bjames/Documents
 ```
 
-* `cd` Changes the working directory. `cd` by itself takes you back to your home directory.  
+* `cd` Changes the working directory. `cd ~` or just `cd` by itself takes you to your home directory. You can `cd` using absolute paths `cd /var/log/`. You can also `cd` using relative paths `cd scripts` takes you to scripts or `cd ../notes`. 
+
+That covers the basics of navigating on the Linux CLI. Here's an example putting it all together. 
+
+i) We start out in my home directory, which contains 12 folders and no files.
+```
+[bjames@lwks1 ~]$ pwd
+/home/bjames  
+[bjames@lwks1 ~]$ ls
+Desktop    Downloads  Pictures  Public  Templates  Videos
+Documents  Music      Projects  snap    tmp
+```
+
+ii) From there we `cd` to my Projects folder using a relative path 
+```
+[bjames@lwks1 ~]$ cd Projects/
+[bjames@lwks1 Projects]$ ls
+neverthenetwork
+```
+
+iii) If we want to go to my Videos folder, we can do so in three different ways.  3) Just using a relative path. All three are show in order below:
+
+	 1) Returning to the parent folder and then navigating to the Video folder, both using relative paths.
+```
+[bjames@lwks1 Projects]$ pwd
+/home/bjames/Projects
+[bjames@lwks1 Projects]$ cd ..
+[bjames@lwks1 ~]$ cd Videos/
+[bjames@lwks1 Videos]$ pwd
+/home/bjames/Videos
+``` 
+	 2) The absolute path
+```
+[bjames@lwks1 Projects]$ cd /home/bjames/Videos/
+[bjames@lwks1 Videos]$ pwd
+/home/bjames/Videos 
+```
+	 3) A single relative path
+```
+[bjames@lwks1 Projects]$ cd ../Videos/
+[bjames@lwks1 Videos]$ pwd
+/home/bjames/Videos
+```
+
+## OpenSSH
+
+Linux has a built in SSH client, called OpenSSH[^4]. Basic usage is very simple.
+```
+[bjames@lwks1 ~]$ ssh labtoolbox
+bjames@labtoolbox's password: 
+bjames@labtoolbox:~$ 
+```
+You can also specify a username
+```
+[bjames@lwks1 ~]$ ssh root@labtoolbox
+root@labtoolbox's password: 
+root@labtoolbox:~$ 
+```
+__Usability Tip__ most Linux distributions ship with a program called bash-completion installed. If it's installed you can use tab-completion to fill in the hostname based on your known-hosts and ssh-config files. If there are multiple matches it will print out a list of matching hosts. This can be useful if you are having trouble remembering an IP or hostname. 
+
+```
+[bjames@lwks1 ~]$ ssh 172.16.12.1
+172.16.12.127  172.16.12.130  172.16.12.132  172.16.12.137  
+```
+### Logging SSH Sessions
+
+
+### The Known Hosts File
+The first time you log into a device you'll be prompted to add it's RSA key to the known hosts file. If this key ever changes, you'll be presented with an error message.
+```
+[bjames@lwks1 ~]$ ssh 192.168.88.1
+The authenticity of host '192.168.88.1 (192.168.88.1)' can't be established.
+RSA key fingerprint is SHA256:tXxQqN842Uoe/35JLTOOllo5liFu3qOERiid54iIW1Y.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '192.168.88.1' (RSA) to the list of known hosts.
+bjames@192.168.88.1's password: 
+```
+If the key ever changes, you'll be presented with an error message.
+```
+[bjames@lwks1 ~]$ ssh 192.168.88.1
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the RSA key sent by the remote host is
+SHA256:HrknWcZ9j3/gt8TY7iqtsOXgJgEypFzuDD8Mydi5y1o.
+Please contact your system administrator.
+Add correct host key in /home/bjames/.ssh/known_hosts to get rid of this message.
+Offending RSA key in /home/bjames/.ssh/known_hosts:10
+RSA host key for 192.168.88.1 has changed and you have requested strict checking.
+Host key verification failed.
+```
+This can be fixed by manually deleting the key from the known_hosts file or you can use `ssh-keygen -R <hostname>` to remove the key from the file.
+```
+[bjames@lwks1 ~]$ ssh-keygen -R 192.168.88.1
+# Host 192.168.88.1 found: line 10
+/home/bjames/.ssh/known_hosts updated.
+Original contents retained as /home/bjames/.ssh/known_hosts.old
+```
+### SSH Configuration File
+
+### SSH Keys
 
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
 [^3]: As the Free Software Foundation suggests, many, but not all of these are part of the GNU Core Utilities. 
+[^4]: OpenSSH is a very widely used product of the OpenBSD Project, another maker of a FOSS Unix-like operating system. 
+ 
