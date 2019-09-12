@@ -53,11 +53,13 @@ Generally APs should be configured automatically using the WLC, after all that's
             ```
             
             * If your new primary controller is your old secondary controller, this has to be done first
+            
 * Change an APs Group Name 
     ```
     config ap group-name BLG1-AP-GROUP BLG1-FLR1-AP1
     ```
     * config ap group-name _GROUP-NAME_ _AP-NAME_
+    
 * Change an APs Operational Mode
    ```
    config ap mode flexconnect submode none BLG1-FLR1-AP1
