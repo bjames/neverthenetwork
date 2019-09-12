@@ -57,11 +57,13 @@ Generally APs should be configured automatically using the WLC, after all that's
     ```
     config ap group-name BLG1-AP-GROUP BLG1-FLR1-AP1
     ```
+    
          * config ap group-name _GROUP-NAME_ _AP-NAME_
 * Change an APs Operational Mode
    ```
    config ap mode flexconnect submode none BLG1-FLR1-AP1
    ```
+   
        * config ap mode _mode_ submode _submode_ BLG1-FLR1-AP1
           * valid modes are: local, bridge, flex+bridge, flexconnect, monitor, rogue, se-connect, sensor, sniffer
           * valid submodes are: none, wips
