@@ -31,8 +31,8 @@ Requires python 3+. I strongly suggest creating a new virtual environment for us
 3. clone the repository `git clone https://github.com/bjames/netwatch`
 
 4. activate the virtualenv
-   * Linux/OS X `source ./venv/bin/activate`
-   * Windows `venv\Scripts\activate`
+    * Linux/OS X `source ./venv/bin/activate`
+    * Windows `venv\Scripts\activate`
 
 5. install the required libraries `python -m pip install -r netwatch/requirements.txt'
 
