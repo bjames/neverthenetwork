@@ -5,7 +5,7 @@ author: Brandon James
 summary: 
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, all my personal machines run Fedora. One of my favorite things about working with Cisco devices is the great CLI, Linux provides a similar experience for general purpose computing. 
+I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, all my personal machines run Fedora and this website is hosted on Ubuntu. One of my favorite things about working with Cisco devices is the great CLI, Linux provides a similar experience for general purpose computing. 
 
 # Linux CLI Basics
 
@@ -55,7 +55,7 @@ As you read this article, I encourage you to skim the man pages for the utilitie
 
 	 			* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
 
-* `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to print include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors alias `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
+* `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors alias `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
 ```
 [bjames@lwks1 Documents]$ ls -lah
 total 183M
@@ -78,7 +78,7 @@ drwxrwxr-x.  6 bjames bjames 4.0K Jul 12 10:57  Zoom
 /home/bjames/Documents
 ```
 
-* `cd` Changes the working directory. `cd ~` or just `cd` by itself takes you to your home directory. You can `cd` using absolute paths `cd /var/log/`. You can also `cd` using relative paths `cd scripts` takes you to scripts or `cd ../notes`. 
+* `cd` Changes the working directory. `cd ~` or just `cd` by itself takes you to your home directory. You can `cd` using absolute paths `cd /var/log/`. You can also `cd` using relative paths `cd scripts` takes you to scripts or `cd ../notes` takes you to the sibling folder `notes`. 
 
 That covers the basics of navigating on the Linux CLI. Here's an example putting it all together. 
 
@@ -98,7 +98,7 @@ ii) From there we `cd` to my Projects folder using a relative path
 neverthenetwork
 ```
 
-iii) If we want to go to my Videos folder, we can do so in three different ways.  3) Just using a relative path. All three are show in order below:
+iii) If we want to go to my Videos folder, we can do so in a few ways. Three are shown below:
 
 	 1) Returning to the parent folder and then navigating to the Video folder, both using relative paths.
 ```
@@ -144,6 +144,15 @@ __Usability Tip__ most Linux distributions ship with a program called bash-compl
 ```
 ### Logging SSH Sessions
 
+As network engineers we often need to log our ssh sessions to a file. This can be done using the `tee` program as follows.
+
+```
+[bjames@lwks1 ~]$ ssh 172.16.12.127 | tee logfile.log
+```
+
+This is a good time to introduce the concept of `|` or pipes. `ssh` and `tee` are two seperate programs. Linux CLI programs such as `ssh` often read from standard input (commonly called stdin) write to standard output (commonly called stdout). When using a terminal emulator, stdout is printed on the terminal and stdin is input to the terminal. `|` is one of the redirection operators in Linux. In this case, we are redirecting the output of `ssh` to the input of `tee` which in turn writes to logfile.log.
+
+`ssh`, `tee` and output redirection are examples of the first two points of the Unix Philosophy at the top of this page. `ssh` and `tee` are both small programs that do one thing well.  In addition, we've made the output of `ssh` the input of `tee`. Redirection is an important part of effective CLI use.
 
 ### The Known Hosts File
 The first time you log into a device you'll be prompted to add it's RSA key to the known hosts file. If this key ever changes, you'll be presented with an error message.
@@ -181,11 +190,32 @@ Original contents retained as /home/bjames/.ssh/known_hosts.old
 ```
 ### SSH Configuration File
 
+The SSH configuration file is used to control how your system connects to other systems via SSH. There are actually multiple SSH configuration files on most systems. Commonly, `/etc/ssh/ssh_config` will contain some basic system-wide configuration as well as example configuration that has been commented out. On more modern systems, your system-wide SSH configuration will include any `.conf` file in `/etc/ssh/ssh_config.d/`. In addition to the system-wide configuration files, each user can have a configuration file under `~/.ssh/config`. In general I've found it best to edit user configuration files first and system-wide configuration files only when necessary.
+
+The SSH Configuration file has a simple syntax. 
+
+```
+# This is a line comment
+
+Host <hostname, IP or pattern>
+	# any number of options can be listed here
+	Ciphers aes128-ctr
+# Use ssh-keys for all other hosts
+Host *
+	IdentityFile ~/.ssh/id_rsa
+```
+
+__Note:__ The SSH Configuration file has it's own man page, you can read it with `man ssh_config`
+
+
+
+
+
 ### SSH Keys
 
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
 [^3]: As the Free Software Foundation suggests, many, but not all of these are part of the GNU Core Utilities. 
-[^4]: OpenSSH is a very widely used product of the OpenBSD Project, another maker of a FOSS Unix-like operating system. 
+[^4]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
  
