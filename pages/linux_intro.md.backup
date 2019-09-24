@@ -1,13 +1,34 @@
-title: A Brief Introduction to the Linux CLI for Network Engineers
+title: A Network Engineer's Guide to the Linux CLI
 category:
 - Route/Switch
 author: Brandon James
 summary: 
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, all my personal machines run Fedora and this website is hosted on Ubuntu. One of my favorite things about working with Cisco devices is the great CLI, Linux provides a similar experience for general purpose computing. 
+I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, my personal machines run Fedora and this website is hosted on Ubuntu. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing. 
 
-# Linux CLI Basics
+This is meant to be a living document with regular updates. You are reading the first edition of the document, which contains what I believe to be essential knowledge for effective linux CLI use. It is missing a few programs that I believe are important for Network Engineers such as tcpdump and netcat, but rest assured these will be added in the near future. 
+
+# Index
+
+* [The Unix Philosophy](#the-unix-philosophy)
+* [Man Pages](#man-pages)
+* [Navigation](#navigation)
+* [Pagers](#pagers)
+* [Searching with grep, find, locate and which](#searching-with-grep-find-locate-and-which)
+	- [grep](#grep)
+	- [find](#find)
+	- [locate](#locate)  
+	- [which](#which)
+* [Text Manipulation with sed, awk and cat](#text-search-and-manipulation-with-sed-awk-and-cat)
+	- [sed](#sed)
+	- [awk](#awk)
+	- [cat](#cat)
+* [OpenSSH](#openssh)
+* [File Transfer - SCP, FTP, SFTP and HTTP](#file-transfer---scp-ftp-sftp-and-http)
+* [Vim](#vim)
+* [.bashrc and .profilerc](#.bashrc-and-.profilerc)
+* [Change Log](#change-log)
 
 ## The Unix Philosophy
 
@@ -23,17 +44,17 @@ iii) Design and build software, even operating systems, to be tried early, ideal
 
 iv) Use tools in preference to unskilled help to lighten a programming task, even if you have to detour to build the tools and expect to throw some of them out after you've finished using them.
 
-From the perspective of a Linux user, I think it's important to keep the first two in mind. 
+From the perspective of a Linux user, I think it's important to keep the first two in mind. Realizing that the Linux CLI consists of not just commands, but a collection of small programs that can act as input to each other is the first step to Linux mastery.
 
-## Man pages
+## Man Pages
 
 All the commands that you run on the Linux CLI are separate programs[^3], most of these commands have listings in the system manual. To view a man page, simply type `man <utility>` where utility is the name of the command or tool you want to know more about. The `man` program itself even has a man page, type `man man` to try it out.
 
-In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called pagers. Pagers give you a way to view the entire contents of a file without the need for a scrollbar. Try `man less` or `man more` to learn about two other pagers. I'll cover both of these in more detail later.
+In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. Try `man less` or `man more` to learn about two other pagers. I'll cover both of these in more detail later.
 
-As you read this article, I encourage you to skim the man pages for the utilities I mention. 
+As you read this guide, I encourage you to skim the man pages for the utilities I mention. 
 
-## File Navigation
+## Navigation
 
 * A few general notes on the Linux directory layout.
 
@@ -122,6 +143,39 @@ iii) If we want to go to my Videos folder, we can do so in a few ways. Three are
 /home/bjames/Videos
 ```
 
+## Pagers
+
+If you've read many linux guides, you've probably seen someone use `cat file.txt` to print the content of a file to the screen. This does work, but there is a much better solution. `more` and `less` both belong to a class of programs known as pagers. Pagers work by breaking files into pages or screenfuls of data so you don't need to scroll back up to see the rest of your file. The two programs operate similarly, but do have a few differences. 
+
+* `less` - Operates similarly to `vi` and allows forward and backward movement through the file. The output of the file is not copied to your scrollback buffer[^5]. 
+	* Basic navigation `[space]` - Move forward one screenful, `j` move forward one line, `k` move backward one line, `q` quit
+	* The pager used by `man` operates similarly to less
+* `more` - Much simpler than `less`
+	* Basic navigation [space] - Move forward one screenful
+	
+Read the man pages (`man less` and `man more`) for *more* on both of these. 
+
+## Searching with grep, find, locate and which
+
+### grep
+
+Grep is used to find strings matching a pattern within a file. Grep has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
+
+### find
+
+### locate
+
+### which
+
+
+## Text Manipulation with sed, awk and cat
+
+### awk
+
+### sed
+
+### cat
+
 ## OpenSSH
 
 Linux has a built in SSH client, called OpenSSH[^4]. Basic usage is very simple.
@@ -207,15 +261,124 @@ Host *
 
 __Note:__ The SSH Configuration file has it's own man page, you can read it with `man ssh_config`
 
+### SSH Arguments
 
+Many of the options you configure in the SSH Configuration file may also have equivalent arguments. The one I use most frequently is `ssh -c <cipher> <hostname>` when connecting to older devices that don't use modern SSH ciphers.
 
+```
+[bjames@lwks1 ~]$ ssh oldhost1
+Unable to negotiate with oldhost1 port 22: no matching cipher found. Their offer: aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
+[bjames@lwks1 ~]$ ssh -c aes256-cbc oldhost1
+```
 
+For more SSH arguments read `man ssh`
 
 ### SSH Keys
+
+SSH can use public key authentication instead of password authentication. As long as your keys are managed correctly, this is both more convenient and secure than password authentication. To use key based authentication, you must first generate a private key. 
+
+```
+[bjames@lwks1 ~]$ ssh-keygen 
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/bjames/.ssh/id_rsa): test_key
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Passphrases do not match.  Try again.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in test_key.
+Your public key has been saved in test_key.pub.
+The key fingerprint is:
+SHA256:F/hmGkdfO1F+S1fm8cVtJAKHiI7sOQFpAEONwvZjZ5Y bjames@lwks1
+The key's randomart image is:
++---[RSA 3072]----+
+|Boo.   . ..oo .+B|
+|.=+.  . .... . *O|
+|o..o o. . o   oo*|
+|   ++E.  o o ..o+|
+|  ..=o  S * . o. |
+|    +    B     . |
+|     .  .        |
+|                 |
+|                 |
++----[SHA256]-----+
+```
+
+I strongly recommend setting a passphrase, especially in a shared environment. If you can't be bothered to type your passphrase more than once per session, you can use `ssh-agent` to store the passphrase. This command generates two files `<key_name>` and `<key_name>.pub`. Once you've generated an SSH key pair, you need to copy the public key, `<key_name>.pub` to the systems you need to authenticate against. 
+
+__Note:__ In practice, it's likely that you'll just want to use default of `~/.ssh/id_rsa`
+
+```
+[bjames@lwks1 ~]$ ssh-copy-id -i test_key.pub goaccess.neverthenetwork.com
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "test_key.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+bjames@goaccess.neverthenetwork.com's password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'goaccess.neverthenetwork.com'"
+and check to make sure that only the key(s) you wanted were added.
+```
+
+This program works by copying your `<key_name>.pub` to `~/.ssh/authorized_keys`. Which can be done manually from systems that don't have `ssh-copy-id` installed. In addition, this might not work on non-unix-like systems. In which case you'll need to copy the contents of `<key_name>.pub` to the authorized key store manually. 
+
+Once the key has been copied, you can log in to the remote system by specifying the identity file using `ssh -i` or by modifying your ssh configuration to always use a specific identity file for one or every host. 
+
+```
+[bjames@lwks1 ~]$ ssh -i test_key goaccess.neverthenetwork.com 
+Enter passphrase for key 'test_key': 
+Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-55-generic x86_64)
+
+bjames@goaccess:~$ 
+```
+
+__Note:__ There are several methods to maintain a list of authorized SSH keys across all your systems. One common method is to include users `authorized_keys` key files in configuration management. There are also centralized methods such as storing the keys in LDAP. 
+
+#### SSH Agent
+
+I'm only going to cover the absolute basic use of `ssh-agent` for more information consult `man ssh-agent`. `ssh-agent` can be used to store ssh keys and is especially useful in the case of ssh keys using passphrases. To use `ssh-agent`, it first needs to be started. 
+
+```
+[bjames@lwks1 ~]$ eval `ssh-agent`
+Agent pid 21285
+```
+
+You probably noticed the use of the `eval` command. `eval` takes input from a file or stdin and evaluates it as if it was entered on the CLI. In this case, calling `ssh-agent` by itself would've resulted in the following output to stdout. 
+
+```
+[bjames@lwks1 ~]$ ssh-agent
+SSH_AUTH_SOCK=/tmp/ssh-k4tysoOInoQM/agent.21285; export SSH_AUTH_SOCK;
+SSH_AGENT_PID=21285; export SSH_AGENT_PID;
+echo Agent pid 21285;
+```
+
+These are bash commands that create new [environment variables](#environment-variables) called `SSH_AUTH_SOCK` and `SSH_AGENT_PID` and then prints them to the screen. `eval` causes these bash commands to be run in the current shell.
+
+Once our `ssh-agent` is running, we can use `ssh-add` to add keys to the `ssh-agent`. By default it tries to add `~./ssh/id_rsa`, but you can specify a key using `ssh-add <key_name>`. Once that's been done you can use the identity file without being prompted for the passphrase.
+
+```
+[bjames@lwks1 ~]$ ssh-add test_key
+Enter passphrase for test_key: 
+Identity added: test_key (bjames@lwks1)
+[bjames@lwks1 ~]$ ssh -i test_key goaccess.neverthenetwork.com 
+Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-55-generic x86_64)
+
+bjames@goaccess:~$ 
+```
+
+__Note:__ This also works with identity files that have been specified using the ssh configuration file
+
+## File Transfer - SCP, FTP, SFTP and HTTP
+
+## Vim
+
+## .bashrc and .profilerc
+SSH Agent
 
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
 [^3]: As the Free Software Foundation suggests, many, but not all of these are part of the GNU Core Utilities. 
 [^4]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
- 
+[^5]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html). 
