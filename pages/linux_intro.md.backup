@@ -15,17 +15,13 @@ This is meant to be a living document with regular updates. You are reading the 
 * [Man Pages](#man-pages)
 * [Navigation](#navigation)
 * [Pagers](#pagers)
-* [Searching with grep, find, locate and which](#searching-with-grep-find-locate-and-which)
+* [Searching with grep, locate and which](#searching-with-grep-find-locate-and-which)
 	- [grep](#grep)
-	- [find](#find)
 	- [locate](#locate)  
 	- [which](#which)
-* [Text Manipulation with sed, awk and cat](#text-search-and-manipulation-with-sed-awk-and-cat)
-	- [sed](#sed)
-	- [awk](#awk)
-	- [cat](#cat)
-* [OpenSSH](#openssh)
+* [SSH](#openssh)
 * [File Transfer - SCP, FTP, SFTP and HTTP](#file-transfer---scp-ftp-sftp-and-http)
+* [Redirection](#redirection)
 * [Vim](#vim)
 * [.bashrc and .profilerc](#.bashrc-and-.profilerc)
 * [Change Log](#change-log)
@@ -159,61 +155,89 @@ Read the man pages (`man less` and `man more`) for *more* on both of these.
 
 ## Searching with grep, find, locate and which
 
-### grep
+### `grep`
 
-Grep is used to find strings matching a pattern within a file. In the most basic case, you might use grep to search for a specific string within a file:
+`grep` is used to find strings matching a pattern within a file. In the most basic case, you might use `grep` to search for a specific string within a file:
 
 ```
 [bjames@lwks1 pages]$ grep "specific string" linux_intro.md
 Grep is used to find strings matching a pattern within a file. In the most basic case, you might use grep to search for a specific string within a file:
 ```
 
-However, the real power of grep lies in regular expressions. Current versions of grep support three *flavors* of regex. They are standard grep regex, extended grep regex and perl regex. I find myself using extended grep for most things. In the below example, we use extended regular expressions to find IP addresses within this markdown file. 
+However, the real power of `grep` lies in regular expressions. Current versions of `grep` support three *flavors* of regex. They are standard `grep` regex, extended `grep` regex and perl regex. I find myself using extended `grep` for most things. In the below example, we use extended regular expressions to find IP addresses within this markdown file. 
 
 ```
 [bjames@lwks1 pages]$ grep -nE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' linux_intro.md
 175:[bjames@lwks1 ~]$ ssh 172.16.12.1
 176:172.16.12.127  172.16.12.130  172.16.12.132  172.16.12.137  
 177:[bjames@lwks1 ~]$ ssh 172.16.12.127 | tee logfile.log
-178:[bjames@lwks1 ~]$ ssh 192.168.88.1
-179:The authenticity of host '192.168.88.1 (192.168.88.1)' can't be established.
-180:Warning: Permanently added '192.168.88.1' (RSA) to the list of known hosts.
-181:bjames@192.168.88.1's password: 
-182:[bjames@lwks1 ~]$ ssh 192.168.88.1
-183:RSA host key for 192.168.88.1 has changed and you have requested strict checking.
-184:[bjames@lwks1 ~]$ ssh-keygen -R 192.168.88.1
-185:# Host 192.168.88.1 found: line 10
-223:[bjames@lwks1 ~]$ ssh 172.16.12.1
-224:172.16.12.127  172.16.12.130  172.16.12.132  172.16.12.137  
-231:[bjames@lwks1 ~]$ ssh 172.16.12.127 | tee logfile.log
-241:[bjames@lwks1 ~]$ ssh 192.168.88.1
-242:The authenticity of host '192.168.88.1 (192.168.88.1)' can't be established.
-245:Warning: Permanently added '192.168.88.1' (RSA) to the list of known hosts.
-246:bjames@192.168.88.1's password: 
-250:[bjames@lwks1 ~]$ ssh 192.168.88.1
+<redacted for brevity>
 262:RSA host key for 192.168.88.1 has changed and you have requested strict checking.
 267:[bjames@lwks1 ~]$ ssh-keygen -R 192.168.88.1
 268:# Host 192.168.88.1 found: line 10
 ```
 
-__Note:__ in the above output, I also included the `-n` argument, this tells grep to print the line number the match was found on. Also note the regex above won't only find valid IPs, for instance 999.999.999.999 is not a valid IP, but would be considered a match. The regex to only match valid IPs is significantly more complicated. When using grep it's generally best to use regex that's good enough to find what you are looking for.
+__Note:__ in the above output, I also included the `-n` argument, this tells `grep` to print the line number the match was found on. Also note the regex above won't only find valid IPs, for instance 999.999.999.999 is not a valid IP, but would be considered a match. The regex to only match valid IPs is significantly more complicated. When using `grep` it's generally best to use regex that's good enough to find what you are looking for.
 
-Grep has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
+In addition to searching a single file, `grep` can be used to search multiple files using either a wildcard such as `grep <pattern> *.log`, a single directory `grep <pattern> ~/logs/` or a directory and it's subdirectories `grep -r <pattern> ~/logs/` (here the `-r` argument stands for recursive). 
 
-### find
+```
+[bjames@t470s pages]$ grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' *.md
+automation_concurrency.md:192.168.1.100
+automation_concurrency.md:192.168.10.0
+<redacted for brevity>
+wlc_cli.md:192.168.0.20
+wlc_cli.md:192.168.1.20
+```
 
-### locate
+__Note:__ Above we found every IP address, subnet mask or wildcard mask used in any NTN article. In addition to the `-E` argument, I used `-o` which tells `grep` that we want the matching part of the line only.
 
-### which
+`grep` can also be used with pipes to search the output of another file `<command> | grep <pattern>`
 
+```
+[bjames@t470s pages]$ ls -lah | grep linux
+-rw-rw-r--.  1 bjames bjames  23K Sep 24 23:46 linux_intro.md
+```
 
-## Text Manipulation with sed, awk and cat
+#### My most used `grep` arguments
 
-### awk
+`-E` use extended regular expressions.
 
-### sed
+`-v` inverse matching, prints all lines that don't match the pattern
 
-### cat
+`-o` only output the matching string
+
+`-r` recursively search sub-directories
+
+`-n` print the line number the match occurred on
+
+`-i` case insensitive search
+
+`-I` ignore binary files
+
+`grep` has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
+
+### `locate`
+
+`locate` is used to find files based on their names. It can be used with either basic wildcards or regular expressions. 
+
+```
+[bjames@t470s pages]$ locate -i *mac*.pdf
+/var/lib/snapd/snap/pycharm-community/147/help/ReferenceCardForMac.pdf
+/var/lib/snapd/snap/pycharm-community/150/help/ReferenceCardForMac.pdf
+```
+
+This is useful if I remember all or part of the name of a file, but don't remember where it was saved. 
+
+### `which`
+
+`which` returns the path of a shell command. This is especially useful for user installed programs and aliases. 
+
+```
+[bjames@t470s pages]$ which ll
+alias ll='ls -l --color=auto'
+	/usr/bin/ls
+```
 
 ## OpenSSH
 
@@ -411,6 +435,40 @@ __Note:__ This also works with identity files that have been specified using the
 ## File Transfer - SCP, FTP, SFTP and HTTP
 
 ## Vim
+
+`vim` is commonly the default CLI text editor on linux distributions. Once you've got the basics down, `vim` is a joy to use. `vim` has a few different modes, but here I'm just going to cover __normal__ and __insert__. 
+
+This is just a cheatsheet of sorts, for more information I recommend `man vim` or `vimtutor`, which launches a fantastic interactive guide to `vim`.
+
+### Normal Mode Commands
+`j` move the cursor down
+
+`k` move the cursor up
+
+`l` move the cursor right
+
+`h` move the cursor left
+
+`.` repeat the last insert
+
+`i` switch to insert mode at the current cursor location
+
+`I` switch to insert mode at the beginning of the current line
+
+`a` switch to insert mode in the position following the cursor
+
+`A` switch to insert mode at the end of the line
+
+`:w` save the file
+
+`:wq` or `:x`save the file and quit
+
+`:q` quit
+
+`:q!` quit ignoring prompts about the file not being saved
+
+### Insert Mode
+`ESC` switch to Normal Mode
 
 ## .bashrc and .profilerc
 SSH Agent
