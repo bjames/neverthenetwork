@@ -7,7 +7,7 @@ summary:
 
 I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, my personal machines run Fedora and this website is hosted on Ubuntu. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing. 
 
-This is meant to be a living document with regular updates. You are reading the first edition of the document, which contains what I believe to be essential knowledge for effective linux CLI use. It is missing a few programs that I believe are important for Network Engineers such as tcpdump and netcat, but rest assured these will be added in the near future. 
+This is meant to be a living document with regular updates. You are reading the first edition of the document, which contains what I believe to be essential knowledge for effective Linux CLI use. 
 
 # Index
 
@@ -20,11 +20,10 @@ This is meant to be a living document with regular updates. You are reading the 
 	- [locate](#locate)  
 	- [which](#which)
 * [SSH](#openssh)
-* [File Transfer - SCP, FTP, SFTP and HTTP](#file-transfer---scp-ftp-sftp-and-http)
-* [Redirection](#redirection)
 * [Vim](#vim)
 * [.bashrc and .profilerc](#.bashrc-and-.profilerc)
 * [Change Log](#change-log)
+* [Queue](#queue)
 
 ## The Unix Philosophy
 
@@ -44,9 +43,9 @@ From the perspective of a Linux user, I think it's important to keep the first t
 
 ## Man Pages
 
-All the commands that you run on the Linux CLI are separate programs[^3], most of these commands have listings in the system manual. To view a man page, simply type `man <utility>` where utility is the name of the command or tool you want to know more about. The `man` program itself even has a man page, type `man man` to try it out.
+All the commands that you run on the Linux CLI are separate programs[^3], most of these commands have listings in the system manual. To view a man page, simply type `man <utility>` where utility is the name of the command or tool you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. To search within a man page, you can pipe `man` into [`grep`](#grep) such as `man man | grep -n EXAMPLES` to find the line number where the examples section begins. 
 
-In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. Try `man less` or `man more` to learn about two other pagers. I'll cover both of these in more detail later.
+In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar, jump to a specific line number by typing it and pressing enter or search for a string with `/<string>`. 
 
 As you read this guide, I encourage you to skim the man pages for the utilities I mention. 
 
@@ -153,9 +152,9 @@ If you've read many linux guides, you've probably seen someone use `cat file.txt
 	
 Read the man pages (`man less` and `man more`) for *more* on both of these. 
 
-## Searching with grep, find, locate and which
+## Searching with grep, locate and which
 
-### `grep`
+### grep
 
 `grep` is used to find strings matching a pattern within a file. In the most basic case, you might use `grep` to search for a specific string within a file:
 
@@ -217,7 +216,7 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 
 `grep` has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
 
-### `locate`
+### locate
 
 `locate` is used to find files based on their names. It can be used with either basic wildcards or regular expressions. 
 
@@ -229,7 +228,7 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 
 This is useful if I remember all or part of the name of a file, but don't remember where it was saved. 
 
-### `which`
+### which
 
 `which` returns the path of a shell command. This is especially useful for user installed programs and aliases. 
 
@@ -239,7 +238,7 @@ alias ll='ls -l --color=auto'
 	/usr/bin/ls
 ```
 
-## OpenSSH
+## SSH
 
 Linux has a built in SSH client, called OpenSSH[^4]. Basic usage is very simple.
 ```
@@ -432,8 +431,6 @@ bjames@goaccess:~$
 
 __Note:__ This also works with identity files that have been specified using the ssh configuration file
 
-## File Transfer - SCP, FTP, SFTP and HTTP
-
 ## Vim
 
 `vim` is commonly the default CLI text editor on linux distributions. Once you've got the basics down, `vim` is a joy to use. `vim` has a few different modes, but here I'm just going to cover __normal__ and __insert__. 
@@ -470,8 +467,76 @@ This is just a cheatsheet of sorts, for more information I recommend `man vim` o
 ### Insert Mode
 `ESC` switch to Normal Mode
 
-## .bashrc and .profilerc
+## .bashrc
+
+.bashrc is described by `man bash` as your personal initialization file. Mine typically contains a group of environment variables, command aliases and functions. .bashrc is actually a list of commands that are ran when you first start a terminal session. For instance, if you want to alias
+
+```
+[bjames4@plaalanwan1 ~]$ more .bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Source sec account tools
+if [ -f ~/.secacctbash ]; then
+    . ~/.secacctbash
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# delete ssh logs more than 1 week old
+find ~/sshlogs/ -mindepth 1 -mtime +7 -delete
+
+# User specific aliases and functions
+
+alias isotime="date +"%Y-%m-%dT%H%M%S""
+alias ll="ls -lah"
+alias setproxy="source ~/scripts/set_proxy.sh"
+
+# oui lookup using nmap ouilist and grep
+function ouilookup()
+{
+    grep -i "$1" ~/oui.txt;
+}
+
+# log ssh sessions
+function logssh()
+{
+
+    currtime=$(isotime);
+    ssh $1 2>&1 | tee -a ~/sshlogs/$1-$currtime.log;
+
+}
+
+# unset the proxy environment variables
+function unset_proxy() {
+    unset HTTP_PROXY
+    unset HTTPS_PROXY
+}
+```
+
 SSH Agent
+
+## Queue
+
+Things I plan on adding as time allows
+
+* Network Utilities
+	- tcpdump
+	- dig
+	- netcat
+	- whois
+	- traceroute and tracepath
+	- ping
+* IO Redirection
+* File Transfer
+	- Clients: SCP, SFTP, FTP
+	- Servers: Python Simple HTTP Server
+* Text Manipulation: awk, sed and cat
 
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
