@@ -7,7 +7,7 @@ author: Brandon James
 summary: A living guide to the Linux CLI
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Fedora on my personal machines since 'Beefy Miracle'. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing.
+I am a huge fan of Linux[^1]. In the office, most of my real work happens on a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Fedora on my personal machines since the 'Beefy Miracle' release in 2012. This article is written from the perspective of a power user and not of a sysadmin. 
 
 This is meant to be a living document with regular updates. You are reading the first edition, which contains what I believe is essential knowledge for effective Linux CLI use. 
 
