@@ -1,13 +1,15 @@
-title: A Network Engineer's Guide to the Linux CLI 1st Edition
+title: A Network Engineer's Guide to the Linux CLI
 category:
-- Route/Switch
+- Cheatsheets
+- Linux
+update_interval: weekly
 author: Brandon James
-summary: 
+summary: A living guide to the Linux CLI
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox. At home, my personal machines run Fedora and this website is hosted on Ubuntu. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing. 
+I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Fedora on my personal machines since 'Beefy Miracle'. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing.
 
-This is meant to be a living document with regular updates. You are reading the first edition of the document, which contains what I believe to be essential knowledge for effective Linux CLI use. 
+This is meant to be a living document with regular updates. You are reading the first edition, which contains what I believe is essential knowledge for effective Linux CLI use. 
 
 # Index
 
@@ -15,14 +17,12 @@ This is meant to be a living document with regular updates. You are reading the 
 * [Man Pages](#man-pages)
 * [Navigation](#navigation)
 * [Pagers](#pagers)
-* [Searching with grep, locate and which](#searching-with-grep-find-locate-and-which)
+* [Searching with grep, locate and which](#searching-with-grep-locate-and-which)
 	- [grep](#grep)
 	- [locate](#locate)  
 	- [which](#which)
-* [SSH](#openssh)
+* [SSH](#ssh)
 * [Vim](#vim)
-* [.bashrc and .profilerc](#.bashrc-and-.profilerc)
-* [Change Log](#change-log)
 * [Queue](#queue)
 
 ## The Unix Philosophy
@@ -181,7 +181,7 @@ __Note:__ in the above output, I also included the `-n` argument, this tells `gr
 In addition to searching a single file, `grep` can be used to search multiple files using either a wildcard such as `grep <pattern> *.log`, a single directory `grep <pattern> ~/logs/` or a directory and it's subdirectories `grep -r <pattern> ~/logs/` (here the `-r` argument stands for recursive). 
 
 ```
-[bjames@t470s pages]$ grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' *.md
+[bjames@lwks1 pages]$ grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' *.md
 automation_concurrency.md:192.168.1.100
 automation_concurrency.md:192.168.10.0
 <redacted for brevity>
@@ -194,7 +194,7 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 `grep` can also be used with pipes to search the output of another file `<command> | grep <pattern>`
 
 ```
-[bjames@t470s pages]$ ls -lah | grep linux
+[bjames@lwks1 pages]$ ls -lah | grep linux
 -rw-rw-r--.  1 bjames bjames  23K Sep 24 23:46 linux_intro.md
 ```
 
@@ -221,7 +221,7 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 `locate` is used to find files based on their names. It can be used with either basic wildcards or regular expressions. 
 
 ```
-[bjames@t470s pages]$ locate -i *mac*.pdf
+[bjames@lwks1 pages]$ locate -i *mac*.pdf
 /var/lib/snapd/snap/pycharm-community/147/help/ReferenceCardForMac.pdf
 /var/lib/snapd/snap/pycharm-community/150/help/ReferenceCardForMac.pdf
 ```
@@ -233,7 +233,7 @@ This is useful if I remember all or part of the name of a file, but don't rememb
 `which` returns the path of a shell command. This is especially useful for user installed programs and aliases. 
 
 ```
-[bjames@t470s pages]$ which ll
+[bjames@lwks1 pages]$ which ll
 alias ll='ls -l --color=auto'
 	/usr/bin/ls
 ```
@@ -467,64 +467,11 @@ This is just a cheatsheet of sorts, for more information I recommend `man vim` o
 ### Insert Mode
 `ESC` switch to Normal Mode
 
-## .bashrc
-
-.bashrc is described by `man bash` as your personal initialization file. Mine typically contains a group of environment variables, command aliases and functions. .bashrc is actually a list of commands that are ran when you first start a terminal session. For instance, if you want to alias
-
-```
-[bjames4@plaalanwan1 ~]$ more .bashrc
-# .bashrc
-
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-        . /etc/bashrc
-fi
-
-# Source sec account tools
-if [ -f ~/.secacctbash ]; then
-    . ~/.secacctbash
-fi
-
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=
-
-# delete ssh logs more than 1 week old
-find ~/sshlogs/ -mindepth 1 -mtime +7 -delete
-
-# User specific aliases and functions
-
-alias isotime="date +"%Y-%m-%dT%H%M%S""
-alias ll="ls -lah"
-alias setproxy="source ~/scripts/set_proxy.sh"
-
-# oui lookup using nmap ouilist and grep
-function ouilookup()
-{
-    grep -i "$1" ~/oui.txt;
-}
-
-# log ssh sessions
-function logssh()
-{
-
-    currtime=$(isotime);
-    ssh $1 2>&1 | tee -a ~/sshlogs/$1-$currtime.log;
-
-}
-
-# unset the proxy environment variables
-function unset_proxy() {
-    unset HTTP_PROXY
-    unset HTTPS_PROXY
-}
-```
-
-SSH Agent
-
 ## Queue
 
 Things I plan on adding as time allows
 
+* .bashrc
 * Network Utilities
 	- tcpdump
 	- dig

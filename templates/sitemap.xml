@@ -24,7 +24,7 @@
     <url>
         <loc>https://neverthenetwork.com/notes/{{ page.path }}</loc>
         <lastmod>{% if page.modified %}{{ page.modified }}{% else %}{{ page.published }}{% endif %}</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>{% if page.update_interval %}{{ page.update_interval }}{% else %}monthly{% endif %}</changefreq>
     </url>
     {% endfor %}
     <!-- End Generated Content -->

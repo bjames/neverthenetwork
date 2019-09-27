@@ -462,6 +462,17 @@ def wireless():
                     key=lambda p: p.meta['published'])
     return render_template('notes/notes.html', pages=latest[:10], active='wireless')
 
+#@app.route('/notes/linux')
+#def linux():
+#    # Only published articles
+#    all_articles = (p for p in pages if 'published' in p.meta)
+#    
+#    articles = (p for p in all_articles if 'Linux' in p.meta['category'])
+#    # Show the 10 most recent articles, most recent first.
+#    latest = sorted(articles, reverse=True,
+#                    key=lambda p: p.meta['published'])
+#    return render_template('notes/notes.html', pages=latest[:10], active='linux')
+
 @app.route('/notes/unpublished')
 def unpublished():
     # Articles without a publication date
