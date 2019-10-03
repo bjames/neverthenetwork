@@ -2,19 +2,17 @@ title: A Network Engineer's Guide to the Linux CLI
 category:
 - Cheatsheets
 - Linux
-published: 2019-09-26
 update_interval: weekly
 author: Brandon James
 summary: A living guide to the Linux CLI
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens on my Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Fedora on my pesince 'Beefy Miracle'. One of my favorite things about working with Cisco devices is the great CLI, Linux provides an even better experience for general purpose computing.
-
-This is meant to be a living document with regular updates. You are reading the first edition, which contains what I believe is essential knowledge for effective Linux CLI use. 
+I am a huge fan of Linux[^1]. In the office, most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010 (and Fedora since the 'Beefy Miracle' release in 2011). Modern desktop environments like gnome, Unity and KDE have made Linux approachable to the average user, but where Linux really shines is on the CLI. This is meant to be a reference for the Linux power user and most of the tools covered are things I find myself using on a regular basis. 
 
 # Index
 
 * [The Unix Philosophy](#the-unix-philosophy)
+* [Defining The Linux CLI](#defining-the-linux-cli)
 * [Man Pages](#man-pages)
 * [Navigation](#navigation)
 * [Pagers](#pagers)
@@ -24,11 +22,14 @@ This is meant to be a living document with regular updates. You are reading the 
 	- [which](#which)
 * [SSH](#ssh)
 * [Vim](#vim)
+* [Job Management](#job-management)
+* [IO Redirection](#io-redirection)
+* [.bashrc](#bashrc)
 * [Queue](#queue)
 
 ## The Unix Philosophy
 
-Linux falls under the "Unix-like" class of operating systems, all of these operating systems roughly follow something known as the Unix Philosophy. The Unix Philosophy has a long and somewhat storied history that you can read about in the first Chapter of [*The Art of Unix Programming* by Eric Steven Raymond](http://www.catb.org/~esr/writings/taoup/html/ch01s06.html). While the book is geared towards programmers, understanding the Unix philosophy is sure to make you a better user of Linux as well. The Unix Philosophy isn't meant to be a set of strict rules and instead should be thought of as a list of best practices.
+Linux falls under the "Unix-like" class of operating systems, all of these operating systems roughly follow something known as the Unix Philosophy. The Unix Philosophy has a long and somewhat storied history that you can read about in the first Chapter of [*The Art of Unix Programming* by Eric Steven Raymond](http://www.catb.org/~esr/writings/taoup/html/ch01s06.html). While the book is geared towards programmers, understanding the Unix philosophy is sure to make you a better user of Linux as well.
 
 I think of the following quote[^2] from Doug McIlroy when I think of the Unix Philosophy:
 
@@ -40,11 +41,15 @@ iii) Design and build software, even operating systems, to be tried early, ideal
 
 iv) Use tools in preference to unskilled help to lighten a programming task, even if you have to detour to build the tools and expect to throw some of them out after you've finished using them.
 
-From the perspective of a Linux user, I think it's important to keep the first two in mind. Realizing that the Linux CLI consists of not just commands, but a collection of small programs that can act as input to each other is the first step to Linux mastery.
+As a Linux user, it's important to keep the first two in mind. Realizing that the Linux CLI consists of a collection of small programs that can act as input to each other and all follow a similar output format is the first step to Linux mastery. If you search for 'bash one-liners' you will find long strings of text that can be difficult to decipher. Once you realize that you are actually looking at multiple commands being chained together you can (usually) make sense of how the 'one-liner' works. 
+
+## Defining the Linux CLI
+
+The Linux CLI consists of a POSIX compliant shell and a set of text-based utilities. The shell is generally the GNU Bourne-Again SHell (BASH), but may be a similar shell with more or less features. There are certain utilities you can expect to be available by default, but unfortunately the only standard for this is in the [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL). The LSB contains a very small subset of the programs you'd find on a typical Linux installation. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
 
 ## Man Pages
 
-All the commands that you run on the Linux CLI are separate programs[^3], most of these commands have listings in the system manual. To view a man page, simply type `man <utility>` where utility is the name of the command or tool you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. To search within a man page, you can pipe `man` into [`grep`](#grep) such as `man man | grep -n EXAMPLES` to find the line number where the examples section begins. 
+Most bash commands and programs have listings in the system manual. To view a man page, simply type `man <command>` where command is the name of the command or program you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. To search within a man page, you can pipe `man` into [`grep`](#grep) such as `man man | grep -n EXAMPLES` to find the line number where the examples section begins. 
 
 In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar, jump to a specific line number by typing it and pressing enter or search for a string with `/<string>`. 
 
@@ -468,11 +473,95 @@ This is just a cheatsheet of sorts, for more information I recommend `man vim` o
 ### Insert Mode
 `ESC` switch to Normal Mode
 
+## Text Manipulation
+
+### sed
+
+### awk
+
+### cat
+
+## Job Management
+
+Linux provides a set of utilities and commands to help you handle multiple process within a single CLI session. 
+
+### Stopping Jobs
+
+To end the current job, press `CTRL+C` this sends SIGINT[^6] to the current process. SIGINT can be thought of as a way to ask the process to gracefully shutdown. There may be instances where this doesn't work, but in general it will kill the process in the foreground.
+
+```
+[bjames@lwks1 neverthenetwork]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=9.08 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=8.97 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=10.3 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=54 time=9.02 ms
+^C
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 7ms
+rtt min/avg/max/mdev = 8.971/9.329/10.250/0.537 ms
+```
+
+When `CTRL+C` doesn't work, `CTRL+Z` can be used as a workaround. This sends `SIGTSTP`, which tells the terminal to stop the current process. From there, you can kill the process, send it to the background or bring it back to the foreground.
+
+Let's pretend that `ping` isn't listening to `CTRL+C`
+
+```
+[bjames@lwks1 neverthenetwork]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=9.41 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=9.61 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=8.87 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=54 time=8.91 ms
+^Z
+[1]+  Stopped                 ping 8.8.8.8
+[bjames@lwks1 neverthenetwork]$ jobs
+[1]+  Stopped                 ping 8.8.8.8
+[bjames@lwks1 neverthenetwork]$ kill %1
+```
+
+Notice that we didn't get the `ping statistics` lines after ping was killed. This is because we stopped the job forcefully with `kill` instead of using `CTRL+C`. We've also introduced the `jobs` and `kill` commands. `jobs` just prints the list of jobs in the current terminal session so there isn't just a ton to say about it. 
+
+`kill` works on both jobs in the current terminal session and processes running outside of the current session. When preceded with `%` the number following the command refers to the job number  (as reported by `jobs`), without the `%` it refers to the Process-ID or PID. The PID of a process can be found using the `ps` or `top` commands. By default `kill` sends SIGTERM, but it can send any of the POSIX signals. `kill -l` lists the signals along with the number kill uses to refer to that signal. As an example, `kill -9 %1` would've killed ping using SIGKILL instead of SIGTERM. 
+
+__Note:__ SIGKILL should really only be used for processes that can't be killed using SIGTERM or SIGINT. SIGKILL doesn't give the process a chance to clean up before exiting and in many cases SIGTERM will work in places SIGINT does not.
+
+## Sending Jobs to the Background
+
+You can immediately send a job to the background when you start it by using `&`. This doesn't redirect the commands output, so this can get a little messy. As an exteme example you can try sending two ping processes to the background in this manner. 
+
+```
+bjames@lwks1 neverthenetwork]$ ping 4.2.2.2 &
+[1] 12020
+PING 4.2.2.2 (4.2.2.2) 56(84) bytes of data.
+[bjames@lwks1 neverthenetwork]$ 64 bytes from 4.2.2.2: icmp_seq=1 ttl=56 time=9.02 ms
+64 bytes from 4.2.2.2: icmp_seq=2 ttl=56 time=9.82 ms
+
+[bjames@lwks1 neverthenetwork]$ 64 bytes from 4.2.2.2: icmp_seq=3 ttl=56 time=8.92 ms
+ping 64 bytes from 4.2.2.2: icmp_seq=4 ttl=56 time=10.2 ms
+8.864 bytes from 4.2.2.2: icmp_seq=5 ttl=56 time=8.93 ms
+.8.864 bytes from 4.2.2.2: icmp_seq=6 ttl=56 time=9.63 ms
+ 64 bytes from 4.2.2.2: icmp_seq=7 ttl=56 time=9.65 ms
+&
+[2] 12060
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+[bjames@lwks1 neverthenetwork]$ 64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=9.49 ms
+64 bytes from 4.2.2.2: icmp_seq=8 ttl=56 time=9.55 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=9.11 ms
+64 bytes from 4.2.2.2: icmp_seq=9 ttl=56 time=9.12 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=10.1 ms
+```
+
+Of course there are uses for this, but in many cases it's not ideal to have the output of background processes sent to STDOUT. 
+
+## IO Redirection
+
+## .bashrc
+
 ## Queue
 
 Things I plan on adding as time allows
 
-* .bashrc
 * Network Utilities
 	- tcpdump
 	- dig
@@ -480,15 +569,14 @@ Things I plan on adding as time allows
 	- whois
 	- traceroute and tracepath
 	- ping
-* IO Redirection
 * File Transfer
 	- Clients: SCP, SFTP, FTP
 	- Servers: Python Simple HTTP Server
-* Text Manipulation: awk, sed and cat
 
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
 [^3]: As the Free Software Foundation suggests, many, but not all of these are part of the GNU Core Utilities. 
 [^4]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
-[^5]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html). 
+[^5]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
+[^6]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means
