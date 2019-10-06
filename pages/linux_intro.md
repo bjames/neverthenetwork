@@ -45,7 +45,7 @@ As a Linux user, it's important to keep the first two in mind. Realizing that th
 
 ## Defining the Linux CLI
 
-The Linux CLI consists of a POSIX compliant shell and a set of text-based utilities. The shell is generally the GNU Bourne-Again SHell (BASH), but may be a similar shell with more or less features. There are certain utilities you can expect to be available by default, but unfortunately the only standard for this is in the [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL). The LSB contains a very small subset of the programs you'd find on a typical Linux installation. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
+Since Linux can vary from distribution to distribution, I think it's important to define what I'm talking about when I say "the Linux CLI". The Linux CLI consists of a POSIX compliant shell[^3] and a set of text-based utilities. There are certain utilities you can expect to be available by default, but we don't really have a standard for this. The [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL) contains a very small subset of the programs you'd find on a typical Linux installation. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
 
 ## Man Pages
 
@@ -576,7 +576,7 @@ Things I plan on adding as time allows
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
-[^3]: As the Free Software Foundation suggests, many, but not all of these are part of the GNU Core Utilities. 
+[^3]: The shell is typically, but not always GNU BASH. Ksh, fish and zsh are common alternatives 
 [^4]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
 [^5]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
 [^6]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means
