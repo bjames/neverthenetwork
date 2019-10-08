@@ -18,14 +18,23 @@ I am a huge fan of Linux[^1]. In the office, most of my real work happens throug
 * [Pagers](#pagers)
 * [Searching with grep, locate and which](#searching-with-grep-locate-and-which)
 	- [grep](#grep)
+		+ [My most used `grep` arguments](#my-most-used-grep-arguments)
 	- [locate](#locate)  
 	- [which](#which)
 * [SSH](#ssh)
 * [Vim](#vim)
 * [Job Management](#job-management)
+	- [Finding Jobs and Processes](#finding-jobs-and-processes)
+	- [Stopping Jobs and Processes](#stopping-jobs-and-processes)
+	- [Switching Between Jobs](#switching-between-jobs)
+		+ [Keeping Jobs Alive](#keeping-jobs-alive)
 * [IO Redirection](#io-redirection)
+	- [Standard Streams](#standard-streams)
+	- [Redirection Operators](#redirection-operators)
+		+ [Chaining Redirection Operators](#chaining-redirection-operators)
 * [.bashrc](#bashrc)
 * [Queue](#queue)
+* [Command Glossary](#command-glossary)
 
 ## The Unix Philosophy
 
@@ -45,13 +54,13 @@ As a Linux user, it's important to keep the first two in mind. Realizing that th
 
 ## Defining the Linux CLI
 
-Since Linux can vary from distribution to distribution, I think it's important to define what I'm talking about when I say "the Linux CLI". The Linux CLI consists of a POSIX compliant shell[^3] and a set of text-based utilities. There are certain utilities you can expect to be available by default, but we don't really have a standard for this. The [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL) contains a very small subset of the programs you'd find on a typical Linux installation. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
+Since Linux can vary from distribution to distribution, I think it's important to define what I'm talking about when I say "the Linux CLI". The Linux CLI consists of a POSIX compliant shell[^3] and a set of text-based utilities. There are certain utilities you can expect to be available by default, but we don't really have a standard for this[^4]. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
 
 ## Man Pages
 
 Most bash commands and programs have listings in the system manual. To view a man page, simply type `man <command>` where command is the name of the command or program you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. To search within a man page, you can pipe `man` into [`grep`](#grep) such as `man man | grep -n EXAMPLES` to find the line number where the examples section begins. 
 
-In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar, jump to a specific line number by typing it and pressing enter or search for a string with `/<string>`. 
+In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar or jump to a specific line number by typing it and pressing enter. You can also perform a basic search with `/<string>` and then use `n` to jump to the next result or `N` to jump to the previous result. 
 
 As you read this guide, I encourage you to skim the man pages for the utilities I mention. 
 
@@ -148,7 +157,7 @@ iii) If we want to go to my Videos folder, we can do so in a few ways. Three are
 
 If you've read many linux guides, you've probably seen someone use `cat file.txt` to print the content of a file to the screen. This does work, but there is a much better solution. `more` and `less` both belong to a class of programs known as pagers. Pagers work by breaking files into pages or screenfuls of data so you don't need to scroll back up to see the rest of your file. The two programs operate similarly, but do have a few differences. 
 
-* `less` - Operates similarly to `vi` and allows forward and backward movement through the file. The output of the file is not copied to your scrollback buffer[^5]. 
+* `less` - Operates similarly to `vi` and allows forward and backward movement through the file. The output of the file is not copied to your scrollback buffer[^6]. 
 	* Basic navigation `[space]` - Move forward one screenful, `j` move forward one line, `k` move backward one line, `q` quit
 	* The pager used by `man` operates similarly to less
 	* `less file.txt`
@@ -220,6 +229,10 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 
 `-I` ignore binary files
 
+`-B [n]` print __n__ lines of context before the match
+
+`-A [n]` print __n__ lines of context after the match 
+
 `grep` has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
 
 ### locate
@@ -246,7 +259,7 @@ alias ll='ls -l --color=auto'
 
 ## SSH
 
-Linux has a built in SSH client, called OpenSSH[^4]. Basic usage is very simple.
+Linux has a built in SSH client, called OpenSSH[^5]. Basic usage is very simple.
 ```
 [bjames@lwks1 ~]$ ssh labtoolbox
 bjames@labtoolbox's password: 
@@ -439,9 +452,9 @@ __Note:__ This also works with identity files that have been specified using the
 
 ## Vim
 
-`vim` is commonly the default CLI text editor on linux distributions. Once you've got the basics down, `vim` is a joy to use. `vim` has a few different modes, but here I'm just going to cover __normal__ and __insert__. 
+`vim` is commonly the default CLI text editor on linux distributions. This means that you need to know how to edit a file using vim. Even if you only know the basics, `vim` can be a joy to use. I've never bothered to learn any of `vim`'s advanced features and tend to use VSCode for development and making large edits, but I still really enjoy using `vim` and it's keyboard centric interface for edits from the terminal.
 
-This is just a cheatsheet of sorts, for more information I recommend `man vim` or `vimtutor`, which launches a fantastic interactive guide to `vim`.
+`vim` has a several modes, but here I'm going to cover the *basics* of __normal__ and __insert__. For more information I recommend `man vim` or `vimtutor`, which launches a fantastic interactive guide to `vim`.
 
 ### Normal Mode Commands
 `j` move the cursor down
@@ -473,21 +486,66 @@ This is just a cheatsheet of sorts, for more information I recommend `man vim` o
 ### Insert Mode
 `ESC` switch to Normal Mode
 
-## Text Manipulation
-
-### sed
-
-### awk
-
-### cat
-
 ## Job Management
 
 Linux provides a set of utilities and commands to help you handle multiple process within a single CLI session. 
 
-### Stopping Jobs
+### Finding Jobs and Processes
 
-To end the current job, press `CTRL+C` this sends SIGINT[^6] to the current process. SIGINT can be thought of as a way to ask the process to gracefully shutdown. There may be instances where this doesn't work, but in general it will kill the process in the foreground.
+To view jobs running in your current session use the `jobs` command
+
+```
+[bjames@lwks1 ~]$ jobs
+[1]   Running                 ping -q 8.8.8.8 &
+[2]   Running                 ping 4.2.2.2 > ping.out &
+[3]+  Stopped                 man bash
+[4]-  Running                 sudo tcpdump -w out.pcap &
+```
+
+To view processes running under the current user and, use `ps ux`
+
+```
+[bjames@lwks1 ~]$ ps ux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+bjames    2297  0.0  0.0  20556 10668 ?        Ss   19:32   0:00 /usr/lib/system
+<redacted for brevity>
+bjames   16593  0.0  0.0 226752  3608 pts/0    R+   21:44   0:00 ps ux
+```
+
+To view all processes on the system, use `ps aux`
+
+```
+[bjames@lwks1 ~]$ ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0 171856 14844 ?        Ss   19:31   0:03 /usr/lib/system
+<redacted for brevity>
+bjames   16763  0.0  0.0 226752  3604 pts/0    R+   21:45   0:00 ps aux
+```
+
+__Note:__ `ps` has tons of options, but `ps aux` and `ps ux` tend to provide the most useful information, especially when combined with [`grep`](#grep). `a` tells `ps` to include all users in the output, `u` tells `ps` to format the output as seen above and `x` tells `ps` to include processes that aren't assigned to a tty.
+
+`top` gives you a list of processes sorted by resource use
+
+```
+[bjames@lwks1 ~]$ top
+
+top - 21:53:12 up  2:21,  1 user,  load average: 0.26, 0.37, 0.39
+Tasks: 369 total,   1 running, 365 sleeping,   3 stopped,   0 zombie
+%Cpu(s):  0.7 us,  0.4 sy,  0.0 ni, 98.8 id,  0.0 wa,  0.1 hi,  0.0 si,  0.0 st
+MiB Mem :  64430.3 total,  59678.8 free,   2847.9 used,   1903.7 buff/cache
+MiB Swap:  32280.0 total,  32280.0 free,      0.0 used.  60759.1 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND    
+ 2343 bjames    20   0 1739572 106636  81552 S   3.0   0.2   1:56.88 Xorg       
+ 2584 bjames    20   0 4790964 227384 113140 S   2.7   0.3   1:44.76 gnome-she+ 
+13769 bjames    20   0  674600  65880  40592 S   2.0   0.1   0:04.11 terminator 
+```
+
+__Note:__ By default, `top` sorts by CPU utilization. Pressing `f` brings up a menu that allows you to select a different column to sort by. 
+
+### Stopping Jobs and Processes
+
+To end the current job, press `CTRL+C` this sends SIGINT[^7] to the current process. SIGINT can be thought of as a way to ask the process to gracefully shutdown. There may be instances where this doesn't work, but in general it will kill the process in the foreground.
 
 ```
 [bjames@lwks1 neverthenetwork]$ ping 8.8.8.8
@@ -520,42 +578,259 @@ PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 [bjames@lwks1 neverthenetwork]$ kill %1
 ```
 
-Notice that we didn't get the `ping statistics` lines after ping was killed. This is because we stopped the job forcefully with `kill` instead of using `CTRL+C`. We've also introduced the `jobs` and `kill` commands. `jobs` just prints the list of jobs in the current terminal session so there isn't just a ton to say about it. 
+Notice that we didn't get the `ping statistics` lines after ping was killed. This is because we stopped the job forcefully with `kill` instead of using `CTRL+C`.
 
-`kill` works on both jobs in the current terminal session and processes running outside of the current session. When preceded with `%` the number following the command refers to the job number  (as reported by `jobs`), without the `%` it refers to the Process-ID or PID. The PID of a process can be found using the `ps` or `top` commands. By default `kill` sends SIGTERM, but it can send any of the POSIX signals. `kill -l` lists the signals along with the number kill uses to refer to that signal. As an example, `kill -9 %1` would've killed ping using SIGKILL instead of SIGTERM. 
+`kill` works on both jobs in the current terminal session and processes running outside of the current session. When preceded with `%` the number following the command refers to the job number  (as reported by `jobs`), without the `%` it refers to the Process-ID or PID. The PID of a process can be found using the `ps` or `top` commands. 
+
+```
+[bjames@lwks1 ~]$ ps ut | grep ping
+bjames   14437  0.0  0.0 221516  2052 pts/0    S    21:31   0:00 ping -q 8.8.8.8
+bjames   14505  0.0  0.0 221516  2076 pts/0    S    21:32   0:00 ping 4.2.2.2
+bjames   21005  0.0  0.0 215744   832 pts/0    S+   21:59   0:00 grep --color=auto ping
+[bjames@lwks1 ~]$ kill 14505
+[2]   Terminated              ping 4.2.2.2 > ping.out
+[bjames@lwks1 ~]$ ps ut | grep ping
+bjames   14437  0.0  0.0 221516  2052 pts/0    S    21:31   0:00 ping -q 8.8.8.8
+bjames   21064  0.0  0.0 215744   832 pts/0    S+   21:59   0:00 grep --color=auto ping
+```
+
+By default `kill` sends SIGTERM, but it can send any of the POSIX signals. `kill -l` lists the signals along with the number kill uses to refer to that signal. As an example, `kill -9 %1` would've killed ping using SIGKILL instead of SIGTERM. 
 
 __Note:__ SIGKILL should really only be used for processes that can't be killed using SIGTERM or SIGINT. SIGKILL doesn't give the process a chance to clean up before exiting and in many cases SIGTERM will work in places SIGINT does not.
 
-### Sending Jobs to the Background
+### Switching Between Jobs
 
-You can immediately send a job to the background when you start it by using `&`. This doesn't redirect the commands output, so this can get a little messy. As an exteme example you can try sending two ping processes to the background in this manner. 
+You can start a background job by appending `&` to the command `ping -q 8.8.8.8 &`. You can also send the current process to the background using `CTRL + Z` followed by `bg`. To bring a process back to the foreground, use `fg`. By default `fg` will bring the most recent job to the foreground, to specify a process use `fg %<jobnumber>`.
 
 ```
-bjames@lwks1 neverthenetwork]$ ping 4.2.2.2 &
-[1] 12020
-PING 4.2.2.2 (4.2.2.2) 56(84) bytes of data.
-[bjames@lwks1 neverthenetwork]$ 64 bytes from 4.2.2.2: icmp_seq=1 ttl=56 time=9.02 ms
-64 bytes from 4.2.2.2: icmp_seq=2 ttl=56 time=9.82 ms
-
-[bjames@lwks1 neverthenetwork]$ 64 bytes from 4.2.2.2: icmp_seq=3 ttl=56 time=8.92 ms
-ping 64 bytes from 4.2.2.2: icmp_seq=4 ttl=56 time=10.2 ms
-8.864 bytes from 4.2.2.2: icmp_seq=5 ttl=56 time=8.93 ms
-.8.864 bytes from 4.2.2.2: icmp_seq=6 ttl=56 time=9.63 ms
- 64 bytes from 4.2.2.2: icmp_seq=7 ttl=56 time=9.65 ms
-&
-[2] 12060
+[bjames@lwks1 ~]$ sudo tcpdump -w out.pcap
+tcpdump: listening on enp4s0, link-type EN10MB (Ethernet), capture size 262144 bytes
+^Z
+[1]+  Stopped                 sudo tcpdump -w out.pcap
+[bjames@lwks1 ~]$ bg
+[1]+ sudo tcpdump -w out.pcap &
+[bjames@lwks1 ~]$ ping -q 8.8.8.8 &
+[2] 26389
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
-[bjames@lwks1 neverthenetwork]$ 64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=9.49 ms
-64 bytes from 4.2.2.2: icmp_seq=8 ttl=56 time=9.55 ms
-64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=9.11 ms
-64 bytes from 4.2.2.2: icmp_seq=9 ttl=56 time=9.12 ms
-64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=10.1 ms
+[bjames@lwks1 ~]$ jobs
+[1]-  Running                 sudo tcpdump -w out.pcap &
+[2]+  Running                 ping -q 8.8.8.8 &
+[bjames@lwks1 ~]$ fg
+ping -q 8.8.8.8
+^C
+--- 8.8.8.8 ping statistics ---
+10 packets transmitted, 10 received, 0% packet loss, time 23ms
+rtt min/avg/max/mdev = 3.571/4.137/5.975/0.687 ms
+[bjames@lwks1 ~]$ fg
+sudo tcpdump -w out.pcap
+^C492 packets captured
+503 packets received by filter
+0 packets dropped by kernel
+[bjames@lwks1 ~]$ 
 ```
 
-Of course there are uses for this, but in many cases it's not ideal to have the output of background processes sent to STDOUT. 
+
+Note that this doesn't redirect the commands output, so this can get a little messy. Many commands have arguments that suppress some or all of their output. Above I used `tcpdump -w` to have tcpdump write to a file and `ping -q` to suppress all ping output with the exception of the summary statistics. Some commands don't have a built in way of doing this, but in those cases, we can use [IO Redirection](#io-redirection) as a workaround. 
+
+#### Keeping Jobs Alive
+
+Commands sent to the background only stay there until your current terminal session ends. This means that if your SSH session ends or you close the terminal window on your Linux desktop, all the jobs you've started die. Luckily, there are a couple of built in ways to keep jobs alive after a session ends.
+
+##### `nohup`
+
+When a session ends, `SIGHUP` is sent to all running jobs. `nohup` prevents programs from receiving `SIGHUP` when you exit and it also redirects the output to `nohup.out`.
+
+```
+[bjames@lwks1 ~]$ nohup ping 8.8.8.8 &
+[1] 4620
+nohup: ignoring input and appending output to 'nohup.out'
+[bjames@lwks1 ~]$ exit
+```
+
+Later, we can look at the output by reading `nohup.out`
+
+```
+[bjames@lwks1 ~]$ more nohup.out 
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=3.50 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=4.06 ms
+<redacted for brevity>
+64 bytes from 8.8.8.8: icmp_seq=81 ttl=54 time=3.99 ms
+64 bytes from 8.8.8.8: icmp_seq=82 ttl=54 time=3.91 ms
+```
+
+You can't re-attach to a job ran with `nohup`. To kill the job, you need to know the PID. 
+
+```
+[bjames@lwks1 ~]$ ps aux | grep ping
+bjames    4620  0.0  0.0 221516  2012 pts/1    S    16:43   0:00 ping 8.8.8.8
+bjames    5935  0.0  0.0 215744   896 pts/1    S+   16:49   0:00 grep --color=auto ping
+[bjames@lwks1 ~]$ kill 4620
+[1]+  Terminated              nohup ping 8.8.8.8
+[bjames@lwks1 ~]$
+```
+
+##### `disown`
+
+By default, disown removes the job from your active job list. Which also prevents `SIGHUP` from being sent to the job. You can also use `disown -h` to keep the job in your active job list, but to prevent `SIGHUP` from being sent to the job later. 
+
+To use `disown`, start a job, send it to the background and then run `disown` or `disown %<job-number>`. 
+
+```
+[bjames@lwks1 ~]$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=4.03 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=3.85 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=4.73 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=54 time=4.34 ms
+^Z
+[1]+  Stopped                 ping 8.8.8.8
+[bjames@lwks1 ~]$ bg
+[1]+ ping 8.8.8.8 &
+[bjames@lwks1 ~]$ 64 bytes from 8.8.8.8: icmp_seq=5 ttl=54 time=3.99 ms
+64 bytes from 8.8.8.8: icmp_seq=6 ttl=54 time=4.05 ms
+64 bytes from 8.8.8.8: icmp_seq=7 ttl=54 time=3.95 ms
+dis64 bytes from 8.8.8.8: icmp_seq=8 ttl=54 time=3.97 ms
+own64 bytes from 8.8.8.8: icmp_seq=9 ttl=54 time=5.58 ms
+
+64 bytes from 8.8.8.8: icmp_seq=11 ttl=54 time=4.11 ms
+[bjames@lwks1 ~]$exit
+```
+
+__Note:__`nohup` and `disown` are functionally the same except `nohup` handles IO redirection for you. Absent of any other [IO Redirection](#io-redirection), `disown`ed jobs will continue to send output to `stdout` until the current session ends.
 
 ## IO Redirection
 
+IO Redirection is one of the more powerful features of the Linux command line. I only cover the essentials here, but honestly it's pretty rare that you'll need much more than what I've listed below. For more details try searching for Pipelines and REDIRECTION in `man bash`
+
+### Standard Streams
+
+POSIX compliant programs have three standard streams. `stdin` or standard input is the input you give to a program. `stdout` or standard output is the output from the program. `stderr` or standard error is a separate output stream (generally also written to the terminal) used for error messages. In keeping with the [Unix Philosophy](#unix-philosophy) these all have pretty predictable output (or take predictable input)[^8]. These streams are what allow [IO Redirection](#io-redirection) to take place.
+
+### Redirection Operators
+
+* `command1 | command2`
+	- Redirects `stdout` from command1 to `stdin` of command2.
+	- This type of redirection is known as a pipe
+	- Example: using grep to search the output of `man bash`
+
+	```
+	[bjames@lwks1 ~]$ man bash | grep -n Pipelines
+	257:   Pipelines
+	```
+* `command > outfile.txt`
+	- Redirects `stdout` to outfile.txt, overwriting the file
+	- Example: using `cat` to concatenate two files and sending the output to outfile.txt 
+	
+	```
+	[bjames@lwks1 ~]$ cat cool.txt notcool.txt > outfile.txt
+	[bjames@lwks1 ~]$ more outfile.txt 
+	cool
+	not cool
+	```
+* `command >> outfile.txt`
+	- Redirects `stdout` to outfile.txt, appending the file
+	- Example: using `cat` to concatenate two files and sending the output to outfile.txt after the command in the previous example has already been executed
+	
+	```
+	[bjames@lwks1 ~]$ cat cool.txt notcool.txt >> outfile.txt
+	[bjames@lwks1 ~]$ more outfile.txt 
+	cool
+	not cool
+	cool
+	not cool	
+	```
+* `command &> outfile.txt`
+	- Redirects `stdout` and `stdin` to outfile.txt
+	- Example: using `cat` to concatenate an existent file with a nonexistent file first only redirecting `stdout` and then redirecting `stdout` and `stderr`.
+	
+	```
+	[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt > outfile.txt
+	cat: doesntexist.txt: No such file or directory
+	[bjames@lwks1 ~]$ more outfile.txt 
+	cool
+	[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt &> outfile.txt
+	[bjames@lwks1 ~]$ more outfile.txt 
+	cool
+	cat: doesntexist.txt: No such file or directory
+	```
+	- Appending looks exactly how you might expect `cat cool.txt doesntexist.txt &>> outfile.txt`
+* `command < infile.txt`
+	- Redirects the contents of `infile.txt` to `stdin`
+	- Example: Redirect a list of domains to `nslookup`'s `stdin`
+	
+	```
+	[bjames@lwks1 ~]$ nslookup < domainlist.txt 
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	neverthenetwork.com
+	Address: 174.138.44.218
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	cisco.com
+	Address: 72.163.4.185
+	Name:	cisco.com
+	Address: 2001:420:1101:1::185
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	juniper.com
+	Address: 192.107.16.40
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	arista.com
+	Address: 64.68.200.46
+	
+	[bjames@lwks1 ~]$ 	
+	```
+
+### Chaining Redirection Operators
+
+Redirection operators can be chained together indefinitely. This works exactly how you would expect, just read from left to right.
+
+* Example: Redirect domainlist.txt to `nslookup`, pipe the output into `grep` and redirect `grep`'s output to result.txt
+
+	```
+	[bjames@lwks1 ~]$ nslookup < domainlist.txt | grep -B 2 64.68.200.46 > result.txt
+	[bjames@lwks1 ~]$ more result.txt 
+	Non-authoritative answer:
+	Name:	arista.com
+	Address: 64.68.200.46
+	```
+
+* Example: Concatenate two domain lists, `grep` the output for the word 'cisco' and perform an `nslookup` for each result
+
+	```
+	[bjames@lwks1 ~]$ cat domainlist.txt domainlist2.txt | grep cisco | nslookup
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	cisco.com
+	Address: 72.163.4.185
+	Name:	cisco.com
+	Address: 2001:420:1101:1::185
+	Server:		192.168.88.1
+	Address:	192.168.88.1#53
+	
+	Non-authoritative answer:
+	Name:	sanfrancisco.com
+	Address: 104.27.130.254
+	Name:	sanfrancisco.com
+	Address: 104.27.131.254
+	Name:	sanfrancisco.com
+	Address: 2606:4700:30::681b:82fe
+	Name:	sanfrancisco.com
+	Address: 2606:4700:30::681b:83fe
+	```
+	
 ## .bashrc
 
 ## Queue
@@ -564,19 +839,26 @@ Things I plan on adding as time allows
 
 * Network Utilities
 	- tcpdump
-	- dig
+	- dig and nslookup
 	- netcat
 	- whois
-	- traceroute and tracepath
+	- traceroute, tracepath and mtr
 	- ping
+	- dhcping
 * File Transfer
 	- Clients: SCP, SFTP, FTP
 	- Servers: Python Simple HTTP Server
-
+* Text Manipulation
+	- sed
+	- awk
+	- cat
+	
+## Command Glossary
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
 [^2]: https://archive.org/details/bstj57-6-1899/page/n3
-[^3]: The shell is typically, but not always GNU BASH. Ksh, fish and zsh are common alternatives 
-[^4]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
-[^5]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
-[^6]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means
+[^3]: The shell is typically, but not always GNU BASH. Ksh, fish and zsh are common alternatives
+[^4]: The [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL) is the closest thing we have to a standard. It contains a very small subset of the programs you'd find on a typical Linux installation. 
+[^5]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
+[^6]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
+[^7]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means.
