@@ -32,6 +32,7 @@ I am a huge fan of Linux[^1]. In the office, most of my real work happens throug
 	- [Standard Streams](#standard-streams)
 	- [Redirection Operators](#redirection-operators)
 		+ [Chaining Redirection Operators](#chaining-redirection-operators)
+* [Command Aliases](#command-aliases)
 * [.bashrc](#bashrc)
 * [Queue](#queue)
 * [Command Glossary](#command-glossary)
@@ -830,7 +831,11 @@ Redirection operators can be chained together indefinitely. This works exactly h
 	Name:	sanfrancisco.com
 	Address: 2606:4700:30::681b:83fe
 	```
-	
+
+## Command Aliases
+
+The `alias` command is used to create command and function aliases. This allows you to call the commands or bash function using the name of the alias instead of the command or function name. This is especially useful for long strings of commands with lots of IO Redirection. Let's say we have a command that reads a list of domains, resolves the A records for those domains and then does a whois lookup for the IP addresses. 
+
 ## .bashrc
 
 ## Queue
