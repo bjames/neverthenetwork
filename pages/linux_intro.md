@@ -832,9 +832,11 @@ Redirection operators can be chained together indefinitely. This works exactly h
 	Address: 2606:4700:30::681b:83fe
 	```
 
-## Command Aliases
+## Command Aliases and Bash Functions
 
-The `alias` command is used to create command and function aliases. This allows you to call the commands or bash function using the name of the alias instead of the command or function name. This is especially useful for long strings of commands with lots of IO Redirection. Let's say we have a command that reads a list of domains, resolves the A records for those domains and then does a whois lookup for the IP addresses. 
+The `alias` command is used to create command and function aliases. This allows you to call the commands or bash function using the name of the alias instead of the command or function name. As an example, lets create a new alias called `logssh`. In the [SSH](#ssh) section we learned that you can log ssh sessions using `ssh hostname | tee logfile.log`. If this is a command that we run regularly, we might want to add a timestamp so we aren't constantly overwriting the file. 
+
+
 
 ## .bashrc
 
