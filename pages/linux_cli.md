@@ -1,11 +1,11 @@
-title: A Network Engineer's Guide to the Linux CLI
+title: A Power User's Guide to the Linux CLI
 category:
 - Cheatsheets
 - Linux
 published: 2019-10-10
 update_interval: weekly
 author: Brandon James
-summary: A power user's guide to the Linux CLI
+summary: At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
 
 
 I am a huge fan of Linux[^1]. In the office, most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010[^2]. At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
