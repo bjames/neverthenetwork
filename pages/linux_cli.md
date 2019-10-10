@@ -68,9 +68,9 @@ File navigation is one of the places new CLI users get hung up, but once you get
 
      	2) Linux provides two useful shortcuts for relative paths 
      	
-     		* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
+      	* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
 
-	 		* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
+	  	* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
 
 * `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors [alias](#command-aliases-bash-functions-and-.bashrc) `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
 ```
@@ -114,10 +114,10 @@ ii) From there we `cd` to my Projects folder using a relative path
 [bjames@lwks1 Projects]$ ls
 neverthenetwork
 ```
-
 iii) If we want to go to my Videos folder, we can do so in a few ways. Three are shown below:
 
-	 1) Returning to the parent folder and then navigating to the Video folder, both using relative paths.
+* Returning to the parent folder and then navigating to the Video folder, both using relative paths.
+
 ```
 [bjames@lwks1 Projects]$ pwd
 /home/bjames/Projects
@@ -126,13 +126,17 @@ iii) If we want to go to my Videos folder, we can do so in a few ways. Three are
 [bjames@lwks1 Videos]$ pwd
 /home/bjames/Videos
 ``` 
-	 2) The absolute path
+
+* The absolute path
+
 ```
 [bjames@lwks1 Projects]$ cd /home/bjames/Videos/
 [bjames@lwks1 Videos]$ pwd
 /home/bjames/Videos 
 ```
-	 3) A single relative path
+
+* A single relative path
+
 ```
 [bjames@lwks1 Projects]$ cd ../Videos/
 [bjames@lwks1 Videos]$ pwd
@@ -703,121 +707,114 @@ POSIX compliant programs have three standard streams. `stdin` or standard input 
 	- Redirects `stdout` from command1 to `stdin` of command2.
 	- This type of redirection is known as a __pipe__
 	- Example: using grep to search the output of `man bash`
-
-	```
-	[bjames@lwks1 ~]$ man bash | grep -n Pipelines
-	257:   Pipelines
-	```
+	
+```
+[bjames@lwks1 ~]$ man bash | grep -n Pipelines
+257:   Pipelines
+```
 * `command > outfile.txt`
 	- Redirects `stdout` to outfile.txt, overwriting the file
 	- Example: using `cat` to concatenate two files and sending the output to outfile.txt 
-	
-	```
-	[bjames@lwks1 ~]$ cat cool.txt notcool.txt > outfile.txt
-	[bjames@lwks1 ~]$ more outfile.txt 
-	cool
-	not cool
-	```
+```
+[bjames@lwks1 ~]$ cat cool.txt notcool.txt > outfile.txt
+[bjames@lwks1 ~]$ more outfile.txt 
+cool
+not cool
+```
 * `command >> outfile.txt`
 	- Redirects `stdout` to outfile.txt, appending the file
 	- Example: using `cat` to concatenate two files and sending the output to outfile.txt after the command in the previous example has already been executed
-	
-	```
-	[bjames@lwks1 ~]$ cat cool.txt notcool.txt >> outfile.txt
-	[bjames@lwks1 ~]$ more outfile.txt 
-	cool
-	not cool
-	cool
-	not cool	
-	```
+```
+[bjames@lwks1 ~]$ cat cool.txt notcool.txt >> outfile.txt
+[bjames@lwks1 ~]$ more outfile.txt 
+cool
+not cool
+cool
+not cool	
+```
 * `command &> outfile.txt`
 	- Redirects `stdout` and `stdin` to outfile.txt
 	- Example: using `cat` to concatenate an existent file with a nonexistent file first only redirecting `stdout` and then redirecting `stdout` and `stderr`.
-	
-	```
-	[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt > outfile.txt
-	cat: doesntexist.txt: No such file or directory
-	[bjames@lwks1 ~]$ more outfile.txt 
-	cool
-	[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt &> outfile.txt
-	[bjames@lwks1 ~]$ more outfile.txt 
-	cool
-	cat: doesntexist.txt: No such file or directory
-	```
 	- Appending looks exactly how you would expect `cat cool.txt doesntexist.txt &>> outfile.txt`
+```
+[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt > outfile.txt
+cat: doesntexist.txt: No such file or directory
+[bjames@lwks1 ~]$ more outfile.txt 
+cool
+[bjames@lwks1 ~]$ cat cool.txt doesntexist.txt &> outfile.txt
+[bjames@lwks1 ~]$ more outfile.txt 
+cool
+cat: doesntexist.txt: No such file or directory
+```
 * `command < infile.txt`
 	- Redirects the contents of `infile.txt` to `stdin`
 	- Example: Redirect a list of domains to `nslookup`'s `stdin`
-	
-	```
-	[bjames@lwks1 ~]$ nslookup < domainlist.txt 
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	neverthenetwork.com
-	Address: 174.138.44.218
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	cisco.com
-	Address: 72.163.4.185
-	Name:	cisco.com
-	Address: 2001:420:1101:1::185
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	juniper.com
-	Address: 192.107.16.40
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	arista.com
-	Address: 64.68.200.46
-	
-	[bjames@lwks1 ~]$ 	
-	```
+```
+[bjames@lwks1 ~]$ nslookup < domainlist.txt 
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	neverthenetwork.com
+Address: 174.138.44.218
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	cisco.com
+Address: 72.163.4.185
+Name:	cisco.com
+Address: 2001:420:1101:1::185
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	juniper.com
+Address: 192.107.16.40
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	arista.com
+Address: 64.68.200.46
+
+[bjames@lwks1 ~]$ 	
+```
 
 ### Chaining Redirection Operators
 
 * Example: Redirect domainlist.txt to `nslookup`, pipe the output into `grep` and redirect `grep`'s output to result.txt
-
-	```
-	[bjames@lwks1 ~]$ nslookup < domainlist.txt | grep -B 2 64.68.200.46 > result.txt
-	[bjames@lwks1 ~]$ more result.txt 
-	Non-authoritative answer:
-	Name:	arista.com
-	Address: 64.68.200.46
-	```
-
+```
+[bjames@lwks1 ~]$ nslookup < domainlist.txt | grep -B 2 64.68.200.46 > result.txt
+[bjames@lwks1 ~]$ more result.txt 
+Non-authoritative answer:
+Name:	arista.com
+Address: 64.68.200.46
+```
 * Example: Concatenate two domain lists, `grep` the output for the word 'cisco' and perform an `nslookup` for each result
+```
+[bjames@lwks1 ~]$ cat domainlist.txt domainlist2.txt | grep cisco | nslookup
+Server:		192.168.88.1
+Address:	192.168.88.1#53
 
-	```
-	[bjames@lwks1 ~]$ cat domainlist.txt domainlist2.txt | grep cisco | nslookup
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	cisco.com
-	Address: 72.163.4.185
-	Name:	cisco.com
-	Address: 2001:420:1101:1::185
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	sanfrancisco.com
-	Address: 104.27.130.254
-	Name:	sanfrancisco.com
-	Address: 104.27.131.254
-	Name:	sanfrancisco.com
-	Address: 2606:4700:30::681b:82fe
-	Name:	sanfrancisco.com
-	Address: 2606:4700:30::681b:83fe
-	```
+Non-authoritative answer:
+Name:	cisco.com
+Address: 72.163.4.185
+Name:	cisco.com
+Address: 2001:420:1101:1::185
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	sanfrancisco.com
+Address: 104.27.130.254
+Name:	sanfrancisco.com
+Address: 104.27.131.254
+Name:	sanfrancisco.com
+Address: 2606:4700:30::681b:82fe
+Name:	sanfrancisco.com
+Address: 2606:4700:30::681b:83fe
+```
 
 ## Command Aliases, Bash Functions and .bashrc
 
