@@ -2,46 +2,25 @@ title: A Network Engineer's Guide to the Linux CLI
 category:
 - Cheatsheets
 - Linux
+published: 2019-10-10
 update_interval: weekly
 author: Brandon James
-summary: A living guide to the Linux CLI
+summary: A power user's guide to the Linux CLI
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010 (and Fedora since the 'Beefy Miracle' release in 2011). Modern desktop environments like gnome, Unity and KDE have made Linux approachable to the average user, but where Linux really shines is on the CLI. This is meant to be a reference for the Linux power user and most of the tools covered are things I find myself using on a regular basis. 
+I am a huge fan of Linux[^1]. In the office, most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010[^2]. At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
 
-# Index
+This document is meant to be act as a Linux CLI reference. I plan on expanding the document as I have time and hope it ends up being a complete reference for Linux power users.
 
-* [The Unix Philosophy](#the-unix-philosophy)
-* [Defining The Linux CLI](#defining-the-linux-cli)
-* [Man Pages](#man-pages)
-* [Navigation](#navigation)
-* [Pagers](#pagers)
-* [Searching with grep, locate and which](#searching-with-grep-locate-and-which)
-	- [grep](#grep)
-		+ [My most used `grep` arguments](#my-most-used-grep-arguments)
-	- [locate](#locate)  
-	- [which](#which)
-* [SSH](#ssh)
-* [Vim](#vim)
-* [Job Management](#job-management)
-	- [Finding Jobs and Processes](#finding-jobs-and-processes)
-	- [Stopping Jobs and Processes](#stopping-jobs-and-processes)
-	- [Switching Between Jobs](#switching-between-jobs)
-		+ [Keeping Jobs Alive](#keeping-jobs-alive)
-* [IO Redirection](#io-redirection)
-	- [Standard Streams](#standard-streams)
-	- [Redirection Operators](#redirection-operators)
-		+ [Chaining Redirection Operators](#chaining-redirection-operators)
-* [Command Aliases](#command-aliases)
-* [.bashrc](#bashrc)
-* [Queue](#queue)
-* [Command Glossary](#command-glossary)
+<H1> Index </H1>
+
+[TOC]
 
 ## The Unix Philosophy
 
-Linux falls under the "Unix-like" class of operating systems, all of these operating systems roughly follow something known as the Unix Philosophy. The Unix Philosophy has a long and somewhat storied history that you can read about in the first Chapter of [*The Art of Unix Programming* by Eric Steven Raymond](http://www.catb.org/~esr/writings/taoup/html/ch01s06.html). While the book is geared towards programmers, understanding the Unix philosophy is sure to make you a better user of Linux as well.
+Linux falls under the "Unix-like" class of operating systems, all of these operating systems follow something known as the Unix Philosophy. The Unix Philosophy has a long and somewhat storied history that you can read about in the first Chapter of [*The Art of Unix Programming* by Eric Steven Raymond](http://www.catb.org/~esr/writings/taoup/html/ch01s06.html). While the book is geared towards programmers, understanding the Unix philosophy is sure to make you a better user of Linux as well.
 
-I think of the following quote[^2] from Doug McIlroy when I think of the Unix Philosophy:
+I think of the following quote from [Doug McIlroy](https://archive.org/details/bstj57-6-1899/page/n3) when I think of the Unix Philosophy:
 
 i) Make each program do one thing well. To do a new job, build afresh rather than complicate old programs by adding new features.
 
@@ -55,39 +34,45 @@ As a Linux user, it's important to keep the first two in mind. Realizing that th
 
 ## Defining the Linux CLI
 
-Since Linux can vary from distribution to distribution, I think it's important to define what I'm talking about when I say "the Linux CLI". The Linux CLI consists of a POSIX compliant shell[^3] and a set of text-based utilities. There are certain utilities you can expect to be available by default, but we don't really have a standard for this[^4]. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on all Linux distributions. 
+Since Linux can vary from distribution to distribution, I think it's important to define what I'm talking about when I say "the Linux CLI". The Linux CLI consists of a POSIX compliant shell and a set of text-based utilities. There are certain utilities you can expect to be available by default, but we don't really have a standard for this[^3]. Unless otherwise noted, any programs or commands that I mention should be available by default on most Linux distributions, but I'd be hesitant to guarantee that they'll be available on _all_ Linux distributions. 
+
+__Note:__ In this document I will use the terms __Linux CLI__, __bash__ and __shell__ interchangeably. If there is a standard Linux shell, it's bash, but some Linux distributions do ship with alternative shells such as ksh, fish or zsh.
 
 ## Man Pages
 
-Most bash commands and programs have listings in the system manual. To view a man page, simply type `man <command>` where command is the name of the command or program you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. To search within a man page, you can pipe `man` into [`grep`](#grep) such as `man man | grep -n EXAMPLES` to find the line number where the examples section begins. 
+Most Linux CLI commands and programs have listings in the system manual. To view a man page, simply type `man <command>` where command is the name of the command or program you want to know more about. The `man` program itself even has a man page, type `man man` to try it out. If for some reason you can't find the `man` page you are looking for you can use `man -k <keyword>` to get a list of `man` pages containing a specific keyword. You can also perform a basic search within a man page by typing `/<keyword>` and then using `n` to jump to the next result or `N` to jump to the previous result. For more advance searches, you can pipe `man` into [`grep -n`].
 
-In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar or jump to a specific line number by typing it and pressing enter. You can also perform a basic search with `/<string>` and then use `n` to jump to the next result or `N` to jump to the previous result. 
+In addition to being a quick way to view manual entries, the `man` program belongs to a class of CLI programs called [pagers](#pagers). Pagers give you a way to view the entire contents of a file without the need for a scrollbar. With `man` you can move up and down with `j` and `k`, skip forward a screenful with the spacebar or jump to a specific line number by typing it and pressing enter. 
 
 As you read this guide, I encourage you to skim the man pages for the utilities I mention. 
 
+__Note:__ Man pages are so effective that I rarely need to turn to the web for my Linux CLI questions. I actually considered stopping after writing this section because the man pages explain everything _far_ better than I can.  
+
 ## Navigation
 
-* A few general notes on the Linux directory layout.
+File navigation is one of the places new CLI users get hung up, but once you get the basics, it really is quicker and easier than managing files with a GUI.
+
+* A few notes on the Linux directory layout.
 
 	i) The root of the Linux filesystem is `/` or the root directory (not to be confused with the root user). This is not quite the same as being in the root of the C:\\ drive on a Windows machine. In Linux, all drives are mounted under the root filesystem. 
 
 	ii) All users have a home directory, it traditionally resides under `/home/<username>`. The `~` symbol refers to the current users home directory.
 
 	iii) Files and folders can be referenced by either absolute or relative paths. 
-
-	 	 * An absolute path is when you refer to the file or folder by it's full path starting at the root directory. As an example, if you have a folder called 'scripts' in your home directory the absolute path to a script within that directory is `/home/bjames/scripts/update_files.sh`. 
+	 	
+	 * An absolute path is when you refer to the file or folder by it's full path starting at the root directory. As an example, if you have a folder called 'scripts' in your home directory the absolute path to a script within that directory is `/home/bjames/scripts/update_files.sh`. 
 	 
-	 	 * There a couple ways to refer to a file or folder by relative paths
+	 * There a couple ways to refer to a file or folder by relative paths
 	 
-	 		1) Referencing the file or folder without a preceding `/` uses your current working directory as the base directory. Using the script above, the relative path from your home directory would be `scripts/update_files.sh`
+	 	1) Referencing the file or folder without a preceding `/` uses your current working directory as the base directory. Using the script above, the relative path from your home directory would be `scripts/update_files.sh`
 
-     		2) Linux provides two useful shortcuts for relative paths 
+     	2) Linux provides two useful shortcuts for relative paths 
      	
-     			* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
+     		* When within a folder, you can refer to the folder as `.`. Again, from our home folder `./scripts/update_files.sh` or from the scripts folder `./update_files.sh` are both relative paths to the update_files.sh script.
 
-	 			* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
+	 		* `..` refers to the parent directory. As an example, let's say the absolute path of your working directory is the scripts folder from above, `/home/bjames/scripts/`. If you needed to access notes.txt stored in your home directory, you could do so with the following relative path: `../notes.txt`. Note that you can use `..` multiple times in a single path. For instance `../../` refers to `/home/`.
 
-* `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors alias `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
+* `ls` Lists the contents of the current directory. It can be combined with arguments like `ls -l` to format the output as a list, `ls -a` to include hidden files in the output or `ls -h` to print the file size in a human readable format. Arguments can also be stacked, for example `ls -lah` formats the output as a list, includes hidden files and uses human readable file sizes. Many Linux flavors [alias](#command-aliases-bash-functions-and-.bashrc) `ls -lah` to `ll`, which means running the command `ll` actually runs `ls -lah`. 
 ```
 [bjames@lwks1 Documents]$ ls -lah
 total 183M
@@ -158,7 +143,7 @@ iii) If we want to go to my Videos folder, we can do so in a few ways. Three are
 
 If you've read many linux guides, you've probably seen someone use `cat file.txt` to print the content of a file to the screen. This does work, but there is a much better solution. `more` and `less` both belong to a class of programs known as pagers. Pagers work by breaking files into pages or screenfuls of data so you don't need to scroll back up to see the rest of your file. The two programs operate similarly, but do have a few differences. 
 
-* `less` - Operates similarly to `vi` and allows forward and backward movement through the file. The output of the file is not copied to your scrollback buffer[^6]. 
+* `less` - Operates similarly to `vi` and allows forward and backward movement through the file. The output of the file is not copied to your scrollback buffer[^4]. 
 	* Basic navigation `[space]` - Move forward one screenful, `j` move forward one line, `k` move backward one line, `q` quit
 	* The pager used by `man` operates similarly to less
 	* `less file.txt`
@@ -175,24 +160,24 @@ Read the man pages (`man less` and `man more`) for *more* on both of these.
 `grep` is used to find strings matching a pattern within a file. In the most basic case, you might use `grep` to search for a specific string within a file:
 
 ```
-[bjames@lwks1 pages]$ grep "specific string" linux_intro.md
+[bjames@lwks1 pages]$ grep "specific string" linux_cli.md
 Grep is used to find strings matching a pattern within a file. In the most basic case, you might use grep to search for a specific string within a file:
 ```
 
 However, the real power of `grep` lies in regular expressions. Current versions of `grep` support three *flavors* of regex. They are standard `grep` regex, extended `grep` regex and perl regex. I find myself using extended `grep` for most things. In the below example, we use extended regular expressions to find IP addresses within this markdown file. 
 
 ```
-[bjames@lwks1 pages]$ grep -nE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' linux_intro.md
-175:[bjames@lwks1 ~]$ ssh 172.16.12.1
-176:172.16.12.127  172.16.12.130  172.16.12.132  172.16.12.137  
-177:[bjames@lwks1 ~]$ ssh 172.16.12.127 | tee logfile.log
-<redacted for brevity>
-262:RSA host key for 192.168.88.1 has changed and you have requested strict checking.
-267:[bjames@lwks1 ~]$ ssh-keygen -R 192.168.88.1
-268:# Host 192.168.88.1 found: line 10
+[bjames@lwks1 pages]$ grep -noE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' linux_cli.md
+193:172.16.12.1
+194:172.16.12.127
+194:172.16.12.130
+<redacted for breavity>
+833:104.27.130.254
+835:104.27.131.254
+876:192.168.88.1
 ```
 
-__Note:__ in the above output, I also included the `-n` argument, this tells `grep` to print the line number the match was found on. Also note the regex above won't only find valid IPs, for instance 999.999.999.999 is not a valid IP, but would be considered a match. The regex to only match valid IPs is significantly more complicated. When using `grep` it's generally best to use regex that's good enough to find what you are looking for.
+__Note:__ in the above output, I also included the `-n` argument, this tells `grep` to print the line number the match was found on. I also used the `-o` argument, which tells grep we want only the matching part of the line. Also note the regex above won't only find valid IPs, for instance 999.999.999.999 is not a valid IP, but would be considered a match. The regex to only match valid IPs is significantly more complicated. When using `grep` it's generally best to use regex that's good enough to find what you are looking for.
 
 In addition to searching a single file, `grep` can be used to search multiple files using either a wildcard such as `grep <pattern> *.log`, a single directory `grep <pattern> ~/logs/` or a directory and it's subdirectories `grep -r <pattern> ~/logs/` (here the `-r` argument stands for recursive). 
 
@@ -205,13 +190,13 @@ wlc_cli.md:192.168.0.20
 wlc_cli.md:192.168.1.20
 ```
 
-__Note:__ Above we found every IP address, subnet mask or wildcard mask used in any NTN article. In addition to the `-E` argument, I used `-o` which tells `grep` that we want the matching part of the line only.
+__Note:__ Above we found every IP address, subnet mask or wildcard mask used in any NTN article. 
 
-`grep` can also be used with pipes to search the output of another file `<command> | grep <pattern>`
+`grep` can also be used with [pipes](#redirection-operators) to search the output of another file `<command> | grep <pattern>`
 
 ```
 [bjames@lwks1 pages]$ ls -lah | grep linux
--rw-rw-r--.  1 bjames bjames  23K Sep 24 23:46 linux_intro.md
+-rw-rw-r--.  1 bjames bjames  23K Sep 24 23:46 linux_cli.md
 ```
 
 #### My most used `grep` arguments
@@ -234,17 +219,18 @@ __Note:__ Above we found every IP address, subnet mask or wildcard mask used in 
 
 `-A [n]` print __n__ lines of context after the match 
 
-`grep` has tons of options and can be used for finding just about anything you'd need to find so I *highly* recommend reading `man grep` as the need arises. 
+`grep` has tons of options and can be used for finding just about anything you'd need to find. I *highly* recommend reading `man grep` as the need arises. 
 
 ### locate
 
 `locate` is used to find files based on their names. It can be used with either basic wildcards or regular expressions. 
 
 ```
-[bjames@lwks1 pages]$ locate -i *mac*.pdf
-/var/lib/snapd/snap/pycharm-community/147/help/ReferenceCardForMac.pdf
-/var/lib/snapd/snap/pycharm-community/150/help/ReferenceCardForMac.pdf
+[bjames@lwks1 pages]$ locate -i *run*.pdf
+/home/bjames/Documents/UA_TRAILRUN_50K_TRAINING_PLAN_2018.pdf
 ```
+
+__Note:__ The `-i` argument tells locate to perform a case-insensitive search
 
 This is useful if I remember all or part of the name of a file, but don't remember where it was saved. 
 
@@ -286,12 +272,12 @@ As network engineers we often need to log our ssh sessions to a file. This can b
 [bjames@lwks1 ~]$ ssh 172.16.12.127 | tee logfile.log
 ```
 
-This is a good time to introduce the concept of `|` or pipes. `ssh` and `tee` are two seperate programs. Linux CLI programs such as `ssh` often read from standard input (commonly called stdin) write to standard output (commonly called stdout). When using a terminal emulator, stdout is printed on the terminal and stdin is input to the terminal. `|` is one of the redirection operators in Linux. In this case, we are redirecting the output of `ssh` to the input of `tee` which in turn writes to logfile.log.
+This is a good time to introduce the concept of `|` or pipes. `ssh` and `tee` are two seperate programs. Linux CLI programs such as `ssh` often read from standard input (commonly called stdin) write to standard output (commonly called stdout). When using a terminal emulator, stdout is printed on the terminal and stdin is input to the terminal. `|` is one of the redirection operators in Linux. In this case, we are redirecting the output of `ssh` to the input of `tee` which in turn writes to logfile.log. For more details, read the section titled [IO Redirection](#io-redirection).
 
-`ssh`, `tee` and output redirection are examples of the first two points of the Unix Philosophy at the top of this page. `ssh` and `tee` are both small programs that do one thing well.  In addition, we've made the output of `ssh` the input of `tee`. Redirection is an important part of effective CLI use.
+__Note:__`ssh`, `tee` and output redirection are examples of the first two points of the Unix Philosophy at the top of this page. `ssh` and `tee` are both small programs that do one thing well.  In addition, we've made the output of `ssh` the input of `tee`. Redirection is an important part of effective CLI use.
 
 ### The Known Hosts File
-The first time you log into a device you'll be prompted to add it's RSA key to the known hosts file. If this key ever changes, you'll be presented with an error message.
+The first time you log into a device you'll be prompted to add it's RSA key to the known hosts file.
 ```
 [bjames@lwks1 ~]$ ssh 192.168.88.1
 The authenticity of host '192.168.88.1 (192.168.88.1)' can't be established.
@@ -300,7 +286,7 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '192.168.88.1' (RSA) to the list of known hosts.
 bjames@192.168.88.1's password: 
 ```
-If the key ever changes, you'll be presented with an error message.
+If the key changes, you'll be presented with an error message.
 ```
 [bjames@lwks1 ~]$ ssh 192.168.88.1
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -326,7 +312,7 @@ Original contents retained as /home/bjames/.ssh/known_hosts.old
 ```
 ### SSH Configuration File
 
-The SSH configuration file is used to control how your system connects to other systems via SSH. There are actually multiple SSH configuration files on most systems. Commonly, `/etc/ssh/ssh_config` will contain some basic system-wide configuration as well as example configuration that has been commented out. On more modern systems, your system-wide SSH configuration will include any `.conf` file in `/etc/ssh/ssh_config.d/`. In addition to the system-wide configuration files, each user can have a configuration file under `~/.ssh/config`. In general I've found it best to edit user configuration files first and system-wide configuration files only when necessary.
+The SSH configuration file is used to control how your system connects to other systems via SSH. There are actually multiple SSH configuration files on most systems. Commonly, `/etc/ssh/ssh_config` will contain some basic system-wide configuration as well as example configuration that has been commented out. On modern systems, your system-wide SSH configuration will include any `.conf` file in `/etc/ssh/ssh_config.d/`. In addition to the system-wide configuration files, each user can have a configuration file under `~/.ssh/config`. In general I've found it best to edit user configuration files first and system-wide configuration files only when necessary.
 
 The SSH Configuration file has a simple syntax. 
 
@@ -345,7 +331,7 @@ __Note:__ The SSH Configuration file has it's own man page, you can read it with
 
 ### SSH Arguments
 
-Many of the options you configure in the SSH Configuration file may also have equivalent arguments. The one I use most frequently is `ssh -c <cipher> <hostname>` when connecting to older devices that don't use modern SSH ciphers.
+Many of the options you configure in the SSH Configuration file have equivalent arguments. The one I use most frequently is `ssh -c <cipher> <hostname>` when connecting to older devices that don't use modern SSH ciphers.
 
 ```
 [bjames@lwks1 ~]$ ssh oldhost1
@@ -386,20 +372,22 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 
-I strongly recommend setting a passphrase, especially in a shared environment. If you can't be bothered to type your passphrase more than once per session, you can use `ssh-agent` to store the passphrase. This command generates two files `<key_name>` and `<key_name>.pub`. Once you've generated an SSH key pair, you need to copy the public key, `<key_name>.pub` to the systems you need to authenticate against. 
+__Note:__ I strongly recommend setting a passphrase, especially in a shared environment. If you can't be bothered to type your passphrase more than once per session, you can use `ssh-agent` to store the passphrase. 
 
-__Note:__ In practice, it's likely that you'll just want to use default of `~/.ssh/id_rsa`
+`ssh-keygen` generates two files `<key_name>` and `<key_name>.pub`. Once you've generated an SSH key pair, you need to copy the public key, `<key_name>.pub` to the systems you need to authenticate against. 
+
+__Note:__ In practice, you'll probably want to use default of `~/.ssh/id_rsa`
 
 ```
-[bjames@lwks1 ~]$ ssh-copy-id -i test_key.pub goaccess.neverthenetwork.com
+[bjames@lwks1 ~]$ ssh-copy-id -i test_key.pub test.neverthenetwork.com
 /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "test_key.pub"
 /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
 /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
-bjames@goaccess.neverthenetwork.com's password: 
+bjames@test.neverthenetwork.com's password: 
 
 Number of key(s) added: 1
 
-Now try logging into the machine, with:   "ssh 'goaccess.neverthenetwork.com'"
+Now try logging into the machine, with:   "ssh 'test.neverthenetwork.com'"
 and check to make sure that only the key(s) you wanted were added.
 ```
 
@@ -408,14 +396,14 @@ This program works by copying your `<key_name>.pub` to `~/.ssh/authorized_keys`.
 Once the key has been copied, you can log in to the remote system by specifying the identity file using `ssh -i` or by modifying your ssh configuration to always use a specific identity file for one or every host. 
 
 ```
-[bjames@lwks1 ~]$ ssh -i test_key goaccess.neverthenetwork.com 
+[bjames@lwks1 ~]$ ssh -i test_key test.neverthenetwork.com 
 Enter passphrase for key 'test_key': 
 Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-55-generic x86_64)
 
-bjames@goaccess:~$ 
+bjames@test:~$ 
 ```
 
-__Note:__ There are several methods to maintain a list of authorized SSH keys across all your systems. One common method is to include users `authorized_keys` key files in configuration management. There are also centralized methods such as storing the keys in LDAP. 
+__Note:__ There are several methods to maintain a list of authorized SSH keys across all your systems. One common method is to include an `authorized_keys` file in a configuration management system. There are also centralized methods such as storing the keys in LDAP. 
 
 #### SSH Agent
 
@@ -453,7 +441,7 @@ __Note:__ This also works with identity files that have been specified using the
 
 ## Vim
 
-`vim` is commonly the default CLI text editor on linux distributions. This means that you need to know how to edit a file using vim. Even if you only know the basics, `vim` can be a joy to use. I've never bothered to learn any of `vim`'s advanced features and tend to use VSCode for development and making large edits, but I still really enjoy using `vim` and it's keyboard centric interface for edits from the terminal.
+`vim` is commonly the default CLI text editor on linux distributions. This means that you need to know how to edit files using vim. But don't fret, even if you only know the basics, `vim` can be a joy to use. I've never bothered to learn any of `vim`'s advanced features and tend to use VSCode for development and making large edits, but I still really enjoy using `vim` and it's keyboard centric interface for edits from the terminal.
 
 `vim` has a several modes, but here I'm going to cover the *basics* of __normal__ and __insert__. For more information I recommend `man vim` or `vimtutor`, which launches a fantastic interactive guide to `vim`.
 
@@ -523,7 +511,7 @@ root         1  0.0  0.0 171856 14844 ?        Ss   19:31   0:03 /usr/lib/system
 bjames   16763  0.0  0.0 226752  3604 pts/0    R+   21:45   0:00 ps aux
 ```
 
-__Note:__ `ps` has tons of options, but `ps aux` and `ps ux` tend to provide the most useful information, especially when combined with [`grep`](#grep). `a` tells `ps` to include all users in the output, `u` tells `ps` to format the output as seen above and `x` tells `ps` to include processes that aren't assigned to a tty.
+__Note:__ `ps` has tons of options, but `ps aux` and `ps ux` tend to provide the most useful information, especially when combined with [`grep`](#grep). `a` tells `ps` to include all users in the output, `u` tells `ps` to format the output as seen above and `x` tells `ps` to include processes that aren't assigned to a tty. Refer to `man ps` for more information
 
 `top` gives you a list of processes sorted by resource use
 
@@ -546,7 +534,7 @@ __Note:__ By default, `top` sorts by CPU utilization. Pressing `f` brings up a m
 
 ### Stopping Jobs and Processes
 
-To end the current job, press `CTRL+C` this sends SIGINT[^7] to the current process. SIGINT can be thought of as a way to ask the process to gracefully shutdown. There may be instances where this doesn't work, but in general it will kill the process in the foreground.
+To end the current job, press `CTRL+C`. This sends SIGINT[^6] to the current process. SIGINT asks the process to gracefully shutdown. There may be instances where this doesn't work, but in general it will end the process in the foreground.
 
 ```
 [bjames@lwks1 neverthenetwork]$ ping 8.8.8.8
@@ -601,7 +589,7 @@ __Note:__ SIGKILL should really only be used for processes that can't be killed 
 
 ### Switching Between Jobs
 
-You can start a background job by appending `&` to the command `ping -q 8.8.8.8 &`. You can also send the current process to the background using `CTRL + Z` followed by `bg`. To bring a process back to the foreground, use `fg`. By default `fg` will bring the most recent job to the foreground, to specify a process use `fg %<jobnumber>`.
+You can start a job in the background by appending `&` to the command `ping -q 8.8.8.8 &`. You can also send the current process to the background by using `CTRL + Z` to stop the process and then `bg` to have the process run in the background. To bring a process back to the foreground, use `fg`. By default `fg` will bring the most recent job to the foreground, but you can specify a process using `fg %<jobnumber>`.
 
 ```
 [bjames@lwks1 ~]$ sudo tcpdump -w out.pcap
@@ -630,8 +618,7 @@ sudo tcpdump -w out.pcap
 [bjames@lwks1 ~]$ 
 ```
 
-
-Note that this doesn't redirect the commands output, so this can get a little messy. Many commands have arguments that suppress some or all of their output. Above I used `tcpdump -w` to have tcpdump write to a file and `ping -q` to suppress all ping output with the exception of the summary statistics. Some commands don't have a built in way of doing this, but in those cases, we can use [IO Redirection](#io-redirection) as a workaround. 
+Note that this doesn't redirect the command's output, so it can get a little messy. Many commands have arguments that suppress some or all of their output. Above I used `tcpdump -w` to have tcpdump write to a file and `ping -q` to suppress all ping output with the exception of the summary statistics. Some commands don't have a built in way of doing this, but in those cases, we can use [IO Redirection](#io-redirection) as a workaround. 
 
 #### Keeping Jobs Alive
 
@@ -639,7 +626,7 @@ Commands sent to the background only stay there until your current terminal sess
 
 ##### `nohup`
 
-When a session ends, `SIGHUP` is sent to all running jobs. `nohup` prevents programs from receiving `SIGHUP` when you exit and it also redirects the output to `nohup.out`.
+When a session ends, `SIGHUP` is sent to all running jobs. When `SIGHUP` is received, jobs clean up and stop. `nohup` prevents programs from receiving `SIGHUP` when you exit and it also redirects their output to `nohup.out`.
 
 ```
 [bjames@lwks1 ~]$ nohup ping 8.8.8.8 &
@@ -673,7 +660,7 @@ bjames    5935  0.0  0.0 215744   896 pts/1    S+   16:49   0:00 grep --color=au
 
 ##### `disown`
 
-By default, disown removes the job from your active job list. Which also prevents `SIGHUP` from being sent to the job. You can also use `disown -h` to keep the job in your active job list, but to prevent `SIGHUP` from being sent to the job later. 
+By default, disown removes the job from your active job list. Which also prevents `SIGHUP` from being sent to the job. You can also use `disown -h` to keep the job in your active job list, but to prevent `SIGHUP` from being sent to the job when your session ends. 
 
 To use `disown`, start a job, send it to the background and then run `disown` or `disown %<job-number>`. 
 
@@ -700,19 +687,21 @@ own64 bytes from 8.8.8.8: icmp_seq=9 ttl=54 time=5.58 ms
 
 __Note:__`nohup` and `disown` are functionally the same except `nohup` handles IO redirection for you. Absent of any other [IO Redirection](#io-redirection), `disown`ed jobs will continue to send output to `stdout` until the current session ends.
 
+I don't cover `screen` here as I don't use it myself, but if you find `disown` or `nohup` insufficient for your needs you might look at using `screen` instead.
+
 ## IO Redirection
 
-IO Redirection is one of the more powerful features of the Linux command line. I only cover the essentials here, but honestly it's pretty rare that you'll need much more than what I've listed below. For more details try searching for Pipelines and REDIRECTION in `man bash`
+IO Redirection is one of the more powerful features of the Linux command line. I only cover the essentials here, but it's rare that you'll need much more than what I've listed below. For more details try searching for Pipelines and REDIRECTION in `man bash`
 
 ### Standard Streams
 
-POSIX compliant programs have three standard streams. `stdin` or standard input is the input you give to a program. `stdout` or standard output is the output from the program. `stderr` or standard error is a separate output stream (generally also written to the terminal) used for error messages. In keeping with the [Unix Philosophy](#unix-philosophy) these all have pretty predictable output (or take predictable input)[^8]. These streams are what allow [IO Redirection](#io-redirection) to take place.
+POSIX compliant programs have three standard streams. `stdin` or standard input is the input you give to a program. `stdout` or standard output is the output from the program. `stderr` or standard error is a separate output stream (also written to the terminal) used for error messages. In keeping with the [Unix Philosophy](#unix-philosophy) these all have pretty predictable output (or take predictable input)[^8]. These streams are what allow [IO Redirection](#io-redirection) to take place.
 
 ### Redirection Operators
 
 * `command1 | command2`
 	- Redirects `stdout` from command1 to `stdin` of command2.
-	- This type of redirection is known as a pipe
+	- This type of redirection is known as a __pipe__
 	- Example: using grep to search the output of `man bash`
 
 	```
@@ -755,7 +744,7 @@ POSIX compliant programs have three standard streams. `stdin` or standard input 
 	cool
 	cat: doesntexist.txt: No such file or directory
 	```
-	- Appending looks exactly how you might expect `cat cool.txt doesntexist.txt &>> outfile.txt`
+	- Appending looks exactly how you would expect `cat cool.txt doesntexist.txt &>> outfile.txt`
 * `command < infile.txt`
 	- Redirects the contents of `infile.txt` to `stdin`
 	- Example: Redirect a list of domains to `nslookup`'s `stdin`
@@ -794,8 +783,6 @@ POSIX compliant programs have three standard streams. `stdin` or standard input 
 
 ### Chaining Redirection Operators
 
-Redirection operators can be chained together indefinitely. This works exactly how you would expect, just read from left to right.
-
 * Example: Redirect domainlist.txt to `nslookup`, pipe the output into `grep` and redirect `grep`'s output to result.txt
 
 	```
@@ -832,13 +819,79 @@ Redirection operators can be chained together indefinitely. This works exactly h
 	Address: 2606:4700:30::681b:83fe
 	```
 
-## Command Aliases and Bash Functions
+## Command Aliases, Bash Functions and .bashrc
 
-The `alias` command is used to create command and function aliases. This allows you to call the commands or bash function using the name of the alias instead of the command or function name. As an example, lets create a new alias called `logssh`. In the [SSH](#ssh) section we learned that you can log ssh sessions using `ssh hostname | tee logfile.log`. If this is a command that we run regularly, we might want to add a timestamp so we aren't constantly overwriting the file. 
+The `alias` command is used to create command aliases. As an example, lets create a new alias called `isotime`. Let's say `date +"%Y-%m-%dT%H%M%S"` gives us the date and time in the format we'd like. This isn't a fun command to type, so lets create an alias.
 
+```
+[bjames@lwks1 ~]$ alias isotime="date +"%Y-%m-%dT%H%M%S""
+[bjames@lwks1 ~]$ isotime
+2019-10-09T091650
+```
 
+__Note:__The `date` command has a argument that returns ISO 8601 formatted timestamps, but it includes colons in the timestamp. If we want to add timestamps to files, colons may cause problems.
 
-## .bashrc
+Aliases are great for simple, hard to remember strings of commands, but they can't be used for anything that requires variables. Luckily, bash is both a shell and a functional programming language. So for anything that requires variables, we can write functions. 
+
+In the [SSH](#ssh) section we learned that you can log ssh sessions using `ssh hostname | tee logfile.log`. This isn't difficult to remember, but we might as well shorten the command a bit if we are going to be typing it regularly. This is a task that lends itself well to bash functions. 
+
+```
+function logssh()
+{
+    currtime=$(isotime);
+    ssh $1 | tee -a ~/sshlogs/$1-$currtime.log;
+}
+```
+
+When working with bash functions `$n` refers to the nth command line argument. This means $1 refers to the string following `logssh`. 
+
+__Note:__ I'm not going to go into detail on writing bash scripts here. That's outside of the scope of this document. I do want to give you a basic example of what they are and how to use them.
+
+To make the function available, we can simply paste the entire function into our terminal. 
+
+```
+[bjames@lwks1 ~]$ alias isotime="date +"%Y-%m-%dT%H%M%S""
+[bjames@lwks1 ~]$ function logssh()
+> {
+> 
+>     currtime=$(isotime);
+>     ssh $1 | tee -a ~/sshlogs/$1-$currtime.log;
+> 
+> }
+[bjames@lwks1 ~]$ logssh 192.168.88.1
+```
+__Note:__ In this function, we leveraged the alias we created earlier. For completeness, I recreate the alias below. 
+
+There is one problem with this method, the function and alias we just created are only available in the current terminal session. Future and concurrent sessions can't make use of the function and alias we just created. 
+
+### .bashrc
+
+`.bashrc` is a file that contains bash commands that are ran when a new terminal session is started. Each user has their own `.bashrc` file located at `~/.bashrc`. If we want `isotime` and `logssh` to be available for future terminal sessions, we can add them to our `.bashrc`. 
+
+```
+alias isotime="date +"%Y-%m-%dT%H%M%S""
+function logssh()
+{
+    currtime=$(isotime);
+    ssh $1 | tee -a ~/sshlogs/$1-$currtime.log;
+}
+```
+
+Upon login, the `alias` command is ran and the `logssh` function is created and ready to be ran. It should also be noted that `.bashrc` commands that write to `stdout` _will_ write to `stdout` when the session starts. 
+
+__Note:__ On my personal machines I like to add `fortune | cowsay` to the bottom of my `.bashrc` so that I'm greeted by a cow each time I open a new terminal window. Fortune and Cowsay aren't usually installed by default, but are most likely available through your distribution's package manager.
+
+```
+ ________________________
+< firewall needs cooling >
+ ------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+[bjames@lwks1 ~]$
+```
 
 ## Queue
 
@@ -859,13 +912,12 @@ Things I plan on adding as time allows
 	- sed
 	- awk
 	- cat
-	
-## Command Glossary
+* SSH
+	- Tunneling
 
 [^1]: My apologies to Richard Stallman, [GNU+Linux](https://www.gnu.org/gnu/linux-and-gnu.en.html) just doesn't roll of the tongue quite as well.
-[^2]: https://archive.org/details/bstj57-6-1899/page/n3
-[^3]: The shell is typically, but not always GNU BASH. Ksh, fish and zsh are common alternatives
-[^4]: The [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL) is the closest thing we have to a standard. It contains a very small subset of the programs you'd find on a typical Linux installation. 
+[^2]: And Fedora since the 'Beefy Miracle' release in 2011!
+[^3]: The [Linux Standard Base](http://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/command.html#CMDUTIL) is the closest thing we have to a standard. It contains a very small subset of the programs you'd find on a typical Linux installation. 
+[^4]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
 [^5]: OpenSSH is a widely used product of the OpenBSD Project, another Unix-like operating system. 
-[^6]: This is due to a feature called alternate screen. I generally don't mind altscreen, but there are ways to [effectively disable it](https://www.shallowsky.com/linux/noaltscreen.html).
-[^7]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means.
+[^6]: The wikipedia entry on [POSIX signals](https://en.wikipedia.org/wiki/Signal_(IPC)#POSIX_signals) is a pretty good reference for what each signal actually means.

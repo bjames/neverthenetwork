@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['FLATPAGES_EXTENSION'] = '.md'
-app.config['FLATPAGES_MARKDOWN_EXTENSIONS'] = ['codehilite', 'fenced_code', 'footnotes']
+app.config['FLATPAGES_MARKDOWN_EXTENSIONS'] = ['codehilite', 'fenced_code', 'footnotes', 'toc']
 app.secret_key = DATABASE_KEY
 
 # chrome likes to add trailing slashes to links for some reason
@@ -462,16 +462,16 @@ def wireless():
                     key=lambda p: p.meta['published'])
     return render_template('notes/notes.html', pages=latest[:10], active='wireless')
 
-#@app.route('/notes/linux')
-#def linux():
-#    # Only published articles
-#    all_articles = (p for p in pages if 'published' in p.meta)
-#    
-#    articles = (p for p in all_articles if 'Linux' in p.meta['category'])
-#    # Show the 10 most recent articles, most recent first.
-#    latest = sorted(articles, reverse=True,
-#                    key=lambda p: p.meta['published'])
-#    return render_template('notes/notes.html', pages=latest[:10], active='linux')
+@app.route('/notes/linux')
+def linux():
+    # Only published articles
+    all_articles = (p for p in pages if 'published' in p.meta)
+    
+    articles = (p for p in all_articles if 'Linux' in p.meta['category'])
+    # Show the 10 most recent articles, most recent first.
+    latest = sorted(articles, reverse=True,
+                    key=lambda p: p.meta['published'])
+    return render_template('notes/notes.html', pages=latest[:10], active='linux')
 
 @app.route('/notes/unpublished')
 def unpublished():
