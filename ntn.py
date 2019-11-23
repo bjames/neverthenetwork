@@ -378,7 +378,7 @@ def programming():
     # Show the 10 most recent articles, most recent first.
     latest = sorted(articles, reverse=True,
                     key=lambda p: p.meta['published'])
-    return render_template('notes/notes.html', pages=latest[:10], active='programming')
+    return render_template('notes/notes.html', pages=latest[:20], active='programming')
 
 @app.route('/notes/automation')
 def automation():

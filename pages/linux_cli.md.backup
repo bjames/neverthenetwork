@@ -8,7 +8,7 @@ author: Brandon James
 summary: At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
 
 
-I am a huge fan of Linux[^1]. In the office, most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010[^2]. At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
+I am a huge fan of Linux[^1]. In the office most of my real work happens through a Red Hat jumpbox, this website is hosted on Ubuntu and I've been using Linux on my personal machines since 2010[^2]. At first, I was using Linux because I'm a nerd and that's what we do, but I continue to use it because it increase my productivity. 
 
 This document is meant to be act as a Linux CLI reference. I plan on expanding the document as I have time and hope it ends up being a complete reference for Linux power users.
 
@@ -325,7 +325,7 @@ The SSH Configuration file has a simple syntax.
 
 Host <hostname, IP or pattern>
 	# any number of options can be listed here
-	Ciphers aes128-ctr
+	Cipher aes128-ctr
 # Use ssh-keys for all other hosts
 Host *
 	IdentityFile ~/.ssh/id_rsa
@@ -792,30 +792,29 @@ Name:	arista.com
 Address: 64.68.200.46
 ```
 * Example: Concatenate two domain lists, `grep` the output for the word 'cisco' and perform an `nslookup` for each result
+```
+[bjames@lwks1 ~]$ cat domainlist.txt domainlist2.txt | grep cisco | nslookup
+Server:		192.168.88.1
+Address:	192.168.88.1#53
 
-	```
-	[bjames@lwks1 ~]$ cat domainlist.txt domainlist2.txt | grep cisco | nslookup
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	cisco.com
-	Address: 72.163.4.185
-	Name:	cisco.com
-	Address: 2001:420:1101:1::185
-	Server:		192.168.88.1
-	Address:	192.168.88.1#53
-	
-	Non-authoritative answer:
-	Name:	sanfrancisco.com
-	Address: 104.27.130.254
-	Name:	sanfrancisco.com
-	Address: 104.27.131.254
-	Name:	sanfrancisco.com
-	Address: 2606:4700:30::681b:82fe
-	Name:	sanfrancisco.com
-	Address: 2606:4700:30::681b:83fe
-	```
+Non-authoritative answer:
+Name:	cisco.com
+Address: 72.163.4.185
+Name:	cisco.com
+Address: 2001:420:1101:1::185
+Server:		192.168.88.1
+Address:	192.168.88.1#53
+
+Non-authoritative answer:
+Name:	sanfrancisco.com
+Address: 104.27.130.254
+Name:	sanfrancisco.com
+Address: 104.27.131.254
+Name:	sanfrancisco.com
+Address: 2606:4700:30::681b:82fe
+Name:	sanfrancisco.com
+Address: 2606:4700:30::681b:83fe
+```
 
 ## Command Aliases, Bash Functions and .bashrc
 

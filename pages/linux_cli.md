@@ -325,7 +325,7 @@ The SSH Configuration file has a simple syntax.
 
 Host <hostname, IP or pattern>
 	# any number of options can be listed here
-	Ciphers aes128-ctr
+	Cipher aes128-ctr
 # Use ssh-keys for all other hosts
 Host *
 	IdentityFile ~/.ssh/id_rsa
