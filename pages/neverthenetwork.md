@@ -11,7 +11,7 @@ About a month ago I decided to submit NTN to Cisco's IT Blog Awards in the Best 
 ## Who I am
 My name is Brandon James and I am a Network Engineer in Fort Worth, TX. I currently work in the enterprise space and have experience with datacenter and campus routing/switching, wireless and automation. Before I was all in on Networking, I worked for a Managed Services company where, in addition to networking, I worked with virtualization, storage, Windows and Linux servers, along with a bit of desktop support. I'm also a graduate from Texas Tech University where I studied Economics and minored in Computer Science. To this day, I maintain a strong interest in Computer Science which has a direct impact in the way I approach networking topics.
 
-Outside of work, I'm a new father of a 3-month old boy, husband, dog owner, trail runner and wannabe landscape/wildlife/family photographer. I consider NTN a hobby and treat it like one. I write about topics that I feel like writing about and I only write when I feel like writing. Admittedly this is something I work on pretty regularly, but because I treat the site as a hobby, I've got several partially completed posts that won't be revisited until I feel like writing on that topic again. Of course that isn't to say technical blogging is easy, it is hard, kinda like running a trail 50k. 
+Outside of work, I'm a father of a 3-month old boy, husband, dog owner, trail runner and wannabe landscape/wildlife/family photographer. On top of all that, I also consider NTN one of my hobbies. I only write about topics that I feel like writing about and only when I feel like writing. Admittedly this is something I work on pretty regularly, but many of my articles never see the light of day. 
 
 ## NTN
 
