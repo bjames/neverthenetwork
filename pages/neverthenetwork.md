@@ -28,6 +28,7 @@ In addition I made it look kinda like a terminal window, which might not be the 
 NTN Notes is a technical networking blog and is probably the reason you're here. The things I write about can be broadly categorized into one of the following:
 
 1) Topics I wanted to learn more about - Example: [Locator/ID Separation Protocol - LISP](https://neverthenetwork.com/notes/lisp/)
+
 2) Things I've noticed engineers struggling with - Example: [A Power Users Guide to the Linux CLI](https://neverthenetwork.com/notes/linux_cli/)
 
 This means that if you are wanting to find an introduction to NAT or VLANs, you'll need to look elsewhere. These two categories really define what I'm passionate about. Of course this is very broad, but you can expect to see lots of posts about automation and new networking tech. I tend to think lower level, so I might not write much about something like ACI directly, instead you can expect to read about things like COOP or MP-BGP. Of course this isn't a hard rule, but a general rule based on my interests.
