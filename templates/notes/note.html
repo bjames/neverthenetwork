@@ -1,5 +1,5 @@
 {% extends "notes/base.html" %}
-{% block title %}NTN - Notes{% endblock %}
+{% block title %}NTN - Notes {% endblock %}
 {% block app %}<input class="hidethis">Select a tool above to get started<input class="hidethis">{% endblock %}
 {% block content %}
 <div class="title_block">
@@ -13,7 +13,7 @@
 
 <script type="text/javascript">
   DiscourseEmbed = { discourseUrl: 'https://forum.neverthenetwork.com/',
-                     discourseEmbedUrl: '{{ request.url }}' };
+                     discourseEmbedUrl: '{{ request.base_url }}' };
 
   (function() {
     var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
