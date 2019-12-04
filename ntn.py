@@ -1,4 +1,4 @@
-from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubip, ntnoui, ntnmodels, ntnwhois
+from ntntools import ntncurl, ntndns, ntnsubnet, ntnping, ntntraceroute, ntnpubip, ntnoui, ntnmodels, ntnwhois, ntnrphash
 from ntntools.ntndb import db_session
 
 from datetime import datetime
@@ -364,6 +364,48 @@ def traceroute():
 def get_traceroute_results(hostname):
 
     return render_template('tools/traceroute_results.html', results=ntntraceroute.traceroute(hostname), hostname=hostname)
+
+
+@app.route('/tools/rphash', methods=['GET', 'POST'])
+def rphash():
+
+    if request.method == 'POST':
+
+        rp_address = request.form['rp_address']
+        group = request.form['group']
+        mask = request.form['mask']
+        
+        render_buffer = get_rphash_results(rp_address, group, mask)
+
+        if request.is_xhr:
+            return render_buffer
+        else:
+            return render_template('tools/rphash.html', results = render_buffer, rp_address = rp_address, group = group, mask = mask)
+        
+    if request.is_xhr:
+        return render_template('tools/rphash_app.html')
+    else:
+
+        # handle query strings
+        rp_address = request.args.get('rp_address') or ''
+        group = request.args.get('group') or ''
+        mask = request.args.get('mask') or ''
+
+        if rp_address != '':
+
+            render_buffer = get_rphash_results(rp_address, group, mask)
+
+        else:
+
+            render_buffer = ''
+
+        return render_template('tools/rphash.html', results = render_buffer, rp_address = rp_address, group = group, mask = mask)
+
+
+def get_rphash_results(rp_address, group, mask):
+
+    return render_template('tools/rphash_results.html', results = ntnrphash.ntnrphash(rp_address, group, mask),
+                                        rp_address = rp_address, group = group, mask = mask)
 
 @app.route('/notes/latest')
 def latest():

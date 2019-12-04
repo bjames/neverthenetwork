@@ -85,6 +85,15 @@ $(document).ready(function() {
         response_navbar();
         return false;
     })
+
+    $('#rphash_nav').click(function(event){
+        event.preventDefault(event);
+        active(this);
+        load_app('rphash', 'RPHash');
+        disable_watch();
+        response_navbar();
+        return false;
+    })
     
     $('#clear_scrollback').click(function(){
         $('#term').empty();
@@ -314,8 +323,28 @@ function submit_form() {
                 post_failed();
             }
         });
-    }
+    }else if (classes.contains("rphash")){
 
+        var rp_address = $('[name=rp_address]').val();
+        var group = $('[name=group]').val();
+        var mask = $('[name=mask]').val();
+
+        $.ajax({
+            url: '/tools/rphash',
+            type: 'post',
+            cache: false,
+            data: {rp_address: rp_address, group: group, mask: mask},
+            success: function(data) {
+
+                set_location('/tools/rphash?rp_address=' + rp_address + '&group=' + group + '&mask=' + mask);
+                post_success(data);
+            
+            },
+            error: function() {
+                post_failed();
+            }
+        });
+    }
 }
 
 function post_success(data) {
@@ -376,6 +405,9 @@ function load_anchor() {
             return;
         case '/tools/whois':
             active($('#whois_nav'));
+            return;
+        case '/tools/rphash':
+            active($('#rphash_nav'));
             return;
     }
 }
