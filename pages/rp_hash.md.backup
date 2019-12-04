@@ -102,3 +102,39 @@ Result | `0001 1110` | `0101 1000` | `1111 1111` | `0111 1101`|
 Note that result here is __509149053__. This is our hash value. 
 
 ## Using Numpy and ipaddress to Calculate Hash Values
+
+```
+import ipaddress
+
+from numpy import uint32, bitwise_and, bitwise_xor
+
+def calculate_hash(rp_address, group, mask):
+
+    result = uint32(bitwise_and(group,mask))
+    result = uint32(uint32(1103515245) * uint32(result)) + uint32(12345)
+    result = uint32(bitwise_xor(result, rp_address))
+    result = uint32(uint32(1103515245) * uint32(result))
+    result = uint32(uint32(result) + uint32(12345))
+    result = uint32(uint32(result) % uint32(2**31))
+
+    return result
+
+if __name__ == '__main__':
+
+    prompt = False
+
+    while prompt:
+        rp_address = uint32(ipaddress.IPv4Address(input('Enter RP Candidate Address: ')))
+        group = uint32(ipaddress.IPv4Address(input('Enter multicast Group Address: ')))
+        mask_length = uint32(int(input('Enter mask length: ')))
+        mask = uint32((2**mask_length) - 1 << 32-mask_length)
+
+        print(calculate_hash(rp_address, group, mask))
+
+    rp_address = uint32(ipaddress.IPv4Address('192.168.1.1'))
+    group = uint32(ipaddress.IPv4Address('239.192.168.1'))
+    mask_length = uint32(30)
+    mask = uint32((2**mask_length) - 1 << 32-mask_length)
+
+    print(calculate_hash(rp_address, group, mask))
+```

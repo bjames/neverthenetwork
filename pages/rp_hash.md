@@ -112,8 +112,8 @@ def calculate_hash(rp_address, group, mask):
 
     result = uint32(bitwise_and(group,mask))
     result = uint32(uint32(1103515245) * uint32(result)) + uint32(12345)
-    result = uint32(uint32(1103515245) * uint32(result))
     result = uint32(bitwise_xor(result, rp_address))
+    result = uint32(uint32(1103515245) * uint32(result))
     result = uint32(uint32(result) + uint32(12345))
     result = uint32(uint32(result) % uint32(2**31))
 
