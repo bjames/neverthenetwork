@@ -2,11 +2,11 @@ title: Bootstrap Router Hash Function
 published: 2019-12-06
 category:
 - Route/Switch
+- Programming
 author: Brandon James
-summary: RFC 7761 describes a hash function used to load balance multicast groups between Rendezvous Point (RP) candidates when you are using Bootstrap Router (BSR). The hash function isn't straight forward and I was unable to find a resource that described it in detail. One feature of the hash function is an adjustable hash mask length. I think it's important to understand what the function does and how adjusting the mask impacts RP selection. I do my best to describe it here and provide some resources to help you select the best hash mask length for your environment. 
+summary: RFC 7761 describes a hash function used to load balance multicast groups between Rendezvous Point (RP) candidates when you are using the Bootstrap Router (BSR) protocol to propagate RP information. One feature of the hash function is an adjustable hash mask length. If you are implementing BSR, it's important to understand how adjusting the mask impacts RP selection. In this article, I describe how the function works and provide resources to help you select the best hash mask length for your environment.  
 
-
-[RFC 7761](https://tools.ietf.org/html/rfc7761#section-4.7.2) describes a hash function used to load balance multicast groups between Rendezvous Point (RP) candidates when you are using Bootstrap Router (BSR). The hash function isn't straight forward and I was unable to find a resource that described it in detail. One feature of the hash function is an adjustable hash mask length. I think it's important to understand what the function does and how adjusting the mask impacts RP selection. I do my best to describe it here and provide some resources to help you select the best hash mask length for your environment.   
+[RFC 7761](https://tools.ietf.org/html/rfc7761#section-4.7.2) describes a hash function used to load balance multicast groups between Rendezvous Point (RP) candidates when you are using the Bootstrap Router (BSR) protocol to propagate RP information. One feature of the hash function is an adjustable hash mask length. If you are implementing BSR, it's important to understand how adjusting the mask impacts RP selection. In this article, I describe how the function works and provide resources to help you select the best hash mask length for your environment.   
 
 ## The Hash Function
 
@@ -24,11 +24,12 @@ Note that in this function, the only value that changes on a per RP basis is the
 
 `M` = 30
 
-Value | Byte 0 | Byte 1 | Byte 2 | Byte 3 | Operation
----|---|---|---|---|---|
+
+Value | Byte 0 | Byte 1 | Byte 2 | Byte 3 | Operation 
+---|---|---|---|---|---
  `G` | `1110 1111` | `0000 0001` | `0000 0001` | `0000 0001` |
- `M` | `1111 1111` | `1111 1111` | `1111 1111` | `1111 1100` | AND
- Result | `1110 1111` | `0000 0001` | `0000 0001` | `0000 0000`
+ `M` | `1111 1111` | `1111 1111` | `1111 1111` | `1111 1100` | AND 
+ Result | `1110 1111` | `0000 0001` | `0000 0001` | `0000 0000` | 
  
 Notice that the AND operation unsets the least significant bit. With a mask length of 30, the two least significant bits will be unset by the operation. This means 239.1.1.0, 239.1.1.1, 239.1.1.2 and 239.1.1.3 will all hash to the same value. To drive the point home, let's look at another:
 
@@ -37,10 +38,10 @@ Notice that the AND operation unsets the least significant bit. With a mask leng
 `M` = 31
 
 Value | Byte 0 | Byte 1 | Byte 2 | Byte 3 | Operation
----|---|---|---|---|---|
+---|---|---|---|---|---
  `G` | `1110 1111` | `0000 0111` | `0000 0111` | `0000 0111` |
  `M` | `1111 1111` | `1111 1111` | `1111 1111` | `1111 1110` | AND
- Result | `1110 1111` | `0000 0100` | `0000 0100` | `0000 0110`
+ Result | `1110 1111` | `0000 0100` | `0000 0100` | `0000 0110`|
 
 
 Here we used a mask length of 31, which causes only the least significant bit to be unset. In this case 239.7.7.6 and 239.7.7.7 will hash to the same value for a given RP. 
