@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['FLATPAGES_EXTENSION'] = '.md'
-app.config['FLATPAGES_MARKDOWN_EXTENSIONS'] = ['codehilite', 'fenced_code', 'footnotes', 'toc']
+app.config['FLATPAGES_MARKDOWN_EXTENSIONS'] = ['codehilite', 'fenced_code', 'footnotes', 'toc', 'tables']
 app.secret_key = DATABASE_KEY
 
 # chrome likes to add trailing slashes to links for some reason
