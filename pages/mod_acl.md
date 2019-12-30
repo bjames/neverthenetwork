@@ -1,15 +1,14 @@
 # Practical Automation - mod_acl
 
-Managing access lists is one of the more painful parts of being a network engineer. Once you've finishing working out what should or should not be allowed, you write the ACL and then paste it into all your devices. The minute you finish, the requirements change or the business lets you know what just broke. In the future, SGTs and SDN promise to fix this problem, but you might not be there yet. mod_acl is a simple and fast way to manage ACLs. 
+Managing access lists is one of the more painful parts of being a network engineer. Once you've finishing working out what should or should not be allowed, you write the ACL and then paste it into all your devices. The minute you finish, the requirements change or the business lets you know what you just broke. In the future, SGTs and SDN promise to fix this problem, but you might not be there yet. mod_acl is a simple and fast way to manage ACLs. 
 
-If you want to skip the fluff and get right to the code, you can clone my repo on github. 
+If you want to skip the fluff and get right to the code, you can clone my repo on [github](https://github.com/bjames/mod_acl). 
 
 ## Implementation Goals
 
 1. The script should be able to modify existing ACLs on both Nexus and IOS
 2. The script should be reusable without any modifications to the script itself
-3. The script should get it's job done without needless complication
-4. Script configuration should be logical and easy 
+3. The script should support multiprocessing
 
 ## Script Design
 
@@ -19,11 +18,11 @@ If you want to skip the fluff and get right to the code, you can clone my repo o
 1. Cisco ACLs have an implicit __deny__ at the end.
 2. An ACL that hasn't been created can be configured (ie applied to an interface, VTY line, etc.). In this case, the ACL is immediately used when created. Because of the implicit deny this means you can easily lock yourself out of a device with an ACL applied to the management interface.
 
-### Pushing ACLs, two Options
+### Two Options for Pushing ACLs
 
 1. Rip and Replace
 	
-	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY using this method. I should note that this will result in *brief* packet loss as the ACL is being recreated. Depending on how the ACL is used, this could be perfectly acceptable.
+	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY using this method. __I should note that this will result in *brief* packet loss as the ACL is being recreated.__ Depending on how the ACL is used, this could be perfectly acceptable.
 	
 	Here's how the rip and replace method looks on the CLI:
 	
@@ -42,9 +41,13 @@ If you want to skip the fluff and get right to the code, you can clone my repo o
 	Here's how the modify in place method looks on the CLI:
 	
 	```
+	ntn(config-ext-nacl)#do sh ip access-list TEST
+	Extended IP access list TEST
+	    10 permit ip host 192.168.1.1 any
+	    20 permit ip host 192.168.1.2 any
+	    30 deny ip any any log
 	ntn(config)#ip access-list extended TEST
-	ntn(config)#ip access-list extended TEST
-	ntn(config)#ip access-list extended TEST
+	ntn(config)#	21 permit ip any any log
 	ntn(config-ext-nacl)#do sh ip access-list TEST
 	Extended IP access list TEST
 	    10 permit ip host 192.168.1.1 any
@@ -56,7 +59,76 @@ If you want to skip the fluff and get right to the code, you can clone my repo o
 
 __mod_acl__ implements both of these methods.
 
-### 
+### Validation
+
+I went as simple as possible on validation. After the script completes, it prints the output of `show ip access-list [acl_name]` to the screen, followed by the names of each device and the number of lines `show ip access-list [acl_name]` returned on that device. 
+
+Here's an example of what this looks like:
+
+```
+[bjames@lwks1 mod_acl]$ ./venv/bin/python mod_acl.py ntn_acl.yml 
+ntn will be modified using mode replace
+Is this correct? [y/n] y
+Username: ntn
+Password: 
+error 172.16.12.222
+172.16.12.112 completed
+172.16.12.109 completed
+172.16.12.110 completed
+172.16.12.111 completed
+
+FULL RESULTS
+_________________
+[{'device': '172.16.12.112',
+  'device_type': 'cisco_ios',
+  'result': 'Extended IP access list ntn\n'
+            '    10 deny ip host 172.16.12.148 any\n'
+            '    20 permit ip host 172.16.12.20 any'},
+ {'device': '172.16.12.110',
+  'device_type': 'cisco_ios',
+  'result': 'Extended IP access list ntn\n'
+            '    10 deny ip host 172.16.12.148 any\n'
+            '    20 permit ip host 172.16.12.20 any'},
+ {'device': '172.16.12.109',
+  'device_type': 'cisco_ios',
+  'result': 'Extended IP access list ntn\n'
+            '    10 deny ip host 172.16.12.148 any\n'
+            '    20 permit ip host 172.16.12.20 any'},
+ {'device': '172.16.12.111',
+  'device_type': 'cisco_nxos',
+  'result': '\n'
+            'IP access list ntn\n'
+            '        10 remark deny traffic from desktop\n'
+            '        20 deny ip 172.16.12.148/32 any \n'
+            '        30 remark permit traffic from jumpbox\n'
+            '        40 permit ip 172.16.12.20/32 any \n'},
+ {'device': '172.16.12.222',
+  'device_type': 'cisco_nxos',
+  'result': NetMikoTimeoutException('Connection to device timed-out: cisco_nxos 172.16.12.222:22')}]
+
+SUMMARY RESULTS
+_________________
+{'ios': [{'device_type': 'cisco_ios',
+          'hostname': '172.16.12.112',
+          'result_lines': 3},
+         {'device_type': 'cisco_ios',
+          'hostname': '172.16.12.110',
+          'result_lines': 3},
+         {'device_type': 'cisco_ios',
+          'hostname': '172.16.12.109',
+          'result_lines': 3}],
+ 'ios_diff': False,
+ 'nexus': [{'device_type': 'cisco_nxos',
+            'hostname': '172.16.12.111',
+            'result_lines': 6},
+           {'device_type': 'cisco_nxos',
+            'hostname': '172.16.12.222',
+            'result_lines': 0}],
+ 'nexus_diff': True}
+[bjames@lwks1 mod_acl]$ 
+```
+
+IOS and Nexus have different output for `show ip access-list`. My current validation process is to look at the results and make sure all IOS devices have the same number of result_lines and all Nexus devices have the same result_lines. You could go much fancier with your validation, but this is simple and works great for my use. 
 
 ## Installation
 * Clone the repository
@@ -68,21 +140,313 @@ __mod_acl__ implements both of these methods.
 
 ## Configuration
 
-The YAML file defines
+The configuration consists of a few options
+
+- threads: This is the number of processes spawned by the script
+- append: Whether to run the script in rip-and-replace or append mode
+- extended: Extended or standard ACL (__note:__ Nexus does not have a concept of standard vs extended ACLs, this is handled by the script)
+- acl_name: The name of the ACL
+- acl_lines: A list of the lines in the ACL. The pipe is required. It tells the YAML interpreter that [line breaks are significant](https://yaml.org/spec/1.2/spec.html#id2760844).
+- device_list: A list of device hostnames or IP addresses and device_types (must be one of cisco_ios or cisco_nxos). 
+
+```
+threads: 8
+append: False
+extended: True
+acl_name: ntn
+acl_lines: |
+ remark deny traffic from desktop
+ deny ip host 172.16.12.148 any
+ remark permit traffic from jumpbox
+ permit ip host 172.16.12.20 any
+device_list:
+  - hostname: 172.16.12.112
+    device_type: cisco_ios
+  - hostname: 172.16.12.110
+    device_type: cisco_ios
+  - hostname: 172.16.12.109
+    device_type: cisco_ios
+  - hostname: 172.16.12.111
+    device_type: cisco_nxos
+  - hostname: 172.16.12.222
+    device_type: cisco_nxos
+```
 
 ## Usage
-* Create or modify one of the YAML files in the repo as needed (see examples folder)
-* device_list entries should have a hostname and device_type (either cisco_ios or cisco_nxos)
+
+Run the script with `./venv/bin/python mod_acl.py mod_acl.yml`
+
+## Code
+
+The latest copy of the script is available on my [github](https://github.com/bjames/mod_acl). I've copied the script below for reference. 
+
 ```
-    - hostname: brs402
-      device_type: cisco_ios
-    - hostname: 10.18.0.2
-      device_type: cisco_nxos
+from multiprocessing import Pool
+from functools import partial
+from netmiko import ConnectHandler, NetMikoAuthenticationException, NetMikoTimeoutException
+from yaml import safe_load
+from pprint import pprint
+from sys import argv
+from json import dumps
+from datetime import datetime
+
+import getpass
+
+def ssh_connect(hostname, device_type, username, password):
+
+    device = {
+        'device_type': device_type,
+        'ip': hostname,
+        'username': username,
+        'password': password
+    }
+
+    return ConnectHandler(**device)
+
+
+def get_valid_credentials(hostname, device_type):
+
+    """
+        gets username and password, opens an ssh session to verify the credentials
+        then closes the ssh session
+
+        returns username and password
+
+        Doing this prevents multiple threads from locking out an account due to mistyped creds
+    """
+
+    # attempts to get the username, prompts if needed
+    username = input('Username: ')
+
+    # prompts user for password
+    password = getpass.getpass()
+
+    authenticated = False
+
+    while not authenticated:
+
+        try:
+
+            test_ssh_session = ssh_connect(hostname, device_type, username, password)
+            test_ssh_session.disconnect()
+
+        except NetMikoAuthenticationException:
+
+            print('authentication failed on ' + hostname + ' (CTRL + C to quit)')
+
+            username = input('Username: ')
+            password = getpass.getpass()
+
+        except NetMikoTimeoutException:
+
+            print('SSH timed out on ' + hostname)
+            raise
+
+        else:
+
+            # if there is no exception set authenticated to true
+            authenticated = True
+
+    return username, password
+
+
+def nxos_mod_acl(ssh_session, device, acl_name, acl_lines, append):
+
+    """
+        Updates ACLs on cisco_nxos devices
+    """
+
+    if not append:
+        # remove the old ACL
+        ssh_session.send_config_set('no ip access-list {}'.format(acl_name))
+
+    # create the config set for the new ACL
+    config_set = ['ip access-list {}'.format(acl_name)]
+    config_set = config_set + acl_lines.splitlines()
+
+    # command input on nexus devices is slow, so we use a delay_factor of 10 to slow down the input and prevent timeouts
+    ssh_session.send_config_set(config_set, delay_factor = 10)
+
+    result = ssh_session.send_command('show ip access-list {}'.format(acl_name))
+
+    return result
+
+
+def ios_mod_acl(ssh_session, device, acl_name, acl_lines, append, extended):
+
+    """
+        Updates ACLs on cisco_ios devices
+    """
+
+    if not append:
+        # remove the old ACL
+        if extended:
+            ssh_session.send_config_set('no ip access-list extended {}'.format(acl_name))
+        else:
+            ssh_session.send_config_set('no ip access-list standard {}'.format(acl_name))
+
+    # create the config set for the new ACL
+    if extended:
+        config_set = ['ip access-list extended {}'.format(acl_name)]
+    else:
+        config_set = ['ip access-list standard {}'.format(acl_name)]
+
+    config_set = config_set + acl_lines.splitlines()
+
+    ssh_session.send_config_set(config_set)
+
+    result = ssh_session.send_command('show ip access-list {}'.format(acl_name))
+
+    return result
+
+
+def mod_acl(acl_name, acl_lines, append, extended, username, password, device):
+
+    try:
+
+        ssh_session = ssh_connect(device['hostname'], device['device_type'], username, password)
+
+    except Exception as e:
+
+        print('error {}'.format(device['hostname']))
+        return {'device': device['hostname'], 'device_type': device['device_type'], 'result': e}
+
+
+    try:
+
+        if device['device_type'] == 'cisco_ios':
+
+            result = ios_mod_acl(ssh_session, device, acl_name, acl_lines, append, extended)
+
+        elif device['device_type'] == 'cisco_nxos':
+
+            result = nxos_mod_acl(ssh_session, device, acl_name, acl_lines, append)
+
+    except Exception as e:
+
+        print('error {}'.format(device['hostname']))
+        return {'device': device['hostname'], 'result': 'Failed\n{}'.format(e)}
+
+    print('{} completed'.format(device['hostname']))
+
+    return {'device': device['hostname'], 'device_type': device['device_type'], 'result': result}
+
+
+def verify(acl_name, append):
+
+    """
+        Asks the user to verify settings in the YAML file
+    """
+
+    if append:
+
+        mode = 'append'
+
+    else:
+
+        mode = 'replace'
+
+    print('{} will be modified using mode {}'.format(acl_name, mode))
+
+    user_input = input('Is this correct? [y/n] ').lower()
+
+    if user_input[0] == 'y':
+
+        return True
+
+    else:
+
+        return False
+
+
+def validation(results):
+
+    """
+        Basic validation
+        
+        It's up to the user to read the results and verify consistancy between the length of ACLs on each device.
+
+        If nexus_diff or ios_diff is True, then a difference was found between the number of lines for devices of that device type
+    """
+
+    validation_results = {'nexus': [], 'ios': [], 'nexus_diff': False, 'ios_diff': False}
+
+    nexus_first_count = -1
+    ios_first_count = -1
+
+    for device in results:
+
+        try:
+            line_count = len(device['result'].splitlines())
+        except AttributeError:
+            line_count = 0
+
+        result = {
+            'hostname': device['device'],
+            'device_type': device['device_type'],
+            'result_lines': line_count
+        }
+
+        if device['device_type'] == 'cisco_nxos':
+            
+            if nexus_first_count == -1:
+                nexus_first_count = line_count
+            elif nexus_first_count != line_count:
+                validation_results['nexus_diff'] = True
+
+            validation_results['nexus'].append(result)
+        elif device['device_type'] == 'cisco_ios':
+
+            if ios_first_count == -1:
+                ios_first_count = line_count
+            elif ios_first_count != line_count:
+                validation_results['ios_diff'] = True
+
+            validation_results['ios'].append(result)
+
+    return validation_results
+
+
+def main():
+
+    try:
+
+        script_settings = safe_load(open(argv[1]))
+
+    except IndexError:
+
+        print('Please specify a configuration file')
+        exit()
+
+
+    # End the script if the settings are incorrect
+    if not verify(script_settings['acl_name'], script_settings['append']):
+        exit()
+
+    # Get working credentials from the user
+    username, password = get_valid_credentials(script_settings['device_list'][0]['hostname'], script_settings['device_list'][0]['device_type']) 
+
+    # Spawn the number of threads configured in the YAML file
+    with Pool(script_settings['threads']) as pool:
+
+        results = pool.map(partial(mod_acl,
+                         script_settings['acl_name'],
+                         script_settings['acl_lines'],
+                         script_settings['append'],
+                         script_settings['extended'],
+                         username,
+                         password),
+                 script_settings['device_list'])
+
+    print('\nFULL RESULTS\n_________________')
+
+    pprint(results)
+
+    print('\nSUMMARY RESULTS\n_________________')
+    validation_results = validation(results)
+
+    pprint(validation_results)
+
+
+main()
 ```
-* acl_name should refer to an ACL that already exists
-    * Creating new ACLs isn't currently supported, but will be added when needed
-* if `append` is set to True, then the lines are added to the ACL. Otherwise the ACL is replaced
-    * Line numbers can be specified in either instance, but should only be necessary when appending
-    * When possible append False is preferred as this enforces consistancy
-* Note on ACL lines the pipe prior to the list of ACEs must be present for the YAML to be parsed correctly
-* Run the script with `./venv/bin/python mod_acl.py mod_acl.yml`
