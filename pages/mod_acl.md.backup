@@ -2,7 +2,7 @@
 
 Managing access lists is one of the more painful parts of being a network engineer. Once you've finishing working out what should or should not be allowed, you write the ACL and then paste it into all your devices. The minute you finish, the requirements change or the business lets you know what you just broke. In the future, SGTs and SDN promise to fix this problem, but you might not be there yet. mod_acl is a simple and fast way to manage ACLs. 
 
-If you want to skip the fluff and get right to the code, you can clone my repo on github. 
+If you want to skip the fluff and get right to the code, you can clone my repo on [github](https://github.com/bjames/mod_acl). 
 
 ## Implementation Goals
 
@@ -13,16 +13,20 @@ If you want to skip the fluff and get right to the code, you can clone my repo o
 ## Script Design
 
 
-### A Couple Notes on ACLs
+### A Few Notes on ACLs
 
-1. Cisco ACLs have an implicit __deny__ at the end.
-2. An ACL that hasn't been created can be configured (ie applied to an interface, VTY line, etc.). In this case, the ACL is immediately used when created. Because of the implicit deny this means you can easily lock yourself out of a device with an ACL applied to the management interface.
+This article assumes you are familiar with writing IOS and NXOS access-lists, but their are a few items I feel are work reiterating. 
+
+1. Cisco ACLs have an implicit __deny__ at the end. This becomes especially important when you are pushing ACLs to every router in your network.
+2. An ACL that hasn't been created can be configured (ie applied to an interface, VTY line, etc.). In this case, the ACL is immediately used when created. _Because of the implicit deny_ you can easily lock yourself out of a device with an ACL applied to the management interface.
+3. NXOS will automatically convert IOS style ACL lines into NXOS ACL lines, this can make script configuration much easier. 
+4. Unfortunately, IOS and NXOS treat `remarks` differently. In IOS, remarks do not have a line number and do not show up in the output of `show ip access-list`. The opposite is true for NXOS.  
 
 ### Two Options for Pushing ACLs
 
 1. Rip and Replace
 	
-	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY using this method. __I should note that this will result in *brief* packet loss as the ACL is being recreated.__ Depending on how the ACL is used, this could be perfectly acceptable.
+	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY using this method. __*Due to the implict deny*, this will result in *brief* packet loss as the ACL is being recreated.__ Depending on how the ACL is used, this could be perfectly acceptable.
 	
 	Here's how the rip and replace method looks on the CLI:
 	
@@ -37,6 +41,10 @@ If you want to skip the fluff and get right to the code, you can clone my repo o
 2. Modify in Place
 
 	This is what I do with ACLs applied in places that either cannot handle short disruptions or when the rip and replace method could cause loss of management access to the network device. 
+	
+	There are two issues with this method. 
+	1. By default you only have 9 lines in between each ACL entry. Since ACL order can be important, this method requires careful planning. 
+	2. NXOS counts `remark` entries as ACL lines, IOS does not. When you modify in place, you need to be mindful of this. If you use remarks, line numbers on IOS and NXOS won't match, so you'll need to create distinct script configuration files for each device type. 
 
 	Here's how the modify in place method looks on the CLI:
 	
@@ -61,9 +69,9 @@ __mod_acl__ implements both of these methods.
 
 ### Validation
 
-I went as simple as possible on validation. After the script completes, it prints the output of `show ip access-list [acl_name]` to the screen, followed by the names of each device and the number of lines `show ip access-list [acl_name]` returned on that device. 
+I went as simple as possible on validation. It's mostly a manual process with a few cues to tell the user whether or not they need to check on any of the devices. 
 
-Here's an example of what this looks like:
+To illustrate, Here's an example of what this looks like:
 
 ```
 [bjames@lwks1 mod_acl]$ ./venv/bin/python mod_acl.py ntn_acl.yml 
@@ -128,15 +136,9 @@ _________________
 [bjames@lwks1 mod_acl]$ 
 ```
 
-IOS and Nexus have different output for `show ip access-list`. My current validation process is to look at the results and make sure all IOS devices have the same number of result_lines and all Nexus devices have the same result_lines. You could go much fancier with your validation, but this is simple and works great for my use. 
+IOS and Nexus have different output for `show ip access-list` so the __SUMMARY RESULTS__ output lists them separately. `result_lines` is the number of lines returned by `show ip access-list`. The flags `ios_diff` and `nxos_diff` are set to `True`, when the number of result_lines don't match for that specific device type. If these flags are set to true, I look over the __FULL RESULTS__ for the devices with the incorrect number of lines and then log into the device if necessary. 
 
-## Installation
-* Clone the repository
-`git clone https://github.com/bjames/mod_acl`
-* Initialize a new python virtual environment
-`python -m virtualenv venv`
-* Install the required python modules
-`.\venv\bin\python -m pip -r requirements.txt`
+You could go much fancier with your validation, but this is simple and works great for my use. 
 
 ## Configuration
 
@@ -148,6 +150,8 @@ The configuration consists of a few options
 - acl_name: The name of the ACL
 - acl_lines: A list of the lines in the ACL. The pipe is required. It tells the YAML interpreter that [line breaks are significant](https://yaml.org/spec/1.2/spec.html#id2760844).
 - device_list: A list of device hostnames or IP addresses and device_types (must be one of cisco_ios or cisco_nxos). 
+
+### Example Configuration - Rip and Replace
 
 ```
 threads: 8
@@ -166,6 +170,44 @@ device_list:
     device_type: cisco_ios
   - hostname: 172.16.12.109
     device_type: cisco_ios
+  - hostname: 172.16.12.111
+    device_type: cisco_nxos
+  - hostname: 172.16.12.222
+    device_type: cisco_nxos
+```
+
+### Example Configuration - Append
+
+__IOS Configuration File__
+
+```
+threads: 8
+append: True
+extended: True
+acl_name: ntn
+acl_lines: |
+ remark permit traffic from laptop
+ 15 permit ip host 172.16.12.160 any
+device_list:
+  - hostname: 172.16.12.112
+    device_type: cisco_ios
+  - hostname: 172.16.12.110
+    device_type: cisco_ios
+  - hostname: 172.16.12.109
+    device_type: cisco_ios
+```
+
+__NXOS Configuration File__
+
+```
+threads: 8
+append: True
+extended: True
+acl_name: ntn
+acl_lines: |
+ 35 remark permit traffic from laptop
+ 36 permit ip host 172.16.12.160 any
+device_list:
   - hostname: 172.16.12.111
     device_type: cisco_nxos
   - hostname: 172.16.12.222
