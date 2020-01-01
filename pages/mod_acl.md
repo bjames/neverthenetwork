@@ -169,9 +169,13 @@ ntn(config-ext-nacl)#
 	__Note:__ The following takes place within threads spawned by Pool.map() 
 	
 	i. Open an SSH session to the device
+	
 	ii. If Nexus, call `nxos_mod_acl` function, if IOS, call `ios_mod_acl`
+	
 	iii. Modify the ACL, deleting it first if append is set to False in the YAML file. __Note:__ This is literally the only difference between the rip-and-replace and append methods in the script. 
+	
 	iv. The script then enters access-list configuration mode and inputs the contents of `acl_lines`.
+	
 	v. Thread exits
 	
 5. The script does some basic processing on the output for validation purposes.
