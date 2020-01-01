@@ -134,7 +134,7 @@ ntn(config-ext-nacl)#deny ip any any log
 	There are two issues with this method. 
 	
 	1. By default you only have 9 lines in between each ACL entry. Since ACL order can be important, this method requires careful planning. 
-	2. [As mentioned above](#preliminary-notes-on-acls), NXOS counts `remark` entries as ACL lines, IOS does not. When you modify in place, you need to be mindful of this. If you use remarks, line numbers on IOS and NXOS won't match, so you'll need to create distinct script configuration files for each device type. 
+	2. [As mentioned above](#preliminary-notes-on-acls), NXOS counts `remark` entries as ACL lines, IOS does not. When you modify in place, you need to be mindful of this. If you use remarks, line numbers on IOS and NXOS won't match, so you'll need to create distinct script [configuration files](#configuration) for each device type. 
 
 	Here's how the modify in place method looks on the CLI:
 	
@@ -155,7 +155,7 @@ Extended IP access list TEST
 ntn(config-ext-nacl)#
 ```
 	
-`mod_acl` implements both of these methods.
+`mod_acl` implements both Rip and Replace and Modify in Place. 
 
 ## `mod_acl`'s Implementation
 
@@ -169,9 +169,13 @@ ntn(config-ext-nacl)#
 	__Note:__ The following takes place within threads spawned by Pool.map() 
 	
 	i. Open an SSH session to the device
+	
 	ii. If Nexus, call `nxos_mod_acl` function, if IOS, call `ios_mod_acl`
-	iii. Modify the ACL, deleting it first if append is set to False in the YAML file. __Note:__ This is literally the only difference between the rip-and-replace and append methods in the script. 
+	
+	iii. Modify the ACL, deleting it first if append is set to False in the YAML file. __Note:__ This is literally the only difference between the rip-and-replace (append set to False) and modify-in-place (append set to True) methods in the script. 
+	
 	iv. The script then enters access-list configuration mode and inputs the contents of `acl_lines`.
+	
 	v. Thread exits
 	
 5. The script does some basic processing on the output for validation purposes.
