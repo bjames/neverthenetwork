@@ -182,7 +182,7 @@ ntn(config-ext-nacl)#
 
 ## Configuration
 
-The scripts configuration is done through a YAML file consisting of a few options
+Script configuration is done through a YAML file consisting of a few options:
 
 - threads: This is the number of processes spawned by the script
 - append: Whether to run the script in rip-and-replace or append mode
