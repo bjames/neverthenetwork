@@ -182,14 +182,16 @@ ntn(config-ext-nacl)#
 
 ## Configuration
 
-The configuration consists of a few options
+The scripts configuration is done through a YAML file consisting of a few options
 
 - threads: This is the number of processes spawned by the script
 - append: Whether to run the script in rip-and-replace or append mode
 - extended: Extended or standard ACL (__note:__ Nexus does not have a concept of standard vs extended ACLs, this is handled by the script)
 - acl_name: The name of the ACL
 - acl_lines: A list of the lines in the ACL. The pipe is required. It tells the YAML interpreter that [line breaks are significant](https://yaml.org/spec/1.2/spec.html#id2760844). These are the ACL lines the script inputs after entering ACL configuration mode.
-- device_list: A list of device hostnames or IP addresses and device_types (must be one of cisco_ios or cisco_nxos). 
+- device_list: A list of device hostnames or IP addresses and device_types (must be one of cisco_ios or cisco_nxos).
+
+You tell the script which YAML file to use when you [run the it](#usage), so feel free to use names that are significant to your environment.  
 
 ### Example Configuration - Rip and Replace
 
