@@ -115,44 +115,45 @@ This will insert the remark into the running configuration above the ACL line th
 
 1. Rip and Replace
 	
-	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY using this method. __*Due to the implict deny*, this will result in *brief* packet loss as the ACL is being recreated.__ Depending on how the ACL is used, this could be perfectly acceptable.
+	By rip and replace, I mean deleting the ACL and recreating it. This is what I prefer to do, it enforces consistency and line ordering. However, caution should be used when modifying ACLs on management interfaces and VTY lines using this method.[^2] __*Due to the implict deny*, this will result in *brief* packet loss as the ACL is being recreated.__ Depending on how the ACL is used, this could be perfectly acceptable.
 	
 	Here's how the rip and replace method looks on the CLI:
 	
-	```
-	ntn(config)#no ip access-list extended TEST 
-	ntn(config)#ip access-list extended TEST 
-	ntn(config-ext-nacl)#permit ip host 192.168.1.1 any 
-	ntn(config-ext-nacl)#permit ip host 192.168.1.2 any 
-	ntn(config-ext-nacl)#deny ip any any log
-	```
+```
+ntn(config)#no ip access-list extended TEST 
+ntn(config)#ip access-list extended TEST 
+ntn(config-ext-nacl)#permit ip host 192.168.1.1 any 
+ntn(config-ext-nacl)#permit ip host 192.168.1.2 any 
+ntn(config-ext-nacl)#deny ip any any log
+```
 	
 2. Modify in Place
 
-	This is what I do with ACLs applied in places that either cannot handle short disruptions or when the rip and replace method could cause loss of management access to the network device. 
+	This is what I do with ACLs applied in places that either cannot handle short disruptions or when the rip and replace method could cause loss of management access. 
 	
 	There are two issues with this method. 
+	
 	1. By default you only have 9 lines in between each ACL entry. Since ACL order can be important, this method requires careful planning. 
-	2. NXOS counts `remark` entries as ACL lines, IOS does not. When you modify in place, you need to be mindful of this. If you use remarks, line numbers on IOS and NXOS won't match, so you'll need to create distinct script configuration files for each device type. 
+	2. [As mentioned above](#), NXOS counts `remark` entries as ACL lines, IOS does not. When you modify in place, you need to be mindful of this. If you use remarks, line numbers on IOS and NXOS won't match, so you'll need to create distinct script configuration files for each device type. 
 
 	Here's how the modify in place method looks on the CLI:
 	
-	```
-	ntn(config-ext-nacl)#do sh ip access-list TEST
-	Extended IP access list TEST
-	    10 permit ip host 192.168.1.1 any
-	    20 permit ip host 192.168.1.2 any
-	    30 deny ip any any log
-	ntn(config)#ip access-list extended TEST
-	ntn(config)#	21 permit ip any any log
-	ntn(config-ext-nacl)#do sh ip access-list TEST
-	Extended IP access list TEST
-	    10 permit ip host 192.168.1.1 any
-	    20 permit ip host 192.168.1.2 any
-	    21 permit ip any any log
-	    30 deny ip any any log
-	ntn(config-ext-nacl)#
-	```
+```
+ntn(config-ext-nacl)#do sh ip access-list TEST
+Extended IP access list TEST
+    10 permit ip host 192.168.1.1 any
+    20 permit ip host 192.168.1.2 any
+    30 deny ip any any log
+ntn(config)#ip access-list extended TEST
+ntn(config)#	21 permit ip any any log
+ntn(config-ext-nacl)#do sh ip access-list TEST
+Extended IP access list TEST
+    10 permit ip host 192.168.1.1 any
+    20 permit ip host 192.168.1.2 any
+    21 permit ip any any log
+    30 deny ip any any log
+ntn(config-ext-nacl)#
+```
 	
 `mod_acl` implements both of these methods.
 
@@ -163,7 +164,7 @@ This will insert the remark into the running configuration above the ACL line th
 1. Verify Configuration
 2. Request Credentials
 3. Validate Credentials against the first device in the device list
-4. Use Pool.map() to spawn _n_ processes (where in _n_ is the number of threads specified in the YAML file).[^2]
+4. Use Pool.map() to spawn _n_ processes (where in _n_ is the number of threads specified in the YAML file).[^3]
 	
 	__Note:__ The following takes place within threads spawned by Pool.map() 
 	i. Open an SSH session to the device
@@ -605,4 +606,5 @@ main()
 ```
 
 [^1]: I _highly_ recommend running the script against a set of test devices prior to pushing to prod. This will help ensure your ACL is formatted correctly. I can't be held liable for anything you break using this script :).
-[^2]: If _m_ > _n_, where _m_ is the number of devices, the device list is broken into chunks of _m_/_n_ and is iterated by Pool.map()
+[^2]: During my testing ACLs applied to VTY lines did not affect the current VTY session. Nonetheless, this could change in the future, so I'd err on the side of caution.
+[^3]: If _m_ > _n_, where _m_ is the number of devices, the device list is broken into chunks of _m_/_n_ and is iterated by Pool.map()
