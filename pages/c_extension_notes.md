@@ -31,8 +31,35 @@ In C, any statement begining with `#` is a preprocessor directive[^2]. `#include
 extern int printf (const char *__restrict __format, ...);
 ```
 
-These prototypes exist only to help the compiler verify your use of the function. In the case of C standard library functions, your compiler already has precompiled copies of the code. After your code has been compiled, it is linked to the precompiled library[^3]. _______________WHERE IS THE OBJ FILE??__________
+These prototypes exist only to help the compiler verify your use of the function. In the case of C standard library functions, your compiler already has precompiled copies of the code. After your code has been compiled, it is linked to the precompiled library[^3]. When you run your program, it makes calls to these libraries. 
+
+## The Building Process
+
+When we write Python code, you don't need to worry about how the interpriter works. In C, the building process can directly impact how your code is executed, so it's important to think about how your code is manipulated when you invoke your compiler. 
+
+1. Preprocess
+
+The preprocessor makes changes to your .c file based on the preprocessor directives mentioned earlier. The code output by the preprocessor is still _human readable_ C code.[^4]
+
+2. Compile
+
+The compiler translates your preprocessed C code into assembly language code[^5]. 
+
+3. Assemble
+
+The assembler translates your compiled code into machine readable object code[^6]. 
+
+4. Link
+
+The compiler then _links_ the object code to any libraries you are using[^7]. What actually happens here differs between operating systems, but broadly speaking code can be either statically linked or dynamically linked. When code is statically linked, the library code is merged with your code. When code is dynamically linked, the libraries continue to exist as seperate pieces of code on your hard drive. These bits of code can be shared with other dynamically linked applications[^8].
+
+Once this process is complete your code is ready to be executed. 
 
 [^1]: Alternatively, you can view it on the [web](https://sourceware.org/git/?p=glibc.git;a=blob;f=include/stdio.h;h=9df98b283353e3d5610b8036876833e86a8eeab0;hb=HEAD).
 [^2]: You can read more about preprocessor directives [here](https://en.wikibooks.org/wiki/C_Programming/Preprocessor_directives_and_macros). 
-[^3]: The printf function is found in printf.c in the stdlib, you can view it [here](https://sourceware.org/git/?p=glibc.git;a=blob;f=stdio-common/printf.c;h=15f71c1feddf9e8324ab38afb351c7840af5a8fc;hb=9ea3686266dca3f004ba874745a4087a89682617)
+[^3]: The printf function is found in printf.c in the stdlib, you can view it [here](https://sourceware.org/git/?p=glibc.git;a=blob;f=stdio-common/printf.c;h=15f71c1feddf9e8324ab38afb351c7840af5a8fc;hb=9ea3686266dca3f004ba874745a4087a89682617). On Fedora 32, the compiled object file (assuming you are compiling with gcc) is located at /lib/gcc/x86_64-redhat-linux/10/32/libgcc.a. 
+[^4]: You can invoke GCC with the -E flag to only run the preprocessing step. In our simple hello world example, this generates a 731 line file. 
+[^5]: You can invoke GCC with the -S flag to stop after the compilation step. This generates a .s file contining the assembly langauge code for your program.
+[^6]: You can invoke GCC with the -c flag to stop after the assembly step. This generates a .o file continuing object code. Unlike the fully built .out file the .o file will give you an error when you try to run it. My Fedora 32 system says `bash: ./herewego.o: cannot execute binary file: Exec format error` ***********Rewrite this*************
+[^7]: When using external libraries, you generally need to tell the compiler where to find the library object files. ************Rewrite this***********
+[^8]: In Linux this is handled via the Executable and Linkable Format (ELF), which is described in detail [here](http://www.skyfree.org/linux/references/ELF_Format.pdf) or for a brief linking focused overview you can follow this [link](http://csapp.cs.cmu.edu/2e/ch7-preview.pdf). A good start point for Windows DLLs is avaliable [here](https://support.microsoft.com/en-us/help/815065/what-is-a-dll). 
